@@ -1,10 +1,10 @@
-# Task 01: Project Foundation
+# Task 30: ML Feature Engineering
 
 ## Status
 Not Started
 
 ## Objective
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Extract behavioral features such as login frequency, failed-login frequency, source frequency, timing, and event frequency.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Extract behavioral features such as login frequency, failed-login frequency, source frequency, timing, and event frequency.
 
 ## Explicitly Out of Scope
-Do not implement application features yet. Do not add Supabase, Firebase, or unrelated services.
+Do not replace the normalized event model with ML features.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Repository structure, environment example, setup documentation, quality commands, and secret exclusions exist.
+Feature generation is reproducible and tested.
 
 ## Required Deliverables
-Foundation only.
+ML feature pipeline.
 
 ## Completion Gate
 Do not mark this task complete until:

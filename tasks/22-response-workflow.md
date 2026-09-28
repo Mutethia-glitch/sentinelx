@@ -1,10 +1,10 @@
-# Task 01: Project Foundation
+# Task 22: Response Workflow
 
 ## Status
 Not Started
 
 ## Objective
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Implement controlled, auditable response actions such as assignment, containment status, escalation, notifications, tasks, notes, and closure.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Implement controlled, auditable response actions such as assignment, containment status, escalation, notifications, tasks, notes, and closure.
 
 ## Explicitly Out of Scope
-Do not implement application features yet. Do not add Supabase, Firebase, or unrelated services.
+Do not automatically disable accounts, delete data, block hosts, or perform destructive actions.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Repository structure, environment example, setup documentation, quality commands, and secret exclusions exist.
+Authorized response actions are recorded and visible in incident history.
 
 ## Required Deliverables
-Foundation only.
+Response module.
 
 ## Completion Gate
 Do not mark this task complete until:

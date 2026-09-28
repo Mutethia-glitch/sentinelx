@@ -1,10 +1,10 @@
-# Task 01: Project Foundation
+# Task 14: Initial Detection Rules
 
 ## Status
 Not Started
 
 ## Objective
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Implement approved core rules for brute force, credential attacks, privilege escalation, suspicious account activity, unauthorized access, reconnaissance, suspicious network activity, and selected scenarios.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Implement approved core rules for brute force, credential attacks, privilege escalation, suspicious account activity, unauthorized access, reconnaissance, suspicious network activity, and selected scenarios.
 
 ## Explicitly Out of Scope
-Do not implement application features yet. Do not add Supabase, Firebase, or unrelated services.
+Do not claim a rule detects behavior unless its logic and tests demonstrate it.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Repository structure, environment example, setup documentation, quality commands, and secret exclusions exist.
+Every rule has documented logic, severity, test data, and expected output.
 
 ## Required Deliverables
-Foundation only.
+Core rule set.
 
 ## Completion Gate
 Do not mark this task complete until:

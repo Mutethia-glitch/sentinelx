@@ -1,10 +1,10 @@
-# Task 01: Project Foundation
+# Task 02: Requirements Baseline
 
 ## Status
 Not Started
 
 ## Objective
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Convert the approved SentinelX specification into explicit functional and non-functional requirements that implementation tasks must follow.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Create the initial SentinelX repository structure, development conventions, environment handling, and baseline documentation.
+Convert the approved SentinelX specification into explicit functional and non-functional requirements that implementation tasks must follow.
 
 ## Explicitly Out of Scope
-Do not implement application features yet. Do not add Supabase, Firebase, or unrelated services.
+Do not invent commercial-SIEM features or expand the academic scope.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Repository structure, environment example, setup documentation, quality commands, and secret exclusions exist.
+Requirements are numbered, traceable, testable, and consistent with SentinelX.
 
 ## Required Deliverables
-Foundation only.
+Requirements baseline.
 
 ## Completion Gate
 Do not mark this task complete until:
