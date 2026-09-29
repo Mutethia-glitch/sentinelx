@@ -29,7 +29,7 @@ test('rule APIs enforce Analyst/Admin management and deny Viewer including forge
   for(const role of ['Administrator','Security Analyst']){assert.equal((await fetch(url,{headers:headers(role)})).status,200);assert.equal((await post(fixture,role)).status,201);}
   assert.equal((await post(fixture,'Security Analyst',url,{Origin:''})).status,403);
   assert.equal((await post({...fixture,threshold:0})).status,400);
-  const validated=await post(fixture,'Security Analyst',`${url}/validate`);assert.equal(validated.status,200);assert.equal((await validated.json()).executionImplemented,false);
+  const validated=await post(fixture,'Security Analyst',`${url}/validate`);assert.equal(validated.status,200);assert.equal((await validated.json()).executionImplemented,true);
   assert.equal((await fetch(`${url}?page=0`,{headers:headers('Administrator')})).status,400);
   assert.equal((await fetch(`${url}/mitre-mappings`,{headers:headers('Administrator')})).status,200);
   assert.equal((await fetch(`${url}/11111111-1111-4111-8111-111111111111`,{headers:headers('Administrator')})).status,404);
