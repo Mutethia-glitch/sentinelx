@@ -115,3 +115,6 @@ policy grants live in versioned application code. Role changes, affected session
 revocation and attributable audit context commit together. An advisory lock
 serializes API role updates and first-Administrator setup. The previous applied
 migrations remain unchanged.
+
+## Task 07 event representation
+Canonical event fields and persistence use the existing security_events table; no new migration is required. See [SECURITY_EVENTS.md](SECURITY_EVENTS.md) for validation, raw evidence handling and repository methods.

@@ -1,7 +1,7 @@
 # Task 07: Security Event Model
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement the normalized security-event data model and persistence layer.
@@ -38,6 +38,14 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Events support timestamp, source, type, IPs, user, host, action, status, severity, raw data, and metadata.
+
+### Verification
+- [x] Vendor-neutral canonical model supports all required fields.
+- [x] Input validation rejects invalid timestamps, IPs, severity and lossy JSON.
+- [x] Parameterized persistence retains raw evidence and canonical fields.
+- [x] PostgreSQL round-trip and identity regression checks pass.
+- [x] Model, persistence and local verification documented.
+- [ ] Windows persistence verification succeeds.
 
 ## Required Deliverables
 Event model.

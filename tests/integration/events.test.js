@@ -1,0 +1,23 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { randomUUID } = require('node:crypto');
+const { createPool } = require('../../src/data/pool');
+const { eventRepository } = require('../../src/data/event-repository');
+const { executeSql } = require('../../src/data/postgres');
+const { migrationSql } = require('../../scripts/migrate');
+test('PostgreSQL round-trips normalized events and retains raw evidence', async t => {
+  assert.equal(process.env.SENTINELX_TEST_DATABASE, '1', 'Use a disposable test database.');
+  executeSql(migrationSql());
+  const pool = createPool(); const repository = eventRepository(pool); const ids = [];
+  t.after(async () => { await pool.query('DELETE FROM security_events WHERE id = ANY($1::uuid[])', [ids]); await pool.end(); });
+  const input = { timestamp: '2026-09-30T03:00:00+03:00', source: "synthetic'); DROP TABLE users; --", type: 'authentication', sourceIp: '2001:db8::1', destinationIp: '192.0.2.1', user: 'fixture', host: 'fixture host', action: 'login', status: 'failed', severity: 'HIGH', rawData: { original: ['unchanged', null, false] }, metadata: { synthetic: true } };
+  const saved = await repository.create(input); ids.push(saved.id);
+  const loaded = await repository.getById(saved.id);
+  assert.deepEqual(loaded, saved); assert.deepEqual(loaded.rawData, input.rawData);
+  assert.equal(loaded.event.timestamp, '2026-09-30T00:00:00.000Z');
+  for (const key of ['sourceIp', 'destinationIp', 'user', 'host', 'action', 'status', 'severity', 'metadata']) assert.deepEqual(loaded.event[key], input[key]);
+  assert.ok(saved.receivedAt); assert.ok(saved.normalizedAt);
+  assert.equal(await repository.getById(randomUUID()), null);
+  const minimal = await repository.create({ timestamp: input.timestamp, source: 'vendor-neutral', type: 'network', rawData: {} }); ids.push(minimal.id);
+  assert.equal(minimal.event.severity, null); assert.equal(minimal.event.user, null);
+});

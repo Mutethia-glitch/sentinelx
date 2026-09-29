@@ -21,4 +21,5 @@
 - Task 04: Complete
 - Task 05: Complete — automated checks and Windows/PostgreSQL 18.6 login/logout verification passed
 - Task 06: Complete — automated policy/API/PostgreSQL/browser checks and local Windows role checks passed
-- Tasks 07–43: Not Started
+- Task 07: In Progress — event model and persistence implemented; awaiting Windows persistence verification
+- Tasks 08–43: Not Started

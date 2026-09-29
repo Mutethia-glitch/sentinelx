@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -15,7 +15,8 @@
     "auth:create-user": "node scripts/create-user.js",
     "test:rbac:integration": "node --test tests/integration/access.test.js",
     "rbac:bootstrap": "node scripts/bootstrap-administrator.js",
-    "test:rbac:ui": "node --test tests/integration/access-ui.test.js"
+    "test:rbac:ui": "node --test tests/integration/access-ui.test.js",
+    "test:events:integration": "node --test tests/integration/events.test.js"
   },
   "engines": {
     "node": ">=20"
