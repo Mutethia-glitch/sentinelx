@@ -26,7 +26,7 @@ This is the high-level contract. Exact endpoint paths and schemas are finalized 
 - Update incident state
 - Add investigation evidence/notes
 - Record controlled response action
-- Resolve/close incident
+- Resolve or dismiss incident through the approved lifecycle
 
 ## Reporting APIs
 - Dashboard metrics
