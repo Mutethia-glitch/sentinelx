@@ -47,6 +47,7 @@ function detectionRepository(pool) {
       try {
         await client.query('BEGIN');
         const trigger = evidence.triggerEventId;
+        await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [rule.id + ':' + trigger]);
         const duplicate = await client.query(`SELECT a.id FROM alerts a
           JOIN alert_events ae ON ae.alert_id=a.id
           WHERE a.rule_id=$1 AND ae.event_id=$2 LIMIT 1 FOR UPDATE`, [rule.id, trigger]);
