@@ -36,7 +36,7 @@ function eventRepository(pool) {
           if (afterPersist) await afterPersist(saved, client);
           return saved;
         };
-        return actorId ? await transaction(pool, work) : await work(pool);
+        return actorId || afterPersist ? await transaction(pool, work) : await work(pool);
       } catch (error) { if (error instanceof AuthError) throw error; throw new EventPersistenceError(); }
     },
     async list(filters) {
