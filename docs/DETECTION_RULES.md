@@ -1,10 +1,6 @@
-# Configurable detection rule model — Task 12
+# Configurable detection rules — Tasks 12–13
 
-Task 12 implements persistent declarative rule configuration and protected rule
-management APIs. It does not evaluate event streams, generate alerts, install core
-rules or claim detection coverage. Execution is Task 13; approved core rule logic
-and scenario expectations are Task 14. Enabling a configuration records operator
-intent but has no event-processing effect in the current implementation.
+Task 12 implements persistent declarative rule configuration and protected rule management APIs. Task 13 now executes enabled schema-v1 definitions deterministically against normalized ingested events and persists alerts when threshold/window/grouping criteria are met. Task 13 does not install the initial approved core rule set or claim detection coverage; that remains Task 14.
 
 ## Candidate schema
 
@@ -40,9 +36,7 @@ selectors are not rule condition fields. Supported operators:
 Text values are trimmed, nonblank and at most 500 characters; null characters are
 rejected. IP condition values must be valid IPv4/IPv6 text; severity values must be
 one of the four approved levels. Text/IP comparison is literal; no regex, scripts,
-eval, arbitrary SQL, case folding or vendor-field guessing is introduced. These
-are the model's declarative semantics; runtime event counting, matching and window
-handling will be tested in Task 13, not performed by Task 12's validation endpoint.
+eval, arbitrary SQL, case folding or vendor-field guessing is introduced. These are the model's declarative semantics. Task 13 uses the same literal semantics for runtime event matching, counting, grouping and event-time windows; the validation endpoint remains structural/reference validation rather than a dry-run simulator.
 
 The persisted definition is
 `{schemaVersion: 1, conditions, threshold, windowSeconds, groupBy}`. Name,
@@ -105,9 +99,7 @@ rule references and audit history must be preserved.
 Rule responses contain id, name, description, enabled, severity, categoryCode,
 definition, mitreTechniqueIds, version, createdAt and updatedAt. List responses
 wrap rules plus page/pageSize/hasMore. Validation returns
-`{valid: true, definition, executionImplemented: false}` for the current Task 12
-stage; it does not run events or predict alerts. Future execution work must update
-this stage indicator as appropriate.
+`{valid: true, definition, executionImplemented: true}`. Validation still does not run events or predict alerts; it reports that runtime execution for supported definitions is implemented.
 
 ## Tests and Windows gate
 
