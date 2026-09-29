@@ -17,5 +17,5 @@
 ## Application Development
 - Task 01: Complete
 - Task 02: Complete
-- Task 03: In progress
+- Task 03: Complete
 - Tasks 04–43: Not Started
