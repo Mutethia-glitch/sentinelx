@@ -12,7 +12,7 @@ function ruleService(repository, access) {
     },
     async get(token, id) { await authorize(token, 'rules.read'); const rule = await repository.get(ruleId(id)); if (!rule) throw new AuthError(404, 'Rule not found.'); return rule; },
     async mitre(token) { await authorize(token, 'rules.read'); return repository.mitre(); },
-    async validate(token, body) { await authorize(token, 'rules.manage'); const data = ruleInput(body); await repository.validate(data); return { valid: true, definition: data.definition, executionImplemented: false }; },
+    async validate(token, body) { await authorize(token, 'rules.manage'); const data = ruleInput(body); await repository.validate(data); return { valid: true, definition: data.definition, executionImplemented: true }; },
     async create(token, body) { const actor = await authorize(token, 'rules.manage'); return repository.create(actor.id, ruleInput(body)); },
     async update(token, id, body) { const actor = await authorize(token, 'rules.manage'); return repository.update(actor.id, ruleId(id), ruleInput(body, true)); },
   };
