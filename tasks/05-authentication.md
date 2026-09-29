@@ -1,7 +1,7 @@
 # Task 05: Authentication
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement secure user authentication and session/token handling.
@@ -38,6 +38,20 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Secure login/logout, safe failures, environment-based secrets, and authentication tests work.
+
+### Verification
+- [x] Authentication module, protected current-user API, login and logout implemented.
+- [x] Salted password hashing, bounded derivation work and hashed opaque sessions implemented.
+- [x] Session expiry, revocation, deactivation and password-change behavior verified on PostgreSQL 16.
+- [x] Generic failures, origin checks, safe cookies, input limits and login throttling tested.
+- [x] Environment-based credentials; no `.env` secrets read or committed.
+- [x] Transactional authentication auditing tested, including rollback on audit failure.
+- [x] Unit/HTTP tests and PostgreSQL integration tests pass; Task 04 regression tests pass.
+- [x] API, architecture, schema and Windows setup documentation updated.
+- [ ] Apply migration 002, provision a user and verify login/logout on the user's Windows database.
+
+The implementation is tested in a disposable environment. The task remains
+In Progress until the final local-runtime verification above succeeds.
 
 ## Required Deliverables
 Authentication module.

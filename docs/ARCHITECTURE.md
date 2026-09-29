@@ -290,3 +290,12 @@ This architecture directly implements the constraints established by `docs/REQUI
 - [x] Optional ML/integration capabilities are isolated from the core.
 - [x] The planned code/module structure maps directly to the documented architecture.
 - [x] No unnecessary microservices or later-task feature implementations were introduced.
+
+## Task 05 runtime mapping
+
+The first runtime slice follows the approved boundaries: `src/api/server.js` and
+`auth-handler.js` expose authentication routes; `src/auth/` owns validation,
+password hashing, sessions and login throttling; `src/data/pool.js` and
+`auth-repository.js` isolate parameterized PostgreSQL persistence and transactions.
+The existing `src/data/postgres.js` remains the migration-client boundary. No
+frontend, RBAC policy or later security pipeline behavior is introduced here.

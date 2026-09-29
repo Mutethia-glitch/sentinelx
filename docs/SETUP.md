@@ -1,6 +1,6 @@
 # SentinelX Development Setup
 
-This document covers the repository foundation only. Application dependencies and runtime commands will be expanded by the task that introduces them.
+This document covers the repository foundation and PostgreSQL setup. Task 05 authentication runtime and Windows instructions are in `docs/AUTHENTICATION.md`.
 
 ## Prerequisites
 
@@ -70,3 +70,12 @@ performs foundation and JavaScript syntax checks without requiring a database;
 the database integration checks are separate and must also pass for Task 04.
 
 See `docs/DATA_MODEL.md` for relationships, indexes, migration policy and limits.
+
+## Task 05 authentication
+
+Install the locked runtime dependencies using `npm ci`. Run `npm run db:migrate`
+to apply `002_auth_sessions.sql`, then use the local provisioning command
+`npm run auth:create-user` and start the loopback API with `npm start`.
+Supply database/provisioning secrets through environment variables. The Windows
+credential prompts and complete login/logout verification are documented in
+`docs/AUTHENTICATION.md`; no credentials belong in source control.

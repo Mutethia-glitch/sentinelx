@@ -19,4 +19,5 @@
 - Task 02: Complete
 - Task 03: Complete
 - Task 04: Complete
-- Tasks 05–43: Not Started
+- Task 05: In Progress — implementation and automated checks verified; awaiting Windows login/logout verification
+- Tasks 06–43: Not Started

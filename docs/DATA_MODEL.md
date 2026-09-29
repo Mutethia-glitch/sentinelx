@@ -96,3 +96,13 @@ orphan reference rejection, enum rejection, all supported incident statuses and
 threat levels, status/threat independence, no automatic response transition and
 restricted deletion. Failure injection verifies full migration rollback, and
 changed applied checksums are rejected. Synthetic test rows are rolled back.
+
+## Task 05 addition
+
+`002_auth_sessions.sql` adds `auth_sessions`: UUID primary key, restricted user
+foreign key, unique SHA-256 token digest, creation/activity/expiry/revocation times
+and timestamp-order checks. User and expiry indexes support attribution and
+session maintenance. User deactivation or password-hash updates revoke sessions
+through `users_revoke_auth_sessions`. Login/logout and authentication auditing are
+implemented through the data-access layer; other audit workflows remain later tasks.
+The original applied migration is unchanged.
