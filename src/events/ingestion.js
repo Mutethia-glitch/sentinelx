@@ -7,7 +7,7 @@ function approvedSources(env = process.env) {
   if (!names.length || names.length > 20 || names.some(name => !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,99}$/.test(name)) || new Set(names).size !== names.length) throw new Error('Invalid approved event source configuration.');
   return Object.freeze(names);
 }
-function ingestionService(repository, access, sources) {
+function ingestionService(repository, access, sources, detector = null) {
   const approved = new Set(sources);
   return {
     async authorize(token) {
@@ -24,7 +24,8 @@ function ingestionService(repository, access, sources) {
       const event = securityEvent(input);
       if (!approved.has(event.source)) throw new AuthError(403, 'Event source is not approved.');
       const saved = await repository.create(event, actor.id);
-      return { id: saved.id, receivedAt: saved.receivedAt, normalizedAt: saved.normalizedAt };
+      const alerts = detector ? await detector.evaluate(saved) : [];
+      return { id: saved.id, receivedAt: saved.receivedAt, normalizedAt: saved.normalizedAt, alertsGenerated: alerts.length };
     },
   };
 }
