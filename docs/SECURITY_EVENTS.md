@@ -58,5 +58,4 @@ node scripts/verify-event-model.js
 
 Expected: `Security event model persistence verified.` The verifier inserts only
 synthetic documentation-range IPs, checks all fields and deletes its own generated
-record. It prints no database credentials or raw driver errors. Task 07 remains
-In Progress until this local check succeeds.
+record. It prints no database credentials or raw driver errors. Local Windows/PostgreSQL 18.6 verification was confirmed on 2026-09-30. Task 07 is Complete.

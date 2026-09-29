@@ -1,7 +1,7 @@
 # Task 07: Security Event Model
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement the normalized security-event data model and persistence layer.
@@ -45,7 +45,9 @@ Events support timestamp, source, type, IPs, user, host, action, status, severit
 - [x] Parameterized persistence retains raw evidence and canonical fields.
 - [x] PostgreSQL round-trip and identity regression checks pass.
 - [x] Model, persistence and local verification documented.
-- [ ] Windows persistence verification succeeds.
+- [x] Windows persistence verification succeeds.
+
+Local Windows/PostgreSQL 18.6 persistence verification confirmed on 2026-09-30 using scripts/verify-event-model.js. The synthetic event round trip preserved every canonical field and raw evidence, and its generated record was removed afterward.
 
 ## Required Deliverables
 Event model.
