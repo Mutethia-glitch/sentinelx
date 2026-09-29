@@ -146,5 +146,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-rules.ps1 -Ex
 Use the existing Viewer/Management test account. Expected:
 `Viewer rule access and management rejection verified.` The policy override is
 process-local; credentials are prompted privately and the verifier logs out its
-own session. Task 12 remains In Progress until both checks succeed locally.
+own session. Both Windows/PostgreSQL 18.6 checks were confirmed on 2026-09-30. Task 12 is Complete.
 After completing Task 12, pause for the user's requested break before Task 13.

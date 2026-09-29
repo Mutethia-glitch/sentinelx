@@ -1,11 +1,12 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–11 are Complete. Task 12 is implemented and In Progress pending Windows
-migration 006 and rule API verification. Consult DEVELOPMENT_STATUS.md and each
-task contract for current acceptance evidence.
+Tasks 01–12 are Complete. Windows/PostgreSQL 18.6 migration 006 and rule lifecycle,
+validation, version protection and Viewer rejection were verified on 2026-09-30.
+The local synthetic verification rule is disabled. Consult DEVELOPMENT_STATUS.md
+and each task contract for current acceptance evidence.
 
-The user requested a break after Task 12. Finish its local checks and completion
-record, then stop before implementing Task 13. Resume Task 13 only when requested.
+The user requested a break after Task 12. Work is paused. Task 13 (Rule-Based
+Detection Engine) is next and remains Not Started. Resume only when requested.
 
 PostgreSQL is hosted on the user's Windows computer for now. No external API key
 is required by the current code. Local API inventory is in LOCAL_API_GUIDE.md.

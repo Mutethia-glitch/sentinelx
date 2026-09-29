@@ -1,7 +1,7 @@
 # Task 12: Detection Rule Model
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement configurable detection rules with conditions, thresholds, time windows, severity, category, MITRE mapping, and enabled state.
@@ -47,7 +47,9 @@ Rules can be created, edited, enabled/disabled, validated, and tested.
 - [x] Version conflicts and audited transactional rollback are tested.
 - [x] Unit/API, PostgreSQL lifecycle and existing regression checks pass.
 - [x] API/schema documentation and Windows verification provided.
-- [ ] Windows migration and rule lifecycle/Viewer checks pass.
+- [x] Windows migration and rule lifecycle/Viewer checks pass.
+
+Local Windows/PostgreSQL 18.6 verification confirmed on 2026-09-30: rule creation, editing, enable/disable, validation and version protection passed; the synthetic rule was left disabled; Viewer rule access and management were rejected.
 
 Rule execution is Task 13. Pause after Task 12 completion for the user's requested break.
 

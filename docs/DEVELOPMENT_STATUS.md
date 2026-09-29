@@ -26,8 +26,8 @@
 - Task 09: Complete — deterministic normalization, evidence persistence and raw API checks passed automatically and on Windows
 - Task 10: Complete — event UI, protected viewing APIs and Windows access/filter/inspection checks passed
 - Task 11: Complete — 15-category taxonomy, selection safeguards and authenticated catalog verified automatically and on Windows
-- Task 12: In Progress — rule configuration and automated checks passed; awaiting Windows lifecycle/access verification
+- Task 12: Complete — rule configuration, lifecycle/version protection and Viewer denial verified automatically and on Windows
 - Tasks 13–43: Not Started
 
 ## Current session checkpoint
-The user requested a break after Task 12. Complete its local verification and record, then pause before Task 13. See SESSION_HANDOFF.md.
+Tasks 01–12 are Complete. Work is paused for the user's requested break. Task 13 is next and remains Not Started; resume only when requested. See SESSION_HANDOFF.md.
