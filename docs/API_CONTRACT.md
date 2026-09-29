@@ -63,3 +63,6 @@ POST /api/events accepts one canonical event from an approved source, with sessi
 
 ## Task 09 implemented raw-event normalization
 POST /api/events/raw accepts an explicit supported format/source/rawData envelope. The existing ingestion security boundaries apply; supported events normalize and persist with preserved raw evidence, and malformed/unsupported inputs return 400 without persistence. See [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md).
+
+## Task 10 implemented event viewing
+GET /api/events provides validated event-specific filters and bounded 50-record pages. GET /api/events/{uuid} returns event inspection with normalized data and raw evidence. Both require a live events.read grant. See [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md) and [LOCAL_API_GUIDE.md](LOCAL_API_GUIDE.md).

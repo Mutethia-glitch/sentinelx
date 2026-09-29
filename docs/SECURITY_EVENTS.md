@@ -34,7 +34,7 @@ stored separately in `raw_data` without duplication in normalized JSON. PostgreS
 assigns the UUID, receipt time and normalization time. No migration is needed and
 previous migrations are unchanged.
 
-`getById(uuid)` returns `{id, receivedAt, normalizedAt, event, rawData}` or null
+`getById(uuid)` returns `{id, source, type, timestamp, receivedAt, normalizedAt, event, rawData}` or null
 for a missing UUID. A pre-existing unnormalized row has `event: null` while its raw
 evidence remains readable. Canonical validation failures and sanitized database
 failures use separate error classes. No update/delete or bulk-search public method
@@ -62,3 +62,6 @@ record. It prints no database credentials or raw driver errors. Local Windows/Po
 
 ## Task 08 integration
 The controlled ingestion service calls create(input, actorId), which rechecks the active actor ingestion grant and inserts its event and audit record transactionally. Internal create(input) remains available to trusted local model verification. See [EVENT_INGESTION.md](EVENT_INGESTION.md).
+
+## Task 10 viewing
+The repository now supplies parameterized event summaries through list(filters); protected services validate filters and check events.read. Source/type/occurrence fields are included in the inspection envelope even for pending normalization. See [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md).

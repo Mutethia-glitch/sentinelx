@@ -1,7 +1,7 @@
 # Task 10: Event Management UI
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Build event viewing, searching, filtering, and inspection.
@@ -38,6 +38,16 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Analysts can inspect events and filter relevant fields without unauthorized exposure.
+
+### Verification
+- [x] Protected event list and inspection APIs support the event page.
+- [x] Relevant event fields can be searched/filtered with bounded pagination.
+- [x] Analysts and approved read-only roles can inspect normalized data and raw evidence.
+- [x] Missing/unapproved identity is rejected on the backend; list summaries omit raw evidence.
+- [x] Data is rendered as text and cleared on sign-out or access loss.
+- [x] Unit/API, PostgreSQL/browser and existing regression checks pass.
+- [x] Local API inventory and Windows verification documented.
+- [ ] Windows list/filter/inspection/access checks succeed.
 
 ## Required Deliverables
 Event UI.

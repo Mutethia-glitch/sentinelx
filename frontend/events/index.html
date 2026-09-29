@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SentinelX · Security events</title><link rel="stylesheet" href="/events/events.css"><script src="/events/events.js" defer></script></head>
+<body><main>
+<header><p class="brand">SentinelX / IPHYN</p><h1>Security events</h1><p>Search and inspect recorded security events.</p><a href="/access">Access management</a></header>
+<p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel"><h2>Sign in</h2><form id="login-form"><label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label><label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button></form></section>
+<section id="identity-panel" hidden><h2>Your access</h2><p id="identity"></p><button id="logout" type="button">Sign out</button></section>
+<section id="events-panel" hidden><h2>Recorded events</h2>
+<form id="filters"><div class="filter-grid">
+<label>Search<input name="q" maxlength="200" placeholder="Source, type, user, host, action, status or IP"></label>
+<label>Source<input name="source" maxlength="500"></label><label>Type<input name="type" maxlength="500"></label>
+<label>Severity<select name="severity" aria-label="Severity"><option value="">All severities</option><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option><option value="UNKNOWN">Unknown</option></select></label>
+<label>Action<input name="action" maxlength="500"></label><label>Status<input name="status" maxlength="500"></label><label>User<input name="user" maxlength="500"></label><label>Host<input name="host" maxlength="500"></label>
+<label>Source IP<input name="sourceIp" maxlength="45"></label><label>Destination IP<input name="destinationIp" maxlength="45"></label>
+<label>From (local time)<input name="from" type="datetime-local" step="1"></label><label>To (local time)<input name="to" type="datetime-local" step="1"></label>
+</div><button type="submit">Apply filters</button> <button id="clear" type="button">Clear filters</button></form>
+<p id="results" aria-live="polite"></p><div class="table-scroll"><table><caption>Events ordered by occurrence time, newest first. Times are UTC.</caption><thead><tr><th>Occurred</th><th>Source</th><th>Type</th><th>Severity</th><th>User / host</th><th>Status</th><th>Inspect</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="pagination"><button id="previous" type="button" disabled>Previous</button><span id="page"></span><button id="next" type="button" disabled>Next</button></div>
+</section>
+<section id="detail-panel" hidden tabindex="-1"><h2>Event inspection</h2><dl id="detail-fields"></dl><h3>Normalized data</h3><pre id="normalized-data"></pre><h3>Raw evidence</h3><pre id="raw-data"></pre></section>
+</main></body></html>

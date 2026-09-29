@@ -1,0 +1,33 @@
+# Local SentinelX API guide
+
+These endpoints are part of the SentinelX repository. Run `npm start` in the
+PowerShell window with your PostgreSQL connection environment. The default local
+base URL is `http://localhost:3000`. No external API registration or API key is
+required. `git pull origin main` keeps the code and this guide on your computer.
+
+| Method | Path | Required access |
+|---|---|---|
+| POST | /api/auth/login | Application email/passphrase; creates an HttpOnly session cookie. |
+| GET | /api/auth/me | Valid session. |
+| POST | /api/auth/logout | Valid session; revokes it. |
+| GET | /api/access/me | Valid session; own identity/roles/permissions. |
+| GET | /api/access/users | Administrator. |
+| GET | /api/access/roles | Administrator. |
+| PUT | /api/access/users/{uuid}/roles | Administrator, approved roles plus reason. |
+| POST | /api/events | Administrator or Security Analyst; approved source and canonical event. |
+| POST | /api/events/raw | Administrator or Security Analyst; approved source and supported raw format. |
+| GET | /api/events | Approved role with events.read; bounded event filters. |
+| GET | /api/events/{uuid} | Approved role with events.read; event inspection. |
+
+Mutation requests need exact `Origin: http://localhost:3000` (or your configured
+APP_ORIGIN) and application/json. Authentication uses a session cookie, not a
+bearer token or API key. A PowerShell caller should log in with `-SessionVariable`
+and reuse `-WebSession`; the repository ingestion verifier demonstrates this
+without printing your credentials.
+
+User pages: `/access` for access management and `/events` for event viewing.
+Detailed payloads, limits and examples are in [AUTHENTICATION.md](AUTHENTICATION.md),
+[ACCESS_CONTROL.md](ACCESS_CONTROL.md), [EVENT_INGESTION.md](EVENT_INGESTION.md),
+[LOG_NORMALIZATION.md](LOG_NORMALIZATION.md) and [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md).
+Future external integrations are separate tasks; no external keys are needed for
+the current implementation.

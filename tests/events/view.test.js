@@ -1,0 +1,41 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { eventQuery } = require('../../src/events/query');
+const { eventViewService } = require('../../src/events/view-service');
+const { eventRepository } = require('../../src/data/event-repository');
+const { createServer } = require('../../src/api/server');
+const { configFromEnv } = require('../../src/auth/config');
+const { AuthError } = require('../../src/auth/errors');
+test('event filters enforce supported fields, dates, IPs and bounded pagination', () => {
+  assert.deepEqual(eventQuery(new URLSearchParams('source=test&page=2&severity=UNKNOWN&from=2026-09-30T03:00:00%2B03:00')), { page: 2, source: 'test', severity: 'UNKNOWN', from: '2026-09-30T00:00:00.000Z' });
+  for (const query of ['unknown=x', 'q=a&q=b', 'source=', 'severity=INVALID', 'page=0', 'page=2001', 'page=1.5', 'sourceIp=invalid', 'from=yesterday', 'from=2026-09-30T00:00:00Z&to=2026-09-29T00:00:00Z', `q=${'x'.repeat(201)}`]) assert.throws(() => eventQuery(new URLSearchParams(query)), { status: 400 });
+});
+test('search parameterizes literal wildcard input and summary excludes evidence', async () => {
+  let parameters;
+  const repository = eventRepository({ query: async (sql, values) => { parameters = values; assert.ok(!sql.includes('private search')); return { rows: [] }; } });
+  await repository.list({ q: 'private search%_', page: 1 });
+  assert.deepEqual(parameters, ['%private search\\%\\_%', 0]);
+});
+test('event viewing rejects unauthenticated/unapproved roles and safely handles HTTP inputs', async t => {
+  let calls = 0;
+  const id = '11111111-1111-4111-8111-111111111111';
+  const access = { me: async token => { if (!token) throw new AuthError(401, 'Authentication required.'); return { roles: [token] }; } };
+  const repository = { list: async query => { calls++; if (query.q === 'fail') throw new Error('private SQL detail'); return { events: [], page: query.page, pageSize: 50, hasMore: false }; }, getById: async value => { calls++; return value === id ? { id, rawData: { evidence: true } } : null; } };
+  const service = eventViewService(repository, access); const config = configFromEnv({});
+  const server = createServer({}, config, null, null, service);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const get = (path, role = 'Security Analyst') => fetch(`${base}${path}`, { headers: { Cookie: `${config.cookieName}=${role}`, 'X-Role': 'Administrator' } });
+  assert.equal((await get('/api/events', '')).status, 401);
+  assert.equal((await get('/api/events', 'Owner')).status, 403);
+  assert.equal(calls, 0);
+  for (const role of ['Administrator', 'Security Analyst', 'Viewer/Management']) assert.equal((await get('/api/events', role)).status, 200);
+  assert.equal((await get('/api/events?source=a&source=b')).status, 400);
+  assert.equal((await get(`/api/events/${id}`)).status, 200);
+  assert.equal((await get('/api/events/22222222-2222-4222-8222-222222222222')).status, 404);
+  assert.equal((await get(`/api/events/${id}?q=a`)).status, 400);
+  const unavailable = await get('/api/events?q=fail'); assert.equal(unavailable.status, 503); assert.deepEqual(await unavailable.json(), { error: 'Event viewing temporarily unavailable.' });
+  const page = await get('/events'); assert.equal(page.status, 200); assert.ok(page.headers.get('content-security-policy').includes("object-src 'none'"));
+  assert.equal((await get('/events/../../.env')).status, 404);
+});

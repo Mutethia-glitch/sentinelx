@@ -1,3 +1,6 @@
+const { eventViewService } = require('../events/view-service');
+const { eventViewHandler } = require('./event-view-handler');
+const { eventPage } = require('./event-page');
 const { ingestionService, approvedSources } = require('../events/ingestion');
 const { eventRepository } = require('../data/event-repository');
 const { ingestionHandler } = require('./ingestion-handler');
@@ -11,11 +14,14 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null) {
+function createServer(service, config, access = null, ingestion = null, views = null) {
+  const reading = views ? eventViewHandler(views, config) : null;
   const events = ingestion ? ingestionHandler(ingestion, config) : null;
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if (eventPage(req, res)) return;
+    if (reading && req.method === 'GET' && req.url.startsWith('/api/events') && !req.url.startsWith('/api/events/raw')) return reading(req, res);
     if (events && req.url.startsWith('/api/events')) return events(req, res);
     if (accessPage(req, res)) return;
     if (authorization && req.url.startsWith('/api/access/')) return authorization(req, res);
@@ -35,7 +41,7 @@ async function main() {
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
     const service = authService(authRepository(pool), config);
     const access = accessService(accessRepository(pool), service);
-    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources()));
+    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources()), eventViewService(eventRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
