@@ -100,7 +100,13 @@ test('browser displays role-appropriate controls and backend rejects DOM-forged 
   await ownCard.getByLabel('Administrator', { exact: true }).uncheck();
   await ownCard.getByLabel('Reason for changing access').fill('Synthetic last Administrator attempt');
   await ownCard.getByRole('button', { name: 'Save roles' }).click();
-  await pages[0].waitForFunction(() => document.getElementById('message').textContent === 'The last active Administrator cannot be removed.');
+  await pages[0].waitForFunction(() => document.getElementById('message').textContent === 'Error: The last active Administrator cannot be removed.');
+  assert.equal(await pages[0].locator('#message').evaluate(el => el.classList.contains('error')), true);
+  assert.equal(await pages[0].locator('#message').evaluate(el => getComputedStyle(el).color), 'rgb(153, 27, 27)');
+  assert.equal(await pages[0].locator('#message').evaluate(el => {
+    const bounds = el.getBoundingClientRect();
+    return bounds.top >= 0 && bounds.bottom <= window.innerHeight;
+  }), true);
   assert.deepEqual(await repository.rolesForUser(users[0].id), ['Administrator']);
   await pages[0].getByRole('button', { name: 'Sign out' }).click();
   await pages[0].locator('#login-panel').waitFor({ state: 'visible' });

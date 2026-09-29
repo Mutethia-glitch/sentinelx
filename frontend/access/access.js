@@ -1,6 +1,11 @@
 'use strict';
 const element = id => document.getElementById(id);
-const message = text => { element('message').textContent = text; };
+const message = (text, isError = false) => {
+  const notice = element('message');
+  notice.classList.toggle('error', isError);
+  notice.textContent = isError ? `Error: ${text}` : text;
+  if (isError) notice.scrollIntoView({ block: 'center' });
+};
 async function request(path, options = {}) {
   const response = await fetch(path, { credentials: 'same-origin', cache: 'no-store', ...options });
   const result = response.status === 204 ? null : await response.json();
@@ -21,7 +26,7 @@ function reset() {
 }
 function handleError(error) {
   if (error.status === 401) reset();
-  message(error.status ? error.message : 'Unable to reach SentinelX. Try again.');
+  message(error.status ? error.message : 'Unable to reach SentinelX. Try again.', true);
 }
 function userCard(user, roles) {
   const form = document.createElement('form');
