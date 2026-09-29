@@ -1,3 +1,5 @@
+const { detectionRepository } = require('../data/detection-repository');
+const { detectionEngine } = require('../detection/engine');
 const { ruleRepository } = require('../data/rule-repository');
 const { ruleService } = require('../rules/service');
 const { ruleHandler } = require('./rule-handler');
@@ -51,7 +53,7 @@ async function main() {
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
     const service = authService(authRepository(pool), config);
     const access = accessService(accessRepository(pool), service);
-    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources()), eventViewService(eventRepository(pool), access), categoryService(categoryRepository(pool), access), ruleService(ruleRepository(pool), access));
+    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool))), eventViewService(eventRepository(pool), access), categoryService(categoryRepository(pool), access), ruleService(ruleRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
