@@ -8,6 +8,8 @@ const { detectionEngine } = require('../src/detection/engine');
 async function main() {
   let pool; let ruleId = null; let categoryEnabled = null; let stage = 'database connection';
   const eventIds = []; const alertIds = [];
+  const runToken = randomUUID().replaceAll('-', '').slice(0, 16);
+  const verificationUser = `task13-${runToken}`;
   try {
     pool = createPool();
 
@@ -33,12 +35,11 @@ async function main() {
     stage = 'synthetic rule creation';
     ruleId = (await pool.query(
       "INSERT INTO detection_rules(name,description,enabled,definition,threat_level,category_code) VALUES($1,'Task 13 local verification',true,$2::jsonb,'HIGH','BRUTE_FORCE') RETURNING id",
-      [`Task 13 verification ${randomUUID()}`, JSON.stringify(definition)],
+      [`Task 13 verification ${runToken}`, JSON.stringify(definition)],
     )).rows[0].id;
 
     const events = eventRepository(pool);
     const repository = detectionRepository(pool);
-    // Verification must never evaluate or clean up alerts from unrelated enabled rules.
     const isolatedRepository = {
       async enabledRules(db) {
         return (await repository.enabledRules(db)).filter(rule => rule.id === ruleId);
@@ -51,8 +52,8 @@ async function main() {
     const input = (offset, status = 'failed', sourceIp = '192.0.2.130') => ({
       timestamp: new Date(base + offset).toISOString(),
       source: 'sentinelx-simulated', type: 'authentication', sourceIp, destinationIp: null,
-      user: 'task13-local', host: 'verification-host', action: 'login', status,
-      severity: 'MEDIUM', rawData: { synthetic: true }, metadata: { verification: 'task13' },
+      user: verificationUser, host: 'verification-host', action: 'login', status,
+      severity: 'MEDIUM', rawData: { synthetic: true }, metadata: { verification: 'task13', runToken },
     });
     const run = async event => {
       let generated = [];
@@ -89,7 +90,8 @@ async function main() {
     assert.equal(alert.rule_id, ruleId);
     assert.equal(alert.threat_level, 'HIGH');
     assert.equal(alert.match_evidence.threshold, 3);
-    assert.deepEqual(alert.match_evidence.groupValues, ['192.0.2.130', 'task13-local']);
+    assert.deepEqual(alert.match_evidence.groupValues, ['192.0.2.130', verificationUser]);
+    assert.equal(alert.match_evidence.triggerEventId, third.saved.id);
     assert.equal(Number((await pool.query('SELECT count(*) FROM alert_events WHERE alert_id=$1', [third.generated[0].id])).rows[0].count), 3);
 
     stage = 'atomic rollback';
