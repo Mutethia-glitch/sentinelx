@@ -1,7 +1,7 @@
 # Task 08: Event Ingestion
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement controlled ingestion of security events through an API and/or approved simulated datasets.
@@ -38,6 +38,15 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Valid events are accepted and stored; invalid payloads are rejected and tested.
+
+### Verification
+- [x] Valid approved-source events are accepted and stored through an authenticated API.
+- [x] Administrator/Analyst ingestion permission and Viewer denial enforced on the backend.
+- [x] Invalid payloads, origins, sources, methods and oversized bodies rejected and tested.
+- [x] Event and attributed audit persist atomically; audit failure rolls both back.
+- [x] PostgreSQL integration and existing identity/event regressions pass.
+- [x] Approved synthetic fixture, API documentation and PowerShell verification supplied.
+- [ ] Windows valid/invalid ingestion and Viewer rejection verified.
 
 ## Required Deliverables
 Event ingestion.

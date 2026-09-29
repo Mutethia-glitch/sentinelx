@@ -202,3 +202,6 @@ verification used a compatible Chromium Headless Shell 141 binary after the
 default archive download failed. This does not change production dependencies.
 
 Reference: [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html).
+
+## Task 08 permission
+Administrator and Security Analyst now have events.ingest for the controlled ingestion API. Viewer/Management remains read-only. Ingestion rechecks active actor roles at the database boundary and audits accepted events transactionally.

@@ -59,3 +59,6 @@ node scripts/verify-event-model.js
 Expected: `Security event model persistence verified.` The verifier inserts only
 synthetic documentation-range IPs, checks all fields and deletes its own generated
 record. It prints no database credentials or raw driver errors. Local Windows/PostgreSQL 18.6 verification was confirmed on 2026-09-30. Task 07 is Complete.
+
+## Task 08 integration
+The controlled ingestion service calls create(input, actorId), which rechecks the active actor ingestion grant and inserts its event and audit record transactionally. Internal create(input) remains available to trusted local model verification. See [EVENT_INGESTION.md](EVENT_INGESTION.md).

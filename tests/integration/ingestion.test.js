@@ -1,0 +1,56 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { randomUUID } = require('node:crypto');
+const { createPool } = require('../../src/data/pool');
+const { authRepository } = require('../../src/data/auth-repository');
+const { accessRepository } = require('../../src/data/access-repository');
+const { eventRepository } = require('../../src/data/event-repository');
+const { authService } = require('../../src/auth/service');
+const { accessService } = require('../../src/access/service');
+const { ingestionService, approvedSources } = require('../../src/events/ingestion');
+const { hashPassword } = require('../../src/auth/passwords');
+const { configFromEnv } = require('../../src/auth/config');
+const { createServer } = require('../../src/api/server');
+const { executeSql } = require('../../src/data/postgres');
+const { migrationSql } = require('../../scripts/migrate');
+const fixture = require('../../fixtures/events/simulated-login.json');
+test('real ingestion authenticates, persists and audits atomically, rejecting viewer and invalid events', async t => {
+  assert.equal(process.env.SENTINELX_TEST_DATABASE, '1', 'Use a disposable test database.');
+  executeSql(migrationSql()); const pool = createPool(); const ids = []; const events = []; let server;
+  const suffix = randomUUID().replaceAll('-', ''); const trigger = `ingestion_test_${suffix}`;
+  t.after(async () => {
+    if (server) await new Promise(resolve => { server.close(resolve); server.closeAllConnections(); });
+    await pool.query(`DROP TRIGGER IF EXISTS ${trigger} ON audit_logs`);
+    await pool.query(`DROP FUNCTION IF EXISTS ${trigger}()`);
+    await pool.query('DELETE FROM audit_logs WHERE actor_id = ANY($1::uuid[])', [ids]);
+    await pool.query('DELETE FROM security_events WHERE id = ANY($1::uuid[])', [events]);
+    await pool.query('DELETE FROM auth_sessions WHERE user_id = ANY($1::uuid[])', [ids]);
+    await pool.query('DELETE FROM user_roles WHERE user_id = ANY($1::uuid[])', [ids]);
+    await pool.query('DELETE FROM users WHERE id = ANY($1::uuid[])', [ids]); await pool.end();
+  });
+  const config = configFromEnv({}); const repo = authRepository(pool); const password = 'Synthetic ingestion passphrase'; const hash = await hashPassword(password);
+  const auth = authService(repo, config); const access = accessService(accessRepository(pool), auth); const eventRepo = eventRepository(pool);
+  const cookies = [];
+  for (const role of ['Security Analyst', 'Viewer/Management']) {
+    const email = `${randomUUID()}@example.invalid`; const id = await repo.createUser(email, 'Synthetic ingestion tester', hash, 'synthetic test operator'); ids.push(id);
+    await pool.query('INSERT INTO user_roles(user_id, role_id) SELECT $1, id FROM roles WHERE name = $2', [id, role]);
+    cookies.push(`${config.cookieName}=${(await auth.login({ email, password })).token}`);
+  }
+  const service = ingestionService(eventRepo, access, approvedSources({})); server = createServer(auth, config, access, service);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); const url = `http://127.0.0.1:${server.address().port}/api/events`;
+  const post = (body, cookie = cookies[0]) => fetch(url, { method: 'POST', headers: { Origin: config.origin, 'Content-Type': 'application/json', Cookie: cookie }, body: JSON.stringify(body) });
+  const accepted = await post(fixture); assert.equal(accepted.status, 201); const receipt = (await accepted.json()).event; events.push(receipt.id);
+  const stored = await eventRepo.getById(receipt.id); assert.deepEqual(stored.rawData, fixture.rawData); assert.equal(stored.event.user, fixture.user);
+  const audit = await pool.query("SELECT actor_id, context FROM audit_logs WHERE target_id=$1 AND action='EVENT_INGESTED'", [receipt.id]);
+  assert.equal(audit.rows[0].actor_id, ids[0]); assert.deepEqual(audit.rows[0].context, { source: fixture.source, type: fixture.type });
+  const count = async () => Number((await pool.query('SELECT count(*) FROM security_events')).rows[0].count); const before = await count();
+  assert.equal((await post(fixture, cookies[1])).status, 403); assert.equal((await post(fixture, '')).status, 401);
+  assert.equal((await post({ ...fixture, source: 'unapproved' })).status, 403); assert.equal((await post({ ...fixture, timestamp: 'invalid' })).status, 400);
+  assert.equal(await count(), before);
+  await pool.query(`CREATE FUNCTION ${trigger}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'EVENT_INGESTED' AND NEW.actor_id = '${ids[0]}'::uuid THEN RAISE EXCEPTION 'synthetic audit failure'; END IF; RETURN NEW; END $$`);
+  await pool.query(`CREATE TRIGGER ${trigger} BEFORE INSERT ON audit_logs FOR EACH ROW EXECUTE FUNCTION ${trigger}()`);
+  assert.equal((await post(fixture)).status, 503); assert.equal(await count(), before);
+  await pool.query(`DROP TRIGGER ${trigger} ON audit_logs`); await pool.query(`DROP FUNCTION ${trigger}()`);
+  await pool.query('DELETE FROM user_roles WHERE user_id=$1', [ids[0]]);
+  assert.equal((await post(fixture)).status, 403); assert.equal(await count(), before);
+});

@@ -16,7 +16,8 @@
     "test:rbac:integration": "node --test tests/integration/access.test.js",
     "rbac:bootstrap": "node scripts/bootstrap-administrator.js",
     "test:rbac:ui": "node --test tests/integration/access-ui.test.js",
-    "test:events:integration": "node --test tests/integration/events.test.js"
+    "test:events:integration": "node --test tests/integration/events.test.js",
+    "test:ingestion:integration": "node --test tests/integration/ingestion.test.js"
   },
   "engines": {
     "node": ">=20"

@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-09-30T00:00:00Z",
+  "source": "sentinelx-simulated",
+  "type": "authentication",
+  "sourceIp": "192.0.2.10",
+  "destinationIp": "2001:db8::10",
+  "user": "synthetic-user",
+  "host": "synthetic-host",
+  "action": "login",
+  "status": "failed",
+  "severity": "LOW",
+  "rawData": {"synthetic": true, "outcome": "failed"},
+  "metadata": {"dataset": "approved-simulation"}
+}

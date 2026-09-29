@@ -6,7 +6,7 @@ test('approved roles implement administrator, analyst and read-only boundaries',
   for (const permission of ['events.read', 'alerts.read', 'incidents.read', 'investigations.read', 'responses.read', 'reports.read', 'dashboard.read']) {
     for (const role of ROLE_NAMES) assert.doesNotThrow(() => requirePermission([role], permission));
   }
-  for (const permission of ['rules.manage', 'alerts.manage', 'incidents.manage', 'investigations.write', 'responses.execute']) {
+  for (const permission of ['events.ingest', 'rules.manage', 'alerts.manage', 'incidents.manage', 'investigations.write', 'responses.execute']) {
     assert.doesNotThrow(() => requirePermission(['Administrator'], permission));
     assert.doesNotThrow(() => requirePermission(['Security Analyst'], permission));
     assert.throws(() => requirePermission(['Viewer/Management'], permission), { status: 403 });
