@@ -1,7 +1,7 @@
 # Task 11: Threat Categories
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement the approved configurable threat categories used by SentinelX detections and incidents.
@@ -47,9 +47,9 @@ Categories are consistent and selectable by rules/incidents.
 - [x] Protected catalog reads and Administrator configuration are backend enforced and audited.
 - [x] Unit/API, PostgreSQL and existing regression checks pass.
 - [x] Append-only migrations, taxonomy/API documentation and rollback-only Windows verifier provided.
-- [ ] Windows migration 005, fifteen-category selection verification and catalog access confirmed.
+- [x] Windows migration 005, fifteen-category selection verification and catalog access confirmed.
 
-Initial seven-category Windows verification passed on 2026-09-30. The user then requested expansion to fifteen; the updated local gate remains pending.
+Windows/PostgreSQL 18.6 verification confirmed on 2026-09-30 for migration 005, all fifteen rule/incident category selections, synthetic rollback and the authenticated catalog response. The original seven-category check also passed before expansion.
 
 ## Required Deliverables
 Threat taxonomy.

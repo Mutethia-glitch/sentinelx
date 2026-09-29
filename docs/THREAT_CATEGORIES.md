@@ -104,9 +104,7 @@ Expected: `Fifteen threat categories and rule/incident selection verified. Synth
 changes rolled back.` The verifier checks actual database catalog/selection behavior
 inside a transaction and rolls back its synthetic records and availability changes.
 It does not persist test incidents or enable detections. With your normal signed-in
-browser, open `/api/threat-categories?selectable=true` to see the catalog. Task 11
-remains In Progress until migration 005, fifteen-category selection verification and updated catalog
-access are confirmed. The initial seven-category checks passed locally before expansion.
+browser, open `/api/threat-categories?selectable=true` to see the catalog. Migration 005, fifteen-category selection verification and authenticated catalog access were confirmed on Windows/PostgreSQL 18.6 on 2026-09-30. Task 11 is Complete.
 
 ## Selection rationale and overlaps
 
