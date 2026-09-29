@@ -25,15 +25,15 @@ function eventMatches(event, definition) {
 function groupValues(event, fields) { return fields.map(field => event[field] ?? null); }
 function detectionEngine(repository) {
   return {
-    async evaluate(saved) {
+    async evaluate(saved, db = null) {
       if (!saved?.id || !saved.event) return [];
       const event = securityEvent(saved.event);
-      const rules = await repository.enabledRules();
+      const rules = await repository.enabledRules(db);
       const alerts = [];
       for (const rule of rules) {
         if (!validDefinition(rule.definition) || !eventMatches(event, rule.definition)) continue;
         const group = groupValues(event, rule.definition.groupBy);
-        const matches = await repository.matchingEvents(rule.definition, event, group);
+        const matches = await repository.matchingEvents(rule.definition, event, group, db);
         if (matches.length < rule.definition.threshold) continue;
         const selected = matches.slice(-rule.definition.threshold);
         const alert = await repository.createAlert(rule, selected, {
@@ -42,7 +42,7 @@ function detectionEngine(repository) {
           windowSeconds: rule.definition.windowSeconds,
           groupBy: rule.definition.groupBy,
           groupValues: group,
-        });
+        }, db);
         if (alert) alerts.push(alert);
       }
       return alerts;
