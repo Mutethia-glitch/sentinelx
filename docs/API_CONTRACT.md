@@ -71,4 +71,7 @@ GET /api/events provides validated event-specific filters and bounded 50-record 
 GET /api/threat-categories supports the validated selectable filter for approved readers. PATCH /api/threat-categories/{CODE} configures label/description/availability with Administrator authorization, exact Origin and transactional audit. See [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md).
 
 ## Task 12 rule management
-GET/POST /api/rules, GET/PUT /api/rules/{uuid}, GET /api/rules/mitre-mappings and POST /api/rules/validate provide bounded rule configuration, version-protected updates and structural/reference validation. Admin/Analyst grants are required; Viewer cannot access rule definitions. See [DETECTION_RULES.md](DETECTION_RULES.md). Runtime evaluation remains Task 13.
+GET/POST /api/rules, GET/PUT /api/rules/{uuid}, GET /api/rules/mitre-mappings and POST /api/rules/validate provide bounded rule configuration, version-protected updates and structural/reference validation. Admin/Analyst grants are required; Viewer cannot access rule definitions. See [DETECTION_RULES.md](DETECTION_RULES.md).
+
+## Task 13 deterministic detection
+Successful canonical or raw event ingestion evaluates enabled schema-v1 rules against the normalized event. Matching rules use their configured event-time window, threshold and group fields and persist an alert plus alert-event evidence links. The ingestion receipt includes `alertsGenerated`. Event persistence, ingestion audit and generated alerts share one PostgreSQL transaction, so detection-stage failure returns a sanitized 503 and rolls the event back. Unsupported/legacy rule definitions are skipped rather than interpreted. See [DETECTION_ENGINE.md](DETECTION_ENGINE.md).
