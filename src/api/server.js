@@ -1,3 +1,6 @@
+const { ruleRepository } = require('../data/rule-repository');
+const { ruleService } = require('../rules/service');
+const { ruleHandler } = require('./rule-handler');
 const { categoryRepository } = require('../data/category-repository');
 const { categoryService } = require('../threats/service');
 const { categoryHandler } = require('./category-handler');
@@ -17,13 +20,15 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null) {
+  const ruleManagement = rules ? ruleHandler(rules, config) : null;
   const taxonomy = categories ? categoryHandler(categories, config) : null;
   const reading = views ? eventViewHandler(views, config) : null;
   const events = ingestion ? ingestionHandler(ingestion, config) : null;
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if (ruleManagement && req.url.startsWith('/api/rules')) return ruleManagement(req, res);
     if (taxonomy && req.url.startsWith('/api/threat-categories')) return taxonomy(req, res);
     if (eventPage(req, res)) return;
     if (reading && req.method === 'GET' && req.url.startsWith('/api/events') && !req.url.startsWith('/api/events/raw')) return reading(req, res);
@@ -46,7 +51,7 @@ async function main() {
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
     const service = authService(authRepository(pool), config);
     const access = accessService(accessRepository(pool), service);
-    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources()), eventViewService(eventRepository(pool), access), categoryService(categoryRepository(pool), access));
+    const server = createServer(service, config, access, ingestionService(eventRepository(pool), access, approvedSources()), eventViewService(eventRepository(pool), access), categoryService(categoryRepository(pool), access), ruleService(ruleRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {

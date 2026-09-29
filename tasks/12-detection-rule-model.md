@@ -1,7 +1,7 @@
 # Task 12: Detection Rule Model
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement configurable detection rules with conditions, thresholds, time windows, severity, category, MITRE mapping, and enabled state.
@@ -38,6 +38,18 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Rules can be created, edited, enabled/disabled, validated, and tested.
+
+### Verification
+- [x] Declarative conditions, thresholds, windows, grouping, severity and category validated.
+- [x] Optional known MITRE references persist through relational mappings.
+- [x] Rules can be created, edited, enabled/disabled and structurally validated through protected APIs.
+- [x] Admin/Analyst management and Viewer read/write denial are backend enforced.
+- [x] Version conflicts and audited transactional rollback are tested.
+- [x] Unit/API, PostgreSQL lifecycle and existing regression checks pass.
+- [x] API/schema documentation and Windows verification provided.
+- [ ] Windows migration and rule lifecycle/Viewer checks pass.
+
+Rule execution is Task 13. Pause after Task 12 completion for the user's requested break.
 
 ## Required Deliverables
 Rule management.

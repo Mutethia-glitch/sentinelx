@@ -20,6 +20,10 @@ required. `git pull origin main` keeps the code and this guide on your computer.
 | GET | /api/events/{uuid} | Approved role with events.read; event inspection. |
 | GET | /api/threat-categories | Approved role with categories.read; selectable=true returns enabled choices. |
 | PATCH | /api/threat-categories/{CODE} | Administrator; catalog configuration plus reason. |
+| GET / POST | /api/rules | Administrator/Analyst; list/create rule configurations. |
+| GET / PUT | /api/rules/{uuid} | Administrator/Analyst; inspect/version-protected edit, including enabled state. |
+| GET | /api/rules/mitre-mappings | Administrator/Analyst; local technique reference catalog. |
+| POST | /api/rules/validate | Administrator/Analyst; structural/reference validation without execution. |
 
 Mutation requests need exact `Origin: http://localhost:3000` (or your configured
 APP_ORIGIN) and application/json. Authentication uses a session cookie, not a
@@ -35,3 +39,5 @@ Future external integrations are separate tasks; no external keys are needed for
 the current implementation.
 
 Threat catalog details: [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Category availability does not imply implemented detection coverage.
+
+Rule configuration details: [DETECTION_RULES.md](DETECTION_RULES.md). These local endpoints need no external API key; runtime rule execution remains Task 13.

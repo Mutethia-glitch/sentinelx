@@ -69,3 +69,6 @@ GET /api/events provides validated event-specific filters and bounded 50-record 
 
 ## Task 11 threat catalog
 GET /api/threat-categories supports the validated selectable filter for approved readers. PATCH /api/threat-categories/{CODE} configures label/description/availability with Administrator authorization, exact Origin and transactional audit. See [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md).
+
+## Task 12 rule management
+GET/POST /api/rules, GET/PUT /api/rules/{uuid}, GET /api/rules/mitre-mappings and POST /api/rules/validate provide bounded rule configuration, version-protected updates and structural/reference validation. Admin/Analyst grants are required; Viewer cannot access rule definitions. See [DETECTION_RULES.md](DETECTION_RULES.md). Runtime evaluation remains Task 13.

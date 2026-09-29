@@ -22,7 +22,7 @@ roles; Viewer/Management can read security information without changing it.
 | `events.ingest` | Yes | Yes | No | Controlled ingestion (Tasks 08–09) |
 | `categories.read` | Yes | Yes | Yes | Shared threat catalog (Task 11) |
 | `categories.manage` | Yes | No | No | Audited taxonomy configuration (Task 11) |
-| `rules.read`, `rules.manage` | Yes | Yes | No | Reserved for Tasks 12–14 |
+| `rules.read`, `rules.manage` | Yes | Yes | No | Rule configuration/validation (Task 12); execution remains Task 13 |
 | `alerts.read` | Yes | Yes | Yes | Reserved for Tasks 15–16 |
 | `alerts.manage` | Yes | Yes | No | Reserved for Task 16 |
 | `incidents.read` | Yes | Yes | Yes | Reserved for Task 18 |

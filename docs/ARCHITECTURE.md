@@ -312,3 +312,6 @@ implemented by the reserved permission vocabulary.
 
 ## Task 09 normalization boundary
 The normalization service maps two explicit simulated formats into the canonical event model and retains raw evidence. The raw ingestion endpoint applies live session/RBAC and source approval, then persists the normalized event and audit transactionally. It does not invoke detection. See [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md).
+
+## Task 12 rule configuration boundary
+The rules service validates a finite declarative schema and uses transactionally audited PostgreSQL repositories for creation, version-protected edits and optional MITRE associations. Protected rule management APIs do not execute event streams. The deterministic execution engine remains Task 13; no enabling action currently creates alerts or responses. See [DETECTION_RULES.md](DETECTION_RULES.md).

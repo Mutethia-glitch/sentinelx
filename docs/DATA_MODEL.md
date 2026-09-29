@@ -123,3 +123,6 @@ Canonical event fields and persistence use the existing security_events table; n
 Migration 004 adds threat_categories (18 application/migration tables in total) and optional catalog foreign keys on detection_rules and incidents. Stable approved codes, configurable labels/availability, historical reference preservation and disabled-choice selection checks are documented in [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Severity/status stay independent.
 
 Migration 005 expands the approved threat catalog from seven to fifteen with eight user-authorized business categories. It preserves prior category configuration and references, and does not change migration 004 or imply detection coverage.
+
+## Task 12 rule configuration
+Migration 006 adds updated_at/version to detection_rules and seeds three known MITRE references without replacing existing rows. Declarative schemaVersion 1 definitions, category and MITRE references, version-protected edits and atomic audit are described in [DETECTION_RULES.md](DETECTION_RULES.md). Existing definitions are retained and must be explicitly validated for future execution. Table count remains 18.

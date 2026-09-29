@@ -1,0 +1,17 @@
+{
+  "name": "Synthetic authentication rule configuration",
+  "description": "Configuration fixture only; Task 13 supplies execution.",
+  "enabled": false,
+  "severity": "MEDIUM",
+  "categoryCode": "BRUTE_FORCE",
+  "conditions": [
+    {"field": "source", "operator": "equals", "value": "sentinelx-simulated"},
+    {"field": "type", "operator": "equals", "value": "authentication"},
+    {"field": "status", "operator": "equals", "value": "failed"}
+  ],
+  "threshold": 5,
+  "windowSeconds": 300,
+  "groupBy": ["sourceIp", "user"],
+  "mitreTechniqueIds": ["T1110"],
+  "reason": "Synthetic Task 12 configuration verification"
+}
