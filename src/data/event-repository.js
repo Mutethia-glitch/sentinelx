@@ -16,7 +16,7 @@ function eventRepository(pool) {
     };
   }
   return {
-    async create(input, actorId = null) {
+    async create(input, actorId = null, afterPersist = null) {
       const event = securityEvent(input);
       const { rawData, ...normalized } = event;
       try {
@@ -33,6 +33,7 @@ function eventRepository(pool) {
           [event.source, event.type, event.timestamp, JSON.stringify(rawData), JSON.stringify(normalized)]);
           const saved = stored(result.rows[0]);
           if (actorId) await client.query(`INSERT INTO audit_logs(actor_id, actor_context, action, target_type, target_id, context) VALUES ($1, 'authenticated event submitter', 'EVENT_INGESTED', 'security_event', $2, $3::jsonb)`, [actorId, saved.id, JSON.stringify({ source: event.source, type: event.type })]);
+          if (afterPersist) await afterPersist(saved, client);
           return saved;
         };
         return actorId ? await transaction(pool, work) : await work(pool);
