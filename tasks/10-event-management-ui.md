@@ -1,7 +1,7 @@
 # Task 10: Event Management UI
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Build event viewing, searching, filtering, and inspection.
@@ -47,7 +47,9 @@ Analysts can inspect events and filter relevant fields without unauthorized expo
 - [x] Data is rendered as text and cleared on sign-out or access loss.
 - [x] Unit/API, PostgreSQL/browser and existing regression checks pass.
 - [x] Local API inventory and Windows verification documented.
-- [ ] Windows list/filter/inspection/access checks succeed.
+- [x] Windows list/filter/inspection/access checks succeed.
+
+Local Windows/PostgreSQL 18.6 checks confirmed on 2026-09-30: Administrator and Viewer/Management event viewing, filtering and inspection worked, with signed-out API access rejected. Viewer inspection is permitted by the current events.read policy.
 
 ## Required Deliverables
 Event UI.

@@ -84,5 +84,4 @@ previously accepted synthetic events appear. Filter source `sentinelx-simulated`
 and severity LOW, inspect an event, and check normalized data plus raw evidence.
 Search for a nonexistent value and confirm an empty result; clear filters to
 restore records. Repeat viewing/inspection as Viewer/Management, then sign out
-and confirm `/api/events` returns Authentication required. Task 10 remains
-In Progress until the local viewing/filter/inspection/access checks succeed.
+and confirm `/api/events` returns Authentication required. Local Windows/PostgreSQL 18.6 viewing, filtering, inspection and signed-out access checks were confirmed on 2026-09-30. Task 10 is Complete. Viewer/Management inspection remains allowed under the documented events.read policy.
