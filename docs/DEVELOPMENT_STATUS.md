@@ -23,5 +23,5 @@
 - Task 06: Complete — automated policy/API/PostgreSQL/browser checks and local Windows role checks passed
 - Task 07: Complete — canonical event model, PostgreSQL persistence and Windows verification passed
 - Task 08: Complete — controlled ingestion, invalid payload rejection and Viewer denial verified automatically and on Windows
-- Task 09: In Progress — deterministic normalization and automated checks passed; awaiting Windows verification
+- Task 09: Complete — deterministic normalization, evidence persistence and raw API checks passed automatically and on Windows
 - Tasks 10–43: Not Started

@@ -1,7 +1,7 @@
 # Task 09: Log Normalization
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Convert supported raw events into the SentinelX normalized event structure while preserving raw evidence.
@@ -46,7 +46,9 @@ Supported samples normalize consistently and malformed data is handled safely.
 - [x] Raw ingestion uses existing authorization, source approval and transactional audit.
 - [x] Unit/API and PostgreSQL integration/regression checks pass.
 - [x] Mapping documentation, sample fixtures and local verification provided.
-- [ ] Windows normalization persistence and raw API checks pass.
+- [x] Windows normalization persistence and raw API checks pass.
+
+Local Windows/PostgreSQL 18.6 verification confirmed on 2026-09-30: both supported formats preserved canonical fields and raw evidence in persistence; authenticated raw ingestion succeeded and malformed input was rejected.
 
 ## Required Deliverables
 Normalization service.

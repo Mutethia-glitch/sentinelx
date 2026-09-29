@@ -77,5 +77,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-ingestion.ps1
 Enter your Administrator application credentials privately. Expected:
 `Raw normalization API and malformed input rejection verified.` This API verifier
 retains one accepted synthetic event/audit record and logs out its own session.
-The execution-policy override applies only to that PowerShell process. Task 09
-stays In Progress until both local checks are confirmed.
+The execution-policy override applies only to that PowerShell process. Both local checks were confirmed on Windows/PostgreSQL 18.6 on 2026-09-30. Task 09 is Complete.
