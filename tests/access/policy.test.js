@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { ROLE_NAMES, ROLE_PERMISSIONS, accessForRoles, requirePermission, roleUpdateInput, validateUserId } = require('../../src/access/policy');
 test('approved roles implement administrator, analyst and read-only boundaries', () => {
   assert.deepEqual(ROLE_NAMES, ['Administrator', 'Security Analyst', 'Viewer/Management']);
-  for (const permission of ['events.read', 'alerts.read', 'incidents.read', 'investigations.read', 'responses.read', 'reports.read', 'dashboard.read']) {
+  for (const permission of ['categories.read', 'events.read', 'alerts.read', 'incidents.read', 'investigations.read', 'responses.read', 'reports.read', 'dashboard.read']) {
     for (const role of ROLE_NAMES) assert.doesNotThrow(() => requirePermission([role], permission));
   }
   for (const permission of ['events.ingest', 'rules.manage', 'alerts.manage', 'incidents.manage', 'investigations.write', 'responses.execute']) {
@@ -11,7 +11,7 @@ test('approved roles implement administrator, analyst and read-only boundaries',
     assert.doesNotThrow(() => requirePermission(['Security Analyst'], permission));
     assert.throws(() => requirePermission(['Viewer/Management'], permission), { status: 403 });
   }
-  for (const permission of ['users.read', 'users.roles.manage']) {
+  for (const permission of ['users.read', 'users.roles.manage', 'categories.manage']) {
     assert.doesNotThrow(() => requirePermission(['Administrator'], permission));
     assert.throws(() => requirePermission(['Security Analyst'], permission), { status: 403 });
     assert.throws(() => requirePermission(['Viewer/Management'], permission), { status: 403 });

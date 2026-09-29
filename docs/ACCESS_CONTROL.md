@@ -18,7 +18,10 @@ roles; Viewer/Management can read security information without changing it.
 | `users.read` | Yes | No | No | Access-management user list |
 | `users.roles.manage` | Yes | No | No | Role catalog and assignment |
 | `dashboard.read` | Yes | Yes | Yes | Reserved for Task 24 |
-| `events.read` | Yes | Yes | Yes | Reserved for Tasks 07–10 |
+| `events.read` | Yes | Yes | Yes | Event list/filter/inspection (Task 10) |
+| `events.ingest` | Yes | Yes | No | Controlled ingestion (Tasks 08–09) |
+| `categories.read` | Yes | Yes | Yes | Shared threat catalog (Task 11) |
+| `categories.manage` | Yes | No | No | Audited taxonomy configuration (Task 11) |
 | `rules.read`, `rules.manage` | Yes | Yes | No | Reserved for Tasks 12–14 |
 | `alerts.read` | Yes | Yes | Yes | Reserved for Tasks 15–16 |
 | `alerts.manage` | Yes | Yes | No | Reserved for Task 16 |
@@ -205,3 +208,6 @@ Reference: [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/
 
 ## Task 08 permission
 Administrator and Security Analyst now have events.ingest for the controlled ingestion API. Viewer/Management remains read-only. Ingestion rechecks active actor roles at the database boundary and audits accepted events transactionally.
+
+## Task 11 catalog permissions
+All three approved roles have categories.read for the shared threat catalog. Only Administrator has categories.manage for audited label/description/availability configuration. Security Analyst manages rule selection in its later task rather than changing the global taxonomy.

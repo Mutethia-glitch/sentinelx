@@ -1,7 +1,7 @@
 # Task 11: Threat Categories
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement the approved configurable threat categories used by SentinelX detections and incidents.
@@ -38,6 +38,16 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Categories are consistent and selectable by rules/incidents.
+
+### Verification
+- [x] Seven stable categories derive from the approved Task 14 families.
+- [x] Names, descriptions and selection availability are configurable.
+- [x] Rules/incidents share validated catalog references; disabled choices reject new selections.
+- [x] Historical classifications and independent status/threat levels are preserved.
+- [x] Protected catalog reads and Administrator configuration are backend enforced and audited.
+- [x] Unit/API, PostgreSQL and existing regression checks pass.
+- [x] Migration, taxonomy/API documentation and rollback-only Windows verifier provided.
+- [ ] Windows migration, selection verification and catalog access confirmed.
 
 ## Required Deliverables
 Threat taxonomy.

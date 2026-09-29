@@ -18,6 +18,8 @@ required. `git pull origin main` keeps the code and this guide on your computer.
 | POST | /api/events/raw | Administrator or Security Analyst; approved source and supported raw format. |
 | GET | /api/events | Approved role with events.read; bounded event filters. |
 | GET | /api/events/{uuid} | Approved role with events.read; event inspection. |
+| GET | /api/threat-categories | Approved role with categories.read; selectable=true returns enabled choices. |
+| PATCH | /api/threat-categories/{CODE} | Administrator; catalog configuration plus reason. |
 
 Mutation requests need exact `Origin: http://localhost:3000` (or your configured
 APP_ORIGIN) and application/json. Authentication uses a session cookie, not a
@@ -31,3 +33,5 @@ Detailed payloads, limits and examples are in [AUTHENTICATION.md](AUTHENTICATION
 [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md) and [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md).
 Future external integrations are separate tasks; no external keys are needed for
 the current implementation.
+
+Threat catalog details: [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Category availability does not imply implemented detection coverage.

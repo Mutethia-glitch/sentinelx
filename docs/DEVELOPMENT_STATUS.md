@@ -25,4 +25,5 @@
 - Task 08: Complete — controlled ingestion, invalid payload rejection and Viewer denial verified automatically and on Windows
 - Task 09: Complete — deterministic normalization, evidence persistence and raw API checks passed automatically and on Windows
 - Task 10: Complete — event UI, protected viewing APIs and Windows access/filter/inspection checks passed
-- Tasks 11–43: Not Started
+- Task 11: In Progress — approved configurable taxonomy and automated checks passed; awaiting Windows verification
+- Tasks 12–43: Not Started

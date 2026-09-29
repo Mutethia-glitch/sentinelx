@@ -66,3 +66,6 @@ POST /api/events/raw accepts an explicit supported format/source/rawData envelop
 
 ## Task 10 implemented event viewing
 GET /api/events provides validated event-specific filters and bounded 50-record pages. GET /api/events/{uuid} returns event inspection with normalized data and raw evidence. Both require a live events.read grant. See [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md) and [LOCAL_API_GUIDE.md](LOCAL_API_GUIDE.md).
+
+## Task 11 threat catalog
+GET /api/threat-categories supports the validated selectable filter for approved readers. PATCH /api/threat-categories/{CODE} configures label/description/availability with Administrator authorization, exact Origin and transactional audit. See [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md).

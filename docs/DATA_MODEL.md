@@ -118,3 +118,6 @@ migrations remain unchanged.
 
 ## Task 07 event representation
 Canonical event fields and persistence use the existing security_events table; no new migration is required. See [SECURITY_EVENTS.md](SECURITY_EVENTS.md) for validation, raw evidence handling and repository methods.
+
+## Task 11 threat taxonomy
+Migration 004 adds threat_categories (18 application/migration tables in total) and optional catalog foreign keys on detection_rules and incidents. Stable approved codes, configurable labels/availability, historical reference preservation and disabled-choice selection checks are documented in [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Severity/status stay independent.

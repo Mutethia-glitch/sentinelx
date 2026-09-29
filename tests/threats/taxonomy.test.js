@@ -1,0 +1,33 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { CATEGORY_CODES, categoryCode, categoryUpdateInput } = require('../../src/threats/taxonomy');
+const { categoryService } = require('../../src/threats/service');
+const { createServer } = require('../../src/api/server');
+const { configFromEnv } = require('../../src/auth/config');
+const { AuthError } = require('../../src/auth/errors');
+const body = { name: 'Brute force', description: 'Classification only', enabled: true, reason: 'Synthetic configuration' };
+test('approved taxonomy rejects arbitrary categories and unsafe configuration', () => {
+  assert.equal(CATEGORY_CODES.length, 7); for (const code of CATEGORY_CODES) assert.equal(categoryCode(code), code);
+  for (const code of ['MALWARE', 'brute_force', 'constructor', null]) assert.throws(() => categoryCode(code), { status: 400 });
+  assert.equal(categoryUpdateInput(body).name, body.name);
+  for (const input of [null, {}, { ...body, code: 'OTHER' }, { ...body, name: '' }, { ...body, reason: '' }, { ...body, description: 'x'.repeat(1001) }, { ...body, enabled: 'true' }]) assert.throws(() => categoryUpdateInput(input), { status: 400 });
+});
+test('category APIs enforce read roles, Administrator-only configuration and Origin', async t => {
+  let writes = 0;
+  const repository = { list: async selectable => [{ code: 'BRUTE_FORCE', enabled: selectable }], update: async (actor, code, data) => { writes++; if (data.reason === 'fail') throw new Error('private driver detail'); return { code: 'BRUTE_FORCE' }; } };
+  const service = categoryService(repository, { me: async token => { if (!token) throw new AuthError(401, 'Authentication required.'); return { user: { id: 'actor' }, roles: [token] }; } });
+  const config = configFromEnv({}); const server = createServer({}, config, null, null, null, service);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));
+  const url = `http://127.0.0.1:${server.address().port}/api/threat-categories`;
+  const headers = role => ({ Cookie: `${config.cookieName}=${role}`, Origin: config.origin, 'Content-Type': 'application/json', 'X-Role': 'Administrator' });
+  for (const role of ['Administrator', 'Security Analyst', 'Viewer/Management']) assert.equal((await fetch(`${url}?selectable=true`, { headers: headers(role) })).status, 200);
+  assert.equal((await fetch(url)).status, 401); assert.equal((await fetch(url, { headers: headers('Owner') })).status, 403);
+  assert.equal((await fetch(`${url}?selectable=maybe`, { headers: headers('Administrator') })).status, 400);
+  assert.equal((await fetch(`${url}?selectable=true&selectable=false`, { headers: headers('Administrator') })).status, 400);
+  const patch = (role, data = body, origin = config.origin) => fetch(`${url}/BRUTE_FORCE`, { method: 'PATCH', headers: { ...headers(role), Origin: origin }, body: JSON.stringify(data) });
+  for (const role of ['Security Analyst', 'Viewer/Management', 'Owner']) assert.equal((await patch(role)).status, 403);
+  assert.equal((await patch('Administrator', body, '')).status, 403);
+  assert.equal((await patch('Administrator', { ...body, enabled: 'yes' })).status, 400);
+  assert.equal((await patch('Administrator')).status, 200); assert.equal(writes, 1);
+  const failed = await patch('Administrator', { ...body, reason: 'fail' }); assert.equal(failed.status, 503); assert.deepEqual(await failed.json(), { error: 'Threat categories temporarily unavailable.' });
+});
