@@ -40,4 +40,4 @@ the current implementation.
 
 Threat catalog details: [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Category availability does not imply implemented detection coverage.
 
-Rule configuration details: [DETECTION_RULES.md](DETECTION_RULES.md). These local endpoints need no external API key; runtime rule execution remains Task 13.
+Rule configuration details: [DETECTION_RULES.md](DETECTION_RULES.md). Runtime deterministic execution is documented in [DETECTION_ENGINE.md](DETECTION_ENGINE.md). These local endpoints and Task 13 detection require no external API key.
