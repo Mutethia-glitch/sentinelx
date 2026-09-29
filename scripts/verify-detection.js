@@ -1,3 +1,4 @@
+const assert = require('node:assert/strict');
 const { randomUUID } = require('node:crypto');
 const { createPool } = require('../src/data/pool');
 const { eventRepository } = require('../src/data/event-repository');
@@ -5,12 +6,15 @@ const { detectionRepository } = require('../src/data/detection-repository');
 const { detectionEngine } = require('../src/detection/engine');
 
 async function main() {
-  let pool; let ruleId = null;
+  let pool; let ruleId = null; let categoryEnabled = null;
   const eventIds = []; const alertIds = [];
   try {
     pool = createPool();
     const category = (await pool.query("SELECT enabled FROM threat_categories WHERE code='BRUTE_FORCE'")).rows[0];
     if (!category) throw new Error('missing category');
+    categoryEnabled = category.enabled;
+    if (!category.enabled) await pool.query("UPDATE threat_categories SET enabled=true WHERE code='BRUTE_FORCE'");
+
     const definition = {
       schemaVersion: 1,
       conditions: [
@@ -35,22 +39,40 @@ async function main() {
       severity: 'MEDIUM', rawData: { synthetic: true }, metadata: { verification: 'task13' },
     });
     const run = async event => {
-      const saved = await events.create(event); eventIds.push(saved.id);
-      const generated = await engine.evaluate(saved);
+      let generated = [];
+      const saved = await events.create(event, null, async (persisted, client) => {
+        generated = await engine.evaluate(persisted, client);
+      });
+      eventIds.push(saved.id);
       for (const alert of generated) alertIds.push(alert.id);
       return { saved, generated };
     };
 
-    if ((await run(input(0))).generated.length !== 0) throw new Error('premature alert');
-    if ((await run(input(10000, 'success'))).generated.length !== 0) throw new Error('non-match alerted');
-    if ((await run(input(20000))).generated.length !== 0) throw new Error('threshold not respected');
+    assert.equal((await run(input(0))).generated.length, 0);
+    assert.equal((await run(input(10000, 'success'))).generated.length, 0);
+    assert.equal((await run(input(20000))).generated.length, 0);
     const third = await run(input(30000));
-    if (third.generated.length !== 1 || third.generated[0].eventIds.length !== 3) throw new Error('threshold alert missing');
-    if ((await engine.evaluate(third.saved)).length !== 0) throw new Error('duplicate trigger alerted');
-    if ((await run(input(100000))).generated.length !== 0) throw new Error('window not respected');
-    if ((await run(input(105000, 'failed', '192.0.2.131'))).generated.length !== 0) throw new Error('grouping not respected');
+    assert.equal(third.generated.length, 1);
+    assert.equal(third.generated[0].eventIds.length, 3);
+    assert.equal((await engine.evaluate(third.saved)).length, 0);
+    assert.equal((await run(input(100000))).generated.length, 0);
+    assert.equal((await run(input(105000, 'failed', '192.0.2.131'))).generated.length, 0);
 
-    console.log('Deterministic matching, non-match rejection, thresholds, grouping, windows and duplicate suppression verified.');
+    const alert = (await pool.query('SELECT rule_id, threat_level, match_evidence FROM alerts WHERE id=$1', [third.generated[0].id])).rows[0];
+    assert.equal(alert.rule_id, ruleId);
+    assert.equal(alert.threat_level, 'HIGH');
+    assert.equal(alert.match_evidence.threshold, 3);
+    assert.deepEqual(alert.match_evidence.groupValues, ['192.0.2.130', 'task13-local']);
+    assert.equal(Number((await pool.query('SELECT count(*) FROM alert_events WHERE alert_id=$1', [third.generated[0].id])).rows[0].count), 3);
+
+    const before = Number((await pool.query('SELECT count(*) FROM security_events')).rows[0].count);
+    await assert.rejects(
+      events.create(input(110000), null, async () => { throw new Error('synthetic detection failure'); }),
+      { message: 'Security event persistence unavailable.' },
+    );
+    assert.equal(Number((await pool.query('SELECT count(*) FROM security_events')).rows[0].count), before);
+
+    console.log('Deterministic matching, non-match rejection, thresholds, grouping, windows, duplicate suppression and atomic rollback verified.');
   } catch {
     console.error('Task 13 detection verification failed. Check migrations and PostgreSQL configuration locally.');
     process.exitCode = 1;
@@ -61,6 +83,7 @@ async function main() {
         if (alertIds.length) await pool.query('DELETE FROM alerts WHERE id=ANY($1::uuid[])', [alertIds]);
         if (eventIds.length) await pool.query('DELETE FROM security_events WHERE id=ANY($1::uuid[])', [eventIds]);
         if (ruleId) await pool.query('DELETE FROM detection_rules WHERE id=$1', [ruleId]);
+        if (categoryEnabled !== null) await pool.query("UPDATE threat_categories SET enabled=$1 WHERE code='BRUTE_FORCE'", [categoryEnabled]);
       } catch { process.exitCode = 1; }
       await pool.end();
     }
