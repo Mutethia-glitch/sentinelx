@@ -18,4 +18,5 @@
 - Task 01: Complete
 - Task 02: Complete
 - Task 03: Complete
-- Tasks 04–43: Not Started
+- Task 04: Complete
+- Tasks 05–43: Not Started

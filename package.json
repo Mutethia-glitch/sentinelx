@@ -5,9 +5,11 @@
   "description": "IPHYN's Intelligent Cybersecurity Incident Detection and Response System",
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
-    "lint": "node --check scripts/check-foundation.js",
+    "lint": "node --check scripts/check-foundation.js && node --check scripts/migrate.js && node --check scripts/test-database.js && node --check src/data/postgres.js",
     "test": "npm run check:foundation",
-    "quality": "npm run lint && npm test"
+    "quality": "npm run lint && npm test",
+    "db:migrate": "node scripts/migrate.js",
+    "test:database": "node scripts/test-database.js"
   },
   "engines": {
     "node": ">=20"

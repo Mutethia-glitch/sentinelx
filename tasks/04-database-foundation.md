@@ -1,7 +1,7 @@
 # Task 04: Database Foundation
 
 ## Status
-Not Started
+Complete
 
 ## Objective
 Design and implement the PostgreSQL schema for users, roles, events, alerts, incidents, rules, investigations, responses, notifications, audit logs, and MITRE mappings.
@@ -38,6 +38,18 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Migrations run successfully; relationships and indexes are documented.
+
+### Verification
+- [x] `db/migrations/001_core.sql` implements all Task 04 entity groups and evidence association tables.
+- [x] PostgreSQL 16 fresh application and unchanged migration replay pass.
+- [x] Failure injection confirms transactional rollback; applied checksum mismatch is rejected.
+- [x] Synthetic integrity tests pass for relationships, duplicate links, JSON shape, attribution and enums.
+- [x] Incident status/threat independence and lack of automatic containment are verified at schema level.
+- [x] Relationships, keys, indexes and later application enforcement boundaries are documented.
+- [x] `npm run quality` and `git diff --check` pass.
+- [x] `.env` remains excluded; credentials are not read, printed or committed.
+- [x] Hosting/provisioning is external; migrations can be run later on the selected host.
+- [x] No later-task application behavior, ML tables or Supabase introduced.
 
 ## Required Deliverables
 Database schema and migrations.

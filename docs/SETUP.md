@@ -32,3 +32,41 @@ At the current foundation stage there is intentionally no application server to 
 Read `README.md`, `docs/IMPLEMENTATION_ORDER.md`, and the current task contract before making changes. Do not implement later tasks early.
 
 PostgreSQL is the approved database. Secrets belong in environment variables. Security testing must use synthetic data or explicitly authorized environments.
+
+## Task 04: PostgreSQL migrations
+
+Provision PostgreSQL 16 or later on your chosen host and create a dedicated
+SentinelX database. The execution workspace is not the hosting environment.
+Install the PostgreSQL `psql` client on the machine running migrations.
+
+Provide `DATABASE_URL` securely through your shell/deployment environment, or
+use standard `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD` and
+`PGSSLMODE` variables. Use TLS settings appropriate to your database host.
+`DATABASE_URL` supports PostgreSQL URLs and an optional `sslmode` query value;
+other URL options are rejected rather than silently ignored. Never put a real
+URL/password in committed SQL, shell scripts or documentation.
+
+```sh
+npm run db:migrate
+```
+
+The command does not read `.env` automatically. If you keep local secrets there,
+load them privately into your process environment using your own tooling.
+Connection strings are not passed in command-line arguments or printed in
+errors. `.env` and `.env.*` remain ignored; `.env.example` is a placeholder only.
+
+For integration checks, select a separate disposable test database through the
+same environment variables, then run:
+
+```sh
+SENTINELX_TEST_DATABASE=1 npm run test:database
+```
+
+This applies/replays migrations and tests database integrity with synthetic rows
+in a rolled-back transaction. The schema remains in the disposable test database.
+The flag is a deliberate acknowledgement, not automatic detection of a safe
+host. Do not use an operational database for this command. `npm run quality`
+performs foundation and JavaScript syntax checks without requiring a database;
+the database integration checks are separate and must also pass for Task 04.
+
+See `docs/DATA_MODEL.md` for relationships, indexes, migration policy and limits.
