@@ -1,0 +1,16 @@
+{
+  "format": "simulated-flat-v1",
+  "source": "sentinelx-simulated",
+  "rawData": {
+    "time": "2026-09-30T03:00:00+03:00",
+    "event_type": "authentication",
+    "src_ip": "192.0.2.10",
+    "dst_ip": "2001:db8::10",
+    "actor": "synthetic-user",
+    "device": "synthetic-host",
+    "operation": "login",
+    "outcome": "failed",
+    "level": "low",
+    "unmapped_evidence": {"sequence": [1, false, null]}
+  }
+}

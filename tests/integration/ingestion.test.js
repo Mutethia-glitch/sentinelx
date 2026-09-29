@@ -38,14 +38,28 @@ test('real ingestion authenticates, persists and audits atomically, rejecting vi
   }
   const service = ingestionService(eventRepo, access, approvedSources({})); server = createServer(auth, config, access, service);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); const url = `http://127.0.0.1:${server.address().port}/api/events`;
-  const post = (body, cookie = cookies[0]) => fetch(url, { method: 'POST', headers: { Origin: config.origin, 'Content-Type': 'application/json', Cookie: cookie }, body: JSON.stringify(body) });
+  const post = (body, cookie = cookies[0], path = url) => fetch(path, { method: 'POST', headers: { Origin: config.origin, 'Content-Type': 'application/json', Cookie: cookie }, body: JSON.stringify(body) });
   const accepted = await post(fixture); assert.equal(accepted.status, 201); const receipt = (await accepted.json()).event; events.push(receipt.id);
   const stored = await eventRepo.getById(receipt.id); assert.deepEqual(stored.rawData, fixture.rawData); assert.equal(stored.event.user, fixture.user);
   const audit = await pool.query("SELECT actor_id, context FROM audit_logs WHERE target_id=$1 AND action='EVENT_INGESTED'", [receipt.id]);
   assert.equal(audit.rows[0].actor_id, ids[0]); assert.deepEqual(audit.rows[0].context, { source: fixture.source, type: fixture.type });
+  for (const name of ['raw-flat', 'raw-nested']) {
+    const raw = require(`../../fixtures/events/${name}.json`);
+    const response = await post(raw, cookies[0], `${url}/raw`); assert.equal(response.status, 201);
+    const normalizedId = (await response.json()).event.id; events.push(normalizedId);
+    const normalized = await eventRepo.getById(normalizedId);
+    assert.deepEqual(normalized.rawData, raw.rawData);
+    assert.equal(normalized.event.timestamp, '2026-09-30T00:00:00.000Z');
+    assert.equal(normalized.event.severity, 'LOW');
+    assert.equal(normalized.event.metadata.normalization.format, raw.format);
+    assert.equal(Number((await pool.query("SELECT count(*) FROM audit_logs WHERE target_id=$1 AND action='EVENT_INGESTED'", [normalizedId])).rows[0].count), 1);
+  }
   const count = async () => Number((await pool.query('SELECT count(*) FROM security_events')).rows[0].count); const before = await count();
   assert.equal((await post(fixture, cookies[1])).status, 403); assert.equal((await post(fixture, '')).status, 401);
   assert.equal((await post({ ...fixture, source: 'unapproved' })).status, 403); assert.equal((await post({ ...fixture, timestamp: 'invalid' })).status, 400);
+  const raw = require('../../fixtures/events/raw-flat.json');
+  assert.equal((await post({ ...raw, format: 'unknown' }, cookies[0], `${url}/raw`)).status, 400);
+  assert.equal((await post(raw, cookies[1], `${url}/raw`)).status, 403);
   assert.equal(await count(), before);
   await pool.query(`CREATE FUNCTION ${trigger}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action = 'EVENT_INGESTED' AND NEW.actor_id = '${ids[0]}'::uuid THEN RAISE EXCEPTION 'synthetic audit failure'; END IF; RETURN NEW; END $$`);
   await pool.query(`CREATE TRIGGER ${trigger} BEFORE INSERT ON audit_logs FOR EACH ROW EXECUTE FUNCTION ${trigger}()`);

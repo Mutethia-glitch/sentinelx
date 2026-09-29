@@ -8,12 +8,14 @@ function ingestionHandler(service, config) {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     const send = (status, body) => { res.statusCode = status; res.end(JSON.stringify(body)); };
     try {
-      if (req.url !== '/api/events') { req.resume(); return send(404, { error: 'Not found.' }); }
+      if (!['/api/events', '/api/events/raw'].includes(req.url)) { req.resume(); return send(404, { error: 'Not found.' }); }
       if (req.method !== 'POST') { req.resume(); res.setHeader('Allow', 'POST'); return send(405, { error: 'Method not allowed.' }); }
       if (req.headers.origin !== config.origin) { req.resume(); throw new AuthError(403, 'Request origin rejected.'); }
       const token = cookieToken(req.headers.cookie, config.cookieName);
       await service.authorize(token);
-      return send(201, { event: await service.ingest(token, await readJson(req)) });
+      const body = await readJson(req);
+      const receipt = req.url === '/api/events/raw' ? await service.ingestRaw(token, body) : await service.ingest(token, body);
+      return send(201, { event: receipt });
     } catch (error) {
       req.resume();
       const status = error instanceof AuthError ? error.status : error instanceof EventValidationError ? 400 : 503;

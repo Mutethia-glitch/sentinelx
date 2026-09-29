@@ -60,3 +60,6 @@ backend checks. Reserved permissions do not imply later APIs already exist.
 
 ## Task 08 implemented event ingestion
 POST /api/events accepts one canonical event from an approved source, with session authentication, events.ingest permission and exact Origin. HTTP 201 returns only the event receipt; validation/authorization/body boundaries reject invalid requests. See [EVENT_INGESTION.md](EVENT_INGESTION.md). Other event APIs remain future tasks.
+
+## Task 09 implemented raw-event normalization
+POST /api/events/raw accepts an explicit supported format/source/rawData envelope. The existing ingestion security boundaries apply; supported events normalize and persist with preserved raw evidence, and malformed/unsupported inputs return 400 without persistence. See [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md).

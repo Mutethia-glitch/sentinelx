@@ -36,7 +36,11 @@ test('event HTTP boundary rejects invalid payloads, identity, origins and method
   assert.equal((await post({ ...fixture, rawData: { large: 'x'.repeat(9000) } })).status, 413);
   assert.equal((await post(fixture, {}, `${url}?source=x`)).status, 404);
   assert.equal((await fetch(url)).status, 405);
+  const raw = require('../../fixtures/events/raw-flat.json');
+  assert.equal((await post(raw, {}, `${url}/raw`)).status, 201);
+  assert.equal((await post({ ...raw, format: 'unknown' }, {}, `${url}/raw`)).status, 400);
+  assert.equal((await post(raw, { Cookie: `${config.cookieName}=Viewer/Management` }, `${url}/raw`)).status, 403);
   const failed = await post({ ...fixture, type: 'backend-failure' });
   assert.equal(failed.status, 503); assert.deepEqual(await failed.json(), { error: 'Event ingestion temporarily unavailable.' });
-  assert.equal(calls, 2);
+  assert.equal(calls, 3);
 });

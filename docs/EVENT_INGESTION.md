@@ -72,3 +72,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-ingestion.ps1
 
 Expected: `Viewer ingestion permission rejection verified.` Both local checks were confirmed on Windows/PostgreSQL 18.6 on 2026-09-30. Task 08 is Complete. Use your configured approved source in the fixture
 if you deliberately changed the default allowlist; do not submit real credentials.
+
+## Task 09 raw input support
+POST /api/events/raw now accepts documented simulated raw formats through deterministic normalization before the existing canonical validation/persistence boundary. The original canonical endpoint is unchanged. See [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md).

@@ -46,4 +46,4 @@ function securityEvent(input) {
   result.metadata = jsonObject(input.metadata ?? {});
   return result;
 }
-module.exports = { securityEvent, EventValidationError };
+module.exports = { securityEvent, jsonObject, EventValidationError };

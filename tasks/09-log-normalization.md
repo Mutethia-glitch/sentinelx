@@ -1,7 +1,7 @@
 # Task 09: Log Normalization
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Convert supported raw events into the SentinelX normalized event structure while preserving raw evidence.
@@ -38,6 +38,15 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Supported samples normalize consistently and malformed data is handled safely.
+
+### Verification
+- [x] Two documented supported simulated formats normalize deterministically.
+- [x] All raw evidence, including unmapped fields, is retained unchanged.
+- [x] Missing optional fields remain unknown; malformed/unsupported data is rejected safely.
+- [x] Raw ingestion uses existing authorization, source approval and transactional audit.
+- [x] Unit/API and PostgreSQL integration/regression checks pass.
+- [x] Mapping documentation, sample fixtures and local verification provided.
+- [ ] Windows normalization persistence and raw API checks pass.
 
 ## Required Deliverables
 Normalization service.

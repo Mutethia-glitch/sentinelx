@@ -309,3 +309,6 @@ changes. `frontend/access/` is a minimal role-management view of these APIs.
 The backend remains authoritative. Later security modules must use the policy
 checks when their task introduces an operation; no later pipeline behavior is
 implemented by the reserved permission vocabulary.
+
+## Task 09 normalization boundary
+The normalization service maps two explicit simulated formats into the canonical event model and retains raw evidence. The raw ingestion endpoint applies live session/RBAC and source approval, then persists the normalized event and audit transactionally. It does not invoke detection. See [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md).

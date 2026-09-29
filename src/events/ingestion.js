@@ -1,3 +1,4 @@
+const { normalizeRawEvent } = require('../normalization/service');
 const { securityEvent } = require('./model');
 const { requirePermission } = require('../access/policy');
 const { AuthError } = require('../auth/errors');
@@ -13,6 +14,10 @@ function ingestionService(repository, access, sources) {
       const identity = await access.me(token);
       requirePermission(identity.roles, 'events.ingest');
       return identity.user;
+    },
+    async ingestRaw(token, input) {
+      await this.authorize(token);
+      return this.ingest(token, normalizeRawEvent(input));
     },
     async ingest(token, input) {
       const actor = await this.authorize(token);

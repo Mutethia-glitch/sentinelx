@@ -1,0 +1,10 @@
+{
+  "format": "simulated-nested-v1",
+  "source": "sentinelx-simulated",
+  "rawData": {
+    "event": {"time": "2026-09-30T00:00:00Z", "type": "authentication", "action": "login", "status": "failed", "severity": "LOW"},
+    "network": {"source_ip": "192.0.2.10", "destination_ip": "2001:db8::10"},
+    "identity": {"user": "synthetic-user", "host": "synthetic-host"},
+    "unmapped_evidence": {"sequence": [1, false, null]}
+  }
+}
