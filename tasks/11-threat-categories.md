@@ -40,14 +40,16 @@ Complete the preceding tasks required by the sequence before implementing this t
 Categories are consistent and selectable by rules/incidents.
 
 ### Verification
-- [x] Seven stable categories derive from the approved Task 14 families.
+- [x] Fifteen stable categories include seven Task 14 families and eight user-approved business threat classifications.
 - [x] Names, descriptions and selection availability are configurable.
 - [x] Rules/incidents share validated catalog references; disabled choices reject new selections.
 - [x] Historical classifications and independent status/threat levels are preserved.
 - [x] Protected catalog reads and Administrator configuration are backend enforced and audited.
 - [x] Unit/API, PostgreSQL and existing regression checks pass.
-- [x] Migration, taxonomy/API documentation and rollback-only Windows verifier provided.
-- [ ] Windows migration, selection verification and catalog access confirmed.
+- [x] Append-only migrations, taxonomy/API documentation and rollback-only Windows verifier provided.
+- [ ] Windows migration 005, fifteen-category selection verification and catalog access confirmed.
+
+Initial seven-category Windows verification passed on 2026-09-30. The user then requested expansion to fifteen; the updated local gate remains pending.
 
 ## Required Deliverables
 Threat taxonomy.

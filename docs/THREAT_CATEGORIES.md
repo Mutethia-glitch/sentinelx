@@ -1,6 +1,8 @@
 # Configurable threat categories — Task 11
 
-The seven categories come from the approved families named in Task 14. They are
+The original seven categories come from the approved families named in Task 14.
+At the user's request on 2026-09-30, eight business-relevant categories were added
+to bring the catalog to fifteen. They are
 classification choices for future rules/incidents, not implemented detection
 claims. Task 11 adds no detection logic, alerts, rule-management workflow or
 incident-management workflow. Severity and incident status remain independent.
@@ -14,12 +16,23 @@ incident-management workflow. Severity and incident status remain independent.
 | UNAUTHORIZED_ACCESS | Unauthorized access |
 | RECONNAISSANCE | Reconnaissance |
 | SUSPICIOUS_NETWORK_ACTIVITY | Suspicious network activity |
+| PHISHING_SOCIAL_ENGINEERING | Phishing and social engineering |
+| MALWARE | Malware |
+| RANSOMWARE | Ransomware |
+| DENIAL_OF_SERVICE | Denial of service (DoS/DDoS) |
+| DATA_EXFILTRATION | Data exfiltration |
+| WEB_APPLICATION_ATTACK | Web application attacks |
+| INSIDER_THREAT | Insider threat |
+| SUPPLY_CHAIN_COMPROMISE | Supply-chain compromise |
 
-Migration `004_threat_categories.sql` creates the catalog and seeds these choices.
+Migration `004_threat_categories.sql` created the initial seven choices. Append-only
+migration `005_expand_threat_categories.sql` adds eight codes and broadens the
+approved-code constraint. Migration 004 remains unchanged so applied checksums and
+existing labels, descriptions, availability and references are preserved.
 Stable codes are restricted to the approved set. Labels (1–100 characters),
 descriptions (0–1000 characters) and availability (`enabled`) are configurable;
 new arbitrary categories are not part of the API. Blank labels, null characters,
-unknown input fields and invalid booleans are rejected. All seven start selectable,
+unknown input fields and invalid booleans are rejected. Newly seeded categories start selectable,
 which does not enable any detection rule.
 
 ## Rule and incident references
@@ -87,10 +100,32 @@ node scripts/verify-threat-categories.js
 npm.cmd start
 ```
 
-Expected: `Seven threat categories and rule/incident selection verified. Synthetic
+Expected: `Fifteen threat categories and rule/incident selection verified. Synthetic
 changes rolled back.` The verifier checks actual database catalog/selection behavior
 inside a transaction and rolls back its synthetic records and availability changes.
 It does not persist test incidents or enable detections. With your normal signed-in
 browser, open `/api/threat-categories?selectable=true` to see the catalog. Task 11
-remains In Progress until local migration, selection verification and catalog
-access are confirmed.
+remains In Progress until migration 005, fifteen-category selection verification and updated catalog
+access are confirmed. The initial seven-category checks passed locally before expansion.
+
+## Selection rationale and overlaps
+
+The additions are a practical business classification catalog, not a ranked list
+of attack frequency or an exhaustive threat framework. CISA's [cybersecurity
+scenarios](https://www.cisa.gov/resources-tools/resources/cybersecurity-scenarios)
+cover phishing, ransomware, insider threats, denial of service and vendor
+supply-chain compromise. Its [ransomware guide](https://www.cisa.gov/stopransomware/ransomware-guide)
+also discusses malware. MITRE's [enterprise tactics](https://attack.mitre.org/tactics/)
+include exfiltration; OWASP's [Top Ten](https://owasp.org/www-project-top-ten/)
+covers web application risks. These are background sources, not a claim that
+SentinelX implements their detections or mappings.
+
+Phishing/social engineering includes business email impersonation. Prefer
+RANSOMWARE when evidence establishes that subtype; MALWARE is the broader choice
+when the subtype is unknown. Web application attacks include injection and other
+application-layer attacks. Insider and supply-chain categories describe context
+and may overlap with attack mechanisms. Choose the most evidence-supported
+primary category for a rule/incident; record additional context in the future
+investigation workflow. Never infer malicious activity merely from a category label.
+The original Task 14 core rule scope remains unchanged; added classifications
+do not expand implemented detection coverage or require live monitoring.

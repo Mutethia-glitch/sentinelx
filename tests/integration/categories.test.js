@@ -48,3 +48,37 @@ test('PostgreSQL taxonomy is configurable, selectable by rules/incidents and tra
   await assert.rejects(repo.update(actorId, 'BRUTE_FORCE', configuration), { status: 403 });
   assert.equal((await repo.list()).find(row => row.code === 'BRUTE_FORCE').enabled, false);
 });
+
+test('all fifteen approved categories remain selectable with preserved original configuration', async () => {
+  assert.equal(process.env.SENTINELX_TEST_DATABASE, '1', 'Use a disposable database.');
+  executeSql(migrationSql()); const pool = createPool(); const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    assert.deepEqual((await client.query('SELECT code FROM threat_categories ORDER BY code')).rows.map(row => row.code), [...CATEGORY_CODES].sort());
+    for (const code of CATEGORY_CODES) {
+      await client.query('UPDATE threat_categories SET enabled=true WHERE code=$1', [code]);
+      const rule = (await client.query("INSERT INTO detection_rules(name, definition, threat_level, category_code) VALUES ($1, '{}', 'LOW', $2) RETURNING category_code, enabled", [`synthetic-selection-${randomUUID()}`, code])).rows[0];
+      const incident = (await client.query("INSERT INTO incidents(title, threat_level, category_code) VALUES ('Synthetic fifteen-category selection', 'LOW', $1) RETURNING category_code", [code])).rows[0];
+      assert.equal(rule.category_code, code); assert.equal(incident.category_code, code); assert.equal(rule.enabled, false);
+    }
+  } finally { await client.query('ROLLBACK'); client.release(); await pool.end(); }
+});
+
+test('migration 005 preserves configured original categories and historical references when upgrading from seven', async () => {
+  assert.equal(process.env.SENTINELX_TEST_DATABASE, '1', 'Use a disposable database.');
+  const fs = require('node:fs'); const path = require('node:path');
+  const pool = createPool(); const client = await pool.connect(); const schema = `category_upgrade_${randomUUID().replaceAll('-', '')}`;
+  try {
+    await client.query('BEGIN'); await client.query(`CREATE SCHEMA ${schema}`); await client.query(`SET LOCAL search_path TO ${schema}, public`);
+    for (const file of ['001_core.sql', '004_threat_categories.sql']) await client.query(fs.readFileSync(path.join(__dirname, '../../db/migrations', file), 'utf8'));
+    assert.equal(Number((await client.query('SELECT count(*) FROM threat_categories')).rows[0].count), 7);
+    await client.query("INSERT INTO detection_rules(name, definition, threat_level, category_code) VALUES ('Historical synthetic rule', '{}', 'LOW', 'BRUTE_FORCE')");
+    await client.query("INSERT INTO incidents(title, threat_level, category_code) VALUES ('Historical synthetic incident', 'HIGH', 'BRUTE_FORCE')");
+    await client.query("UPDATE threat_categories SET name='Existing custom label', description='Keep existing configuration', enabled=false WHERE code='BRUTE_FORCE'");
+    await client.query(fs.readFileSync(path.join(__dirname, '../../db/migrations/005_expand_threat_categories.sql'), 'utf8'));
+    assert.equal(Number((await client.query('SELECT count(*) FROM threat_categories')).rows[0].count), 15);
+    assert.deepEqual((await client.query("SELECT name, description, enabled FROM threat_categories WHERE code='BRUTE_FORCE'")).rows[0], { name: 'Existing custom label', description: 'Keep existing configuration', enabled: false });
+    assert.equal((await client.query('SELECT category_code FROM detection_rules')).rows[0].category_code, 'BRUTE_FORCE');
+    assert.equal((await client.query('SELECT category_code FROM incidents')).rows[0].category_code, 'BRUTE_FORCE');
+  } finally { await client.query('ROLLBACK'); client.release(); await pool.end(); }
+});

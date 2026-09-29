@@ -7,8 +7,8 @@ const { configFromEnv } = require('../../src/auth/config');
 const { AuthError } = require('../../src/auth/errors');
 const body = { name: 'Brute force', description: 'Classification only', enabled: true, reason: 'Synthetic configuration' };
 test('approved taxonomy rejects arbitrary categories and unsafe configuration', () => {
-  assert.equal(CATEGORY_CODES.length, 7); for (const code of CATEGORY_CODES) assert.equal(categoryCode(code), code);
-  for (const code of ['MALWARE', 'brute_force', 'constructor', null]) assert.throws(() => categoryCode(code), { status: 400 });
+  assert.equal(CATEGORY_CODES.length, 15); for (const code of CATEGORY_CODES) assert.equal(categoryCode(code), code);
+  for (const code of ['UNAPPROVED_ATTACK', 'brute_force', 'constructor', null]) assert.throws(() => categoryCode(code), { status: 400 });
   assert.equal(categoryUpdateInput(body).name, body.name);
   for (const input of [null, {}, { ...body, code: 'OTHER' }, { ...body, name: '' }, { ...body, reason: '' }, { ...body, description: 'x'.repeat(1001) }, { ...body, enabled: 'true' }]) assert.throws(() => categoryUpdateInput(input), { status: 400 });
 });
