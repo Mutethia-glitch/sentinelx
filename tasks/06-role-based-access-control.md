@@ -1,7 +1,7 @@
 # Task 06: Role-Based Access Control
 
 ## Status
-Not Started
+In Progress
 
 ## Objective
 Implement Administrator, Security Analyst, and Viewer/Management permissions at API and UI levels.
@@ -38,6 +38,19 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Unauthorized API actions are rejected and role permissions are tested.
+
+### Verification
+- [x] Only Administrator, Security Analyst and Viewer/Management grants are defined.
+- [x] Unknown roles/permissions deny by default; live backend session/role checks precede protected operations.
+- [x] Role assignment is validated, authorized, transactionally audited and revokes affected sessions.
+- [x] First Administrator bootstrap and last-active-Administrator removal safeguards are concurrency-tested.
+- [x] Policy/HTTP checks, PostgreSQL integration checks and real browser role-control checks pass.
+- [x] Authentication and database foundation regression checks pass.
+- [x] The minimal role-aware access page uses real protected APIs, with no future SOC feature implementations.
+- [x] Permission matrix, API, architecture, data and Windows setup documentation updated.
+- [ ] Verify migration 003, Administrator bootstrap, role-aware page and denied access on Windows.
+
+The task remains In Progress until the user's local verification succeeds.
 
 ## Required Deliverables
 RBAC.

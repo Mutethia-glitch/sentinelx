@@ -79,3 +79,12 @@ to apply `002_auth_sessions.sql`, then use the local provisioning command
 Supply database/provisioning secrets through environment variables. The Windows
 credential prompts and complete login/logout verification are documented in
 `docs/AUTHENTICATION.md`; no credentials belong in source control.
+
+## Task 06 access control
+
+Apply migration 003, configure the first Administrator with
+`npm run rbac:bootstrap` using an existing active application account, then
+restart the server and open `http://localhost:3000/access`. Initial setup requires
+local database credentials; later role assignments use protected Administrator
+APIs. See `docs/ACCESS_CONTROL.md` for the exact permission matrix, secure Windows
+prompts, browser checks and denied-access verification.

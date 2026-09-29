@@ -81,4 +81,4 @@ function authHandler(service, config, limiter = loginLimiter()) {
     }
   };
 }
-module.exports = { authHandler, cookieToken, sessionCookie };
+module.exports = { authHandler, cookieToken, sessionCookie, readJson };

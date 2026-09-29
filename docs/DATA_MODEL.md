@@ -106,3 +106,12 @@ session maintenance. User deactivation or password-hash updates revoke sessions
 through `users_revoke_auth_sessions`. Login/logout and authentication auditing are
 implemented through the data-access layer; other audit workflows remain later tasks.
 The original applied migration is unchanged.
+
+## Task 06 addition
+
+`003_rbac_roles.sql` seeds the three approved role names without adding tables or
+assigning users. Existing `roles` and `user_roles` remain the source of assignments;
+policy grants live in versioned application code. Role changes, affected session
+revocation and attributable audit context commit together. An advisory lock
+serializes API role updates and first-Administrator setup. The previous applied
+migrations remain unchanged.

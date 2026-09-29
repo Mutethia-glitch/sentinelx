@@ -299,3 +299,13 @@ password hashing, sessions and login throttling; `src/data/pool.js` and
 `auth-repository.js` isolate parameterized PostgreSQL persistence and transactions.
 The existing `src/data/postgres.js` remains the migration-client boundary. No
 frontend, RBAC policy or later security pipeline behavior is introduced here.
+
+## Task 06 runtime mapping
+
+`src/access/` defines the permission policy and access use cases; the access API
+handler enforces the authenticated cookie boundary and origin/JSON checks;
+`src/data/access-repository.js` owns live role queries and transactional role
+changes. `frontend/access/` is a minimal role-management view of these APIs.
+The backend remains authoritative. Later security modules must use the policy
+checks when their task introduces an operation; no later pipeline behavior is
+implemented by the reserved permission vocabulary.

@@ -64,4 +64,4 @@ function authRepository(pool) {
     },
   };
 }
-module.exports = { authRepository };
+module.exports = { authRepository, transaction };

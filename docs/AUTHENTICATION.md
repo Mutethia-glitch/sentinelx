@@ -64,8 +64,8 @@ portions of NFR-002–005, NFR-007 and NFR-015.
 There is no signup, social login, password-reset API or role assignment in Task 05.
 Only a local operator with database credentials can provision initial accounts.
 The provisioning command never replaces an existing account/password or grants
-any role. Task 06 will define Administrator, Security Analyst and Viewer/Management
-permissions before security operations become available.
+any role. Task 06 defines Administrator, Security Analyst and Viewer/Management
+permissions in `docs/ACCESS_CONTROL.md`; later security operations must enforce them.
 
 ## Windows local setup
 
@@ -177,7 +177,7 @@ provisioning, API startup, login, authenticated current-user retrieval, logout a
 subsequent access rejection on Windows/PostgreSQL 18.6. The application passphrase
 was entered through `Read-Host -AsSecureString`, separately from the database
 password. This record contains no credentials, account identifiers or tokens.
-No Task 06 permissions have been implemented.
+Task 06 adds the role policy and protected access-management APIs; see `docs/ACCESS_CONTROL.md`.
 
 ## Reference guidance
 

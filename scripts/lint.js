@@ -11,4 +11,4 @@ function check(directory) {
     }
   }
 }
-for (const dir of ['src', 'scripts', 'tests']) check(path.join(__dirname, '..', dir));
+for (const dir of ['src', 'scripts', 'tests', 'frontend']) check(path.join(__dirname, '..', dir));

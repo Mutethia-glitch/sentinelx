@@ -6,18 +6,24 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
     "test:auth:integration": "node --test tests/integration/auth.test.js",
     "start": "node src/api/server.js",
-    "auth:create-user": "node scripts/create-user.js"
+    "auth:create-user": "node scripts/create-user.js",
+    "test:rbac:integration": "node --test tests/integration/access.test.js",
+    "rbac:bootstrap": "node scripts/bootstrap-administrator.js",
+    "test:rbac:ui": "node --test tests/integration/access-ui.test.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
   }
 }

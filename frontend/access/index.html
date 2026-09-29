@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentinelX · Access management</title>
+  <link rel="stylesheet" href="/access/access.css">
+  <script src="/access/access.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><p class="brand">SentinelX / IPHYN</p><h1>Access management</h1>
+      <p>Sign in to view your access. Administrators can assign approved roles.</p></header>
+    <p id="message" role="status" aria-live="polite"></p>
+    <section id="login-panel" aria-labelledby="login-heading">
+      <h2 id="login-heading">Sign in</h2>
+      <form id="login-form">
+        <label>Email<input id="email" type="email" autocomplete="username" required maxlength="254"></label>
+        <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">Sign in</button>
+      </form>
+    </section>
+    <section id="identity-panel" hidden aria-labelledby="identity-heading">
+      <div class="section-heading"><h2 id="identity-heading">Your access</h2><button id="logout" type="button">Sign out</button></div>
+      <p id="identity"></p><p id="assigned-roles"></p>
+      <button id="refresh" type="button">Refresh access</button>
+    </section>
+    <section id="users-panel" hidden aria-labelledby="users-heading">
+      <h2 id="users-heading">Assign roles</h2>
+      <p>Role changes require a reason and sign the affected user out. At least one active Administrator must remain.</p>
+      <div id="users"></div>
+    </section>
+  </main>
+</body>
+</html>
