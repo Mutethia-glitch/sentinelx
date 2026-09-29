@@ -1,7 +1,7 @@
 # Task 08: Event Ingestion
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement controlled ingestion of security events through an API and/or approved simulated datasets.
@@ -46,7 +46,9 @@ Valid events are accepted and stored; invalid payloads are rejected and tested.
 - [x] Event and attributed audit persist atomically; audit failure rolls both back.
 - [x] PostgreSQL integration and existing identity/event regressions pass.
 - [x] Approved synthetic fixture, API documentation and PowerShell verification supplied.
-- [ ] Windows valid/invalid ingestion and Viewer rejection verified.
+- [x] Windows valid/invalid ingestion and Viewer rejection verified.
+
+Local Windows/PostgreSQL 18.6 checks confirmed on 2026-09-30: Administrator submission returned a synthetic event receipt, invalid payload rejection succeeded, and Viewer/Management ingestion was denied.
 
 ## Required Deliverables
 Event ingestion.

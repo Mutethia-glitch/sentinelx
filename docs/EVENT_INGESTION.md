@@ -70,6 +70,5 @@ Then repeat with the existing Viewer/Management test account:
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-ingestion.ps1 -ExpectDenied
 ```
 
-Expected: `Viewer ingestion permission rejection verified.` Keep Task 08 In Progress
-until both local checks succeed. Use your configured approved source in the fixture
+Expected: `Viewer ingestion permission rejection verified.` Both local checks were confirmed on Windows/PostgreSQL 18.6 on 2026-09-30. Task 08 is Complete. Use your configured approved source in the fixture
 if you deliberately changed the default allowlist; do not submit real credentials.
