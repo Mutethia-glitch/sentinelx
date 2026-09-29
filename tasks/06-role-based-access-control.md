@@ -1,7 +1,7 @@
 # Task 06: Role-Based Access Control
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement Administrator, Security Analyst, and Viewer/Management permissions at API and UI levels.
@@ -48,9 +48,9 @@ Unauthorized API actions are rejected and role permissions are tested.
 - [x] Authentication and database foundation regression checks pass.
 - [x] The minimal role-aware access page uses real protected APIs, with no future SOC feature implementations.
 - [x] Permission matrix, API, architecture, data and Windows setup documentation updated.
-- [ ] Verify migration 003, Administrator bootstrap, role-aware page and denied access on Windows.
+- [x] Verify migration 003, Administrator bootstrap, role-aware page and denied access on Windows.
 
-The task remains In Progress until the user's local verification succeeds.
+Local Windows/PostgreSQL 18.6 verification confirmed on 2026-09-30: migration 003 and Administrator bootstrap succeeded; Administrator controls appeared; last-Administrator removal was rejected with a prominent red notice; Security Analyst and Viewer/Management controls were restricted and direct user-list access was denied; changing the test account role revoked its existing session. Automated integration tests additionally verify denied role updates and Viewer/Management write restrictions.
 
 ## Required Deliverables
 RBAC.

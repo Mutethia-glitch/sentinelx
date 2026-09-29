@@ -169,7 +169,7 @@ Viewer/Management through the Administrator page with a reason. Do not assign a
 role as part of a login request. Check that those users see their own access but
 no role-management controls, and that direct user-list/update requests are denied.
 
-Task 06 stays In Progress until these local Windows checks are confirmed.
+Local Windows/PostgreSQL 18.6 checks were confirmed on 2026-09-30: migration and bootstrap, Administrator controls, last-Administrator rejection, restricted Security Analyst and Viewer/Management controls, denied direct user-list requests and session revocation after role change. Task 06 is Complete. Errors appear in a red bordered notice that scrolls into view.
 After testing, stop the server with Ctrl+C and clear the database password from
 the server's PowerShell process using `Remove-Item Env:PGPASSWORD`.
 

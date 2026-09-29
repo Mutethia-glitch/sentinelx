@@ -20,5 +20,5 @@
 - Task 03: Complete
 - Task 04: Complete
 - Task 05: Complete — automated checks and Windows/PostgreSQL 18.6 login/logout verification passed
-- Task 06: In Progress — backend and browser verification passed; awaiting local Windows role checks
+- Task 06: Complete — automated policy/API/PostgreSQL/browser checks and local Windows role checks passed
 - Tasks 07–43: Not Started
