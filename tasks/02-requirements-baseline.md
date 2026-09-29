@@ -1,7 +1,7 @@
 # Task 02: Requirements Baseline
 
 ## Status
-Not Started
+Complete
 
 ## Objective
 Convert the approved SentinelX specification into explicit functional and non-functional requirements that implementation tasks must follow.
@@ -38,6 +38,15 @@ Complete the preceding tasks required by the sequence before implementing this t
 
 ## Acceptance Criteria
 Requirements are numbered, traceable, testable, and consistent with SentinelX.
+
+### Verification
+- [x] 36 functional requirements are numbered `FR-001` through `FR-036`.
+- [x] 18 non-functional/security requirements are numbered `NFR-001` through `NFR-018`.
+- [x] Each requirement states a verification method and primary implementation task(s).
+- [x] Every requirement ID appears in `docs/REQUIREMENTS_TRACEABILITY.md`.
+- [x] Lifecycle invariants preserve the approved incident-status/threat-level separation.
+- [x] Core and advanced/optional scope are explicitly separated.
+- [x] No later-task application or database implementation was introduced.
 
 ## Required Deliverables
 Requirements baseline.
