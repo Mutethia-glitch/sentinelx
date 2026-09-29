@@ -47,9 +47,9 @@ function detectionRepository(pool) {
   async function insertAlert(client, rule, events, evidence) {
     const trigger = evidence.triggerEventId;
     await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [rule.id + ':' + trigger]);
-    const duplicate = await client.query(`SELECT a.id FROM alerts a
-      JOIN alert_events ae ON ae.alert_id=a.id
-      WHERE a.rule_id=$1 AND ae.event_id=$2 LIMIT 1 FOR UPDATE`, [rule.id, trigger]);
+    const duplicate = await client.query(`SELECT id FROM alerts
+      WHERE rule_id=$1 AND match_evidence->>'triggerEventId'=$2
+      LIMIT 1 FOR UPDATE`, [rule.id, trigger]);
     if (duplicate.rows.length) return null;
     const reason = `${rule.name} matched ${events.length} event(s) within ${evidence.windowSeconds} seconds.`;
     const created = await client.query(`INSERT INTO alerts(rule_id, threat_level, match_reason, match_evidence)
