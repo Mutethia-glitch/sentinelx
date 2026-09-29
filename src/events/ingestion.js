@@ -23,8 +23,10 @@ function ingestionService(repository, access, sources, detector = null) {
       const actor = await this.authorize(token);
       const event = securityEvent(input);
       if (!approved.has(event.source)) throw new AuthError(403, 'Event source is not approved.');
-      const saved = await repository.create(event, actor.id);
-      const alerts = detector ? await detector.evaluate(saved) : [];
+      let alerts = [];
+      const saved = await repository.create(event, actor.id, detector ? async (persisted, client) => {
+        alerts = await detector.evaluate(persisted, client);
+      } : null);
       return { id: saved.id, receivedAt: saved.receivedAt, normalizedAt: saved.normalizedAt, alertsGenerated: alerts.length };
     },
   };
