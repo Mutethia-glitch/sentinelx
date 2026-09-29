@@ -19,5 +19,5 @@
 - Task 02: Complete
 - Task 03: Complete
 - Task 04: Complete
-- Task 05: In Progress — implementation and automated checks verified; awaiting Windows login/logout verification
+- Task 05: Complete — automated checks and Windows/PostgreSQL 18.6 login/logout verification passed
 - Tasks 06–43: Not Started

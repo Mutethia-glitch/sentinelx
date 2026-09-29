@@ -1,7 +1,7 @@
 # Task 05: Authentication
 
 ## Status
-In Progress
+Complete
 
 ## Objective
 Implement secure user authentication and session/token handling.
@@ -48,10 +48,13 @@ Secure login/logout, safe failures, environment-based secrets, and authenticatio
 - [x] Transactional authentication auditing tested, including rollback on audit failure.
 - [x] Unit/HTTP tests and PostgreSQL integration tests pass; Task 04 regression tests pass.
 - [x] API, architecture, schema and Windows setup documentation updated.
-- [ ] Apply migration 002, provision a user and verify login/logout on the user's Windows database.
+- [x] Migration 002, local user provisioning and login/logout verified on Windows with PostgreSQL 18.6.
 
-The implementation is tested in a disposable environment. The task remains
-In Progress until the final local-runtime verification above succeeds.
+Automated tests passed in a disposable PostgreSQL 16 environment. On 2026-09-29,
+the user also confirmed migration application, user provisioning, API startup,
+successful login and authenticated retrieval, successful logout, and rejection of
+subsequent authenticated retrieval on Windows/PostgreSQL 18.6. No credentials,
+account identifiers or session tokens are included in this verification record.
 
 ## Required Deliverables
 Authentication module.

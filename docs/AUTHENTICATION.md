@@ -101,13 +101,14 @@ local credential prompt:
 ```powershell
 $env:AUTH_USER_EMAIL = Read-Host "Application login email"
 $env:AUTH_USER_NAME = Read-Host "Display name"
-$userCredential = Get-Credential -UserName $env:AUTH_USER_EMAIL -Message "New application passphrase (15+ characters)"
-$env:AUTH_USER_PASSWORD = $userCredential.GetNetworkCredential().Password
+$applicationPassphrase = Read-Host "Create a NEW application passphrase (15+ characters)" -AsSecureString
+$applicationCredential = [System.Net.NetworkCredential]::new("", $applicationPassphrase)
+$env:AUTH_USER_PASSWORD = $applicationCredential.Password
 try {
     node scripts/create-user.js
 } finally {
     Remove-Item Env:AUTH_USER_PASSWORD -ErrorAction SilentlyContinue
-    Remove-Variable userCredential -ErrorAction SilentlyContinue
+    Remove-Variable applicationPassphrase,applicationCredential -ErrorAction SilentlyContinue
 }
 ```
 
@@ -123,13 +124,14 @@ In a second PowerShell window, log in and keep the cookie in a web-request sessi
 
 ```powershell
 $loginEmail = Read-Host "Application login email"
-$loginCredential = Get-Credential -UserName $loginEmail -Message "Application password"
-$loginBody = @{ email = $loginEmail; password = $loginCredential.GetNetworkCredential().Password } | ConvertTo-Json -Compress
+$loginPassphrase = Read-Host "Your APPLICATION passphrase" -AsSecureString
+$loginCredential = [System.Net.NetworkCredential]::new("", $loginPassphrase)
+$loginBody = @{ email = $loginEmail; password = $loginCredential.Password } | ConvertTo-Json -Compress
 $origin = @{ Origin = "http://localhost:3000" }
 try {
     Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/login" -Headers $origin -ContentType "application/json" -Body $loginBody -SessionVariable sentinelSession
 } finally {
-    Remove-Variable loginBody,loginCredential -ErrorAction SilentlyContinue
+    Remove-Variable loginBody,loginCredential,loginPassphrase -ErrorAction SilentlyContinue
 }
 Invoke-RestMethod -Uri "http://localhost:3000/api/auth/me" -WebSession $sentinelSession
 Invoke-RestMethod -Method Post -Uri "http://localhost:3000/api/auth/logout" -Headers $origin -ContentType "application/json" -Body '{}' -WebSession $sentinelSession
@@ -170,8 +172,12 @@ absolute expiry, permanent deactivation/password-change revocation, stale passwo
 race rejection, hashed token storage and transactional login/logout audit failures.
 Task 04's integrity suite still passes; dependency audit reports no vulnerabilities.
 
-Task 05 stays In Progress until login/logout is also confirmed on the user's local
-Windows database. No Task 06 permissions have been implemented.
+Task 05 is Complete. On 2026-09-29, the user verified migration 002, local
+provisioning, API startup, login, authenticated current-user retrieval, logout and
+subsequent access rejection on Windows/PostgreSQL 18.6. The application passphrase
+was entered through `Read-Host -AsSecureString`, separately from the database
+password. This record contains no credentials, account identifiers or tokens.
+No Task 06 permissions have been implemented.
 
 ## Reference guidance
 
