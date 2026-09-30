@@ -157,3 +157,12 @@ See [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
 Migration 011 extends the existing `incidents` table without changing the approved incident_status enum. It adds `updated_at`, assignment/status attribution timestamps and actors, plus terminal resolution/dismissal note metadata. Existing incidents receive `updated_at=created_at`; other new fields remain nullable until an authorized workflow populates them.
 
 Incident creation links existing alerts through `incident_alerts`; initial severity is the highest linked-alert severity. Status changes do not alter threat level. OPEN and CLOSED remain unsupported. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
+
+
+## Task 19 incident classification and severity
+
+Migration 012 adds `assessment_updated_at` and `assessment_updated_by` to incidents. The existing `category_code` and `threat_level` columns remain the authoritative classification and severity values. Classification accepts the approved taxonomy or null; severity remains the existing LOW/MEDIUM/HIGH/CRITICAL enum.
+
+No separate priority column or risk score is added by Task 19. Task 20 owns risk scoring. Assessment attribution references users with ON DELETE RESTRICT, and material assessment changes are also preserved in the audit trail.
+
+See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
