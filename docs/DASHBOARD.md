@@ -127,3 +127,11 @@ npm.cmd run test:dashboard:ui
 
 No external API key, analytics vendor, new database schema, scheduled job or
 commercial SIEM extension is required. Task 25 remains Not Started.
+
+## Completion
+
+Task 24 is **Complete**. Its Windows/PostgreSQL acceptance verifier passed on 2026-09-30:
+
+`Live dashboard totals, severity/status distributions, threat and UTC trends, recorded response outcomes, Viewer access, refresh accuracy and read-only rollback verified. Synthetic changes cleaned up.`
+
+No new migration was necessary. Task 25 Search and Filtering remains separately scoped.
