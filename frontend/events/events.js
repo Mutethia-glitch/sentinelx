@@ -1,4 +1,5 @@
 'use strict';
+const ui=window.SentinelXUi;
 const el = id => document.getElementById(id);
 let generation = 0;
 let page = 1;
@@ -14,7 +15,7 @@ function clearData() {
   el('normalized-data').textContent = ''; el('raw-data').textContent = '';
   el('previous').disabled = true; el('next').disabled = true;
 }
-function reset() {
+function reset() {ui.clearAccess();
   generation++; clearData(); el('login-panel').hidden = false; el('identity-panel').hidden = true;
   el('events-panel').hidden = true; el('identity').textContent = '';
 }
@@ -26,7 +27,8 @@ async function request(path, options = {}) {
 }
 function handleError(error) {
   if (error.status === 401 || error.status === 403) reset();
-  message(error.status ? error.message : 'Unable to reach SentinelX. Try again.', true);
+  if (error.status === 401) return message('Sign in to continue.');
+  message(ui.safeError(error), true);
 }
 async function inspect(id) {
   const current = ++generation;
@@ -45,10 +47,11 @@ async function inspect(id) {
   } catch (error) { if (current === generation) handleError(error); }
 }
 async function load() {
-  const current = ++generation; clearData();
+  const current = ++generation; clearData(); ui.loading('Loading security events…');
   try {
     const access = await request('/api/access/me');
     if (current !== generation) return;
+    ui.applyAccess(access);
     el('login-panel').hidden = true; el('identity-panel').hidden = false;
     el('identity').textContent = `${access.user.displayName} · ${access.roles.join(', ') || 'No role assigned'}`;
     if (!access.permissions.includes('events.read')) { el('events-panel').hidden = true; message('Your account does not have permission to view events.', true); return; }

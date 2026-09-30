@@ -1,7 +1,7 @@
 # Task 36: Frontend Security and UX
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Harden the frontend for safe rendering, authorization-aware navigation, data protection, loading/error states, and analyst usability.
@@ -50,6 +50,11 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-09-30
+Implemented a shared frontend helper and consistent permission-aware navigation across the seven existing operational consoles. Permissioned links start hidden and are revealed only from live `/api/access/me` grants; authentication reset/sign-out hides them again. Primary loads now expose explicit loading states, the audit console now preserves an authenticated identity/permission-denied state rather than falling back to a misleading login view, and all login password fields use current-password autocomplete and are cleared after attempts.
+
+Frontend rendering remains DOM/text-node based. Regression checks forbid unsafe HTML/script sinks and browser credential/data storage APIs. The existing restrictive page CSP remains in place; the shared helper asset is GET-only, no-store, no-sniff, no-referrer and same-origin-resource-policy protected. No backend authorization was moved client-side, no migration/new runtime dependency/visual-effects redesign was introduced, and Task 37 was not started. Local Windows quality, verifier and browser acceptance remain pending. See `docs/FRONTEND_SECURITY_UX.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

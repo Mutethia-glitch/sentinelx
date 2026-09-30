@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SentinelX · Access management</title>
   <link rel="stylesheet" href="/access/access.css">
-  <script src="/access/access.js" defer></script>
+  <script src="/ui/sentinelx-ui.js" defer></script><script src="/access/access.js" defer></script>
 </head>
 <body>
   <main>
     <header><p class="brand">SentinelX / IPHYN</p><h1>Access management</h1>
-      <p>Sign in to view your access. Administrators can assign approved roles.</p><a href="/events">Security events</a><nav><a href="/dashboard">Dashboard</a> · <a href="/alerts">Alerts</a></nav></header>
+      <p>Sign in to view your access. Administrators can assign approved roles.</p><nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a> <a href="/events" data-permission="events.read" hidden>Events</a> <a href="/alerts" data-permission="alerts.read" hidden>Alerts</a> <a href="/incidents" data-permission="incidents.read" hidden>Incidents</a> <a href="/notifications" data-permission="notifications.read" hidden>Notifications</a> <a href="/audit" data-permission="audit.read" hidden>Audit</a> <a href="/access">Access</a></nav></header>
     <p id="message" role="status" aria-live="polite"></p>
     <section id="login-panel" aria-labelledby="login-heading">
       <h2 id="login-heading">Sign in</h2>

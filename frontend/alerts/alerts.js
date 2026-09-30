@@ -1,12 +1,13 @@
 'use strict';
+const ui=window.SentinelXUi;
 const el=id=>document.getElementById(id);
 let generation=0,page=1,activeFilters=new URLSearchParams(),canManage=false,currentAlertId=null;
 function message(text,error=false){el('message').textContent=error?`Error: ${text}`:text;el('message').classList.toggle('error',error);if(error)el('message').scrollIntoView({block:'center'});}
 function clearDetail(){currentAlertId=null;el('detail-panel').hidden=true;el('detail-fields').replaceChildren();el('entities').textContent='';el('match-evidence').textContent='';el('event-rows').replaceChildren();el('status-form').hidden=true;el('status-reason').value='';clearEvent();}
 function clearData(){el('rows').replaceChildren();el('results').textContent='';el('page').textContent='';el('previous').disabled=true;el('next').disabled=true;clearDetail();}
-function reset(){generation++;clearData();el('login-panel').hidden=false;el('identity-panel').hidden=true;el('alerts-panel').hidden=true;el('identity').textContent='';canManage=false;}
+function reset(){ui.clearAccess();generation++;clearData();el('login-panel').hidden=false;el('identity-panel').hidden=true;el('alerts-panel').hidden=true;el('identity').textContent='';canManage=false;}
 async function request(path,options={}){const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});const body=response.status===204?null:await response.json();if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}return body;}
-function handleError(error){if(error.status===401||error.status===403)reset();message(error.status?error.message:'Unable to reach SentinelX. Try again.',true);}
+function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message('Sign in to continue.');message(ui.safeError(error),true);}
 function addField(label,value){const term=document.createElement('dt'),description=document.createElement('dd');term.textContent=label;description.textContent=value??'Unknown';el('detail-fields').append(term,description);}
 function clearEvent(){el('event-detail').hidden=true;el('event-identity').textContent='';el('normalized-event').textContent='';el('raw-event').textContent='';}
 async function inspectEvent(id){
@@ -42,9 +43,9 @@ async function inspect(id){
   }catch(error){if(current===generation)handleError(error);}
 }
 async function load(){
-  const current=++generation;clearData();
+  const current=++generation;clearData();ui.loading('Loading alerts…');
   try{
-    const access=await request('/api/access/me');if(current!==generation)return;
+    const access=await request('/api/access/me');if(current!==generation)return;ui.applyAccess(access);
     el('login-panel').hidden=true;el('identity-panel').hidden=false;el('identity').textContent=`${access.user.displayName} · ${access.roles.join(', ')||'No role assigned'}`;
     if(!access.permissions.includes('alerts.read')){el('alerts-panel').hidden=true;message('Your account does not have permission to view alerts.',true);return;}
     canManage=access.permissions.includes('alerts.manage');

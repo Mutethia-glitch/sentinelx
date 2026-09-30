@@ -246,3 +246,10 @@ Every `/api` route now passes through a common request-security boundary before 
 - returns bounded JSON errors for shared-boundary failures.
 
 Existing endpoint contracts remain unchanged. Route/service layers continue to enforce authentication, live RBAC, exact-origin mutation protection, bounded JSON/schema validation, authorized record access, parameterized database operations, and sanitized internal failures. The existing login throttle remains stricter. Forwarding headers are not trusted for rate-limit identity. See [API_HARDENING.md](API_HARDENING.md).
+
+
+## Task 36 frontend consumption rules
+
+Task 36 adds no public API endpoint. Existing consoles consume `GET /api/access/me` to tailor navigation and controls to the authenticated user's current grants. This is presentation-only: all protected API calls continue to authenticate and authorize independently on the backend.
+
+Frontend code does not persist passwords, cookies, roles, permissions, or security records in Web Storage. API-derived text is rendered through safe DOM/text operations. Loading, permission-denied, authentication-reset, empty, and error states remain visible without inventing backend capability. See [FRONTEND_SECURITY_UX.md](FRONTEND_SECURITY_UX.md).

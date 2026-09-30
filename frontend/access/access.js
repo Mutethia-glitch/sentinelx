@@ -1,4 +1,5 @@
 'use strict';
+const ui=window.SentinelXUi;
 const element = id => document.getElementById(id);
 const message = (text, isError = false) => {
   const notice = element('message');
@@ -16,7 +17,7 @@ async function request(path, options = {}) {
   }
   return result;
 }
-function reset() {
+function reset() {ui.clearAccess();
   element('login-panel').hidden = false;
   element('identity-panel').hidden = true;
   element('users-panel').hidden = true;
@@ -74,10 +75,11 @@ function userCard(user, roles) {
   return form;
 }
 async function refresh() {
+  ui.loading('Loading access…');
   // Clear sensitive controls first so an expired/downgraded session cannot leave them visible.
   element('users-panel').hidden = true;
   element('users').replaceChildren();
-  const access = await request('/api/access/me');
+  const access = await request('/api/access/me');ui.applyAccess(access);
   element('login-panel').hidden = true;
   element('identity-panel').hidden = false;
   element('identity').textContent = `${access.user.displayName} · ${access.user.email}`;

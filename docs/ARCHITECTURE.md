@@ -442,3 +442,10 @@ No vendor-specific SDK or database dependency is introduced. External delivery c
 All SentinelX `/api` traffic now passes through `src/api/security.js` before route dispatch. This shared boundary adds bounded socket-peer rate limiting, basic request-target/body-shape rejection, and uniform safe API response headers. Domain handlers and services still own authentication, live RBAC authorization, origin checks, input schemas, record scoping, persistence, and auditable response decisions.
 
 The limiter deliberately ignores caller-supplied forwarding headers. The current server remains loopback-bound; deployment/proxy trust configuration is not invented by Task 35. See [API_HARDENING.md](API_HARDENING.md).
+
+
+## Task 36 frontend security and truthful UX
+
+The seven operational consoles share `frontend/shared/sentinelx-ui.js` for live permission-aware navigation and common loading/error-state helpers. Permissioned links are hidden by default and only revealed from the authenticated access API; frontend visibility never becomes an authorization source.
+
+Operational API values remain safely rendered through DOM/text APIs, and browser storage is not used for credentials, session tokens, roles, permissions, or security records. The existing HttpOnly cookie and backend RBAC boundaries remain authoritative. See [FRONTEND_SECURITY_UX.md](FRONTEND_SECURITY_UX.md).

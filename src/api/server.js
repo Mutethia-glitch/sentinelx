@@ -1,4 +1,5 @@
 const { apiSecurityBoundary } = require('./security');
+const { frontendShared } = require('./frontend-shared');
 const { externalWebhook } = require('../integrations/webhook');
 const { auditRepository }=require('../data/audit-repository');
 const { auditService }=require('../audit/service');
@@ -82,6 +83,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
     if (alertManagement && req.url.startsWith('/api/alerts')) return alertManagement(req, res);
     if (ruleManagement && req.url.startsWith('/api/rules')) return ruleManagement(req, res);
     if (taxonomy && req.url.startsWith('/api/threat-categories')) return taxonomy(req, res);
+    if (frontendShared(req, res)) return;
     if (auditPage(req, res)) return;
     if (dashboardPage(req, res)) return;
     if (notificationPage(req, res)) return;

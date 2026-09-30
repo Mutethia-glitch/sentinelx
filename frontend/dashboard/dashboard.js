@@ -1,9 +1,10 @@
 'use strict';
+const ui=window.SentinelXUi;
 const el=id=>document.getElementById(id);
 let generation=0;
 const nf=new Intl.NumberFormat(undefined,{maximumFractionDigits:1});
 function message(value,error=false){el('message').textContent=error?'Error: '+value:value;el('message').classList.toggle('error',error);}
-function reset(){
+function reset(){ui.clearAccess();
  generation++;
  for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
   'alert-threats','incident-threats','response-types','trend-rows'])el(id).replaceChildren();
@@ -15,7 +16,7 @@ async function request(path,options={}){
  if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}
  return body;
 }
-function handleError(error){if(error.status===401||error.status===403)reset();message(error.status?error.message:'Unable to reach SentinelX.',true);}
+function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message('Sign in to continue.');message(ui.safeError(error),true);}
 function number(value){return value===null||value===undefined?'No incident data':nf.format(value);}
 function card(container,label,value){
  const dl=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');
@@ -76,10 +77,10 @@ function render(d){
  el('dashboard-panel').hidden=false;
 }
 async function load(){
- const current=++generation;el('refresh').disabled=true;
+ const current=++generation;el('refresh').disabled=true;ui.loading('Loading dashboard…');
  try{
-  const access=await request('/api/access/me');if(current!==generation)return;
-  if(!access.permissions.includes('dashboard.read'))throw Object.assign(new Error('Dashboard permission denied.'),{status:403});
+  const access=await request('/api/access/me');if(current!==generation)return;ui.applyAccess(access);
+  if(!access.permissions.includes('dashboard.read')){el('login-panel').hidden=true;el('identity-panel').hidden=false;el('dashboard-panel').hidden=true;el('identity').textContent=access.user.displayName+' · '+access.roles.join(', ');message('Your account does not have permission to view the dashboard.',true);return;}
   el('identity').textContent=access.user.displayName+' · '+access.roles.join(', ');
   const result=await request('/api/dashboard');if(current!==generation)return;
   for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
