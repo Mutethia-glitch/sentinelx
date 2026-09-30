@@ -1,3 +1,5 @@
+const { correlationRepository } = require('../data/correlation-repository');
+const { correlationEngine } = require('../correlation/engine');
 const { alertRepository } = require('../data/alert-repository');
 const { alertService } = require('../alerts/service');
 const { alertHandler } = require('./alert-handler');
@@ -61,7 +63,7 @@ async function main() {
     const service = authService(authRepository(pool), config);
     const access = accessService(accessRepository(pool), service);
     const server = createServer(service, config, access,
-      ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool))),
+      ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool)))),
       eventViewService(eventRepository(pool), access),
       categoryService(categoryRepository(pool), access),
       ruleService(ruleRepository(pool), access),
