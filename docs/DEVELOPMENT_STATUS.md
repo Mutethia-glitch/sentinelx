@@ -42,9 +42,9 @@
 - Task 25: Complete — consistent event/alert/incident filtering with parameterized evidence-chain search, validated date/severity/status/category/IP/user/host/rule/MITRE filters, RBAC and pagination; isolated checks passed 15/15 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 26: Complete — stored-data security summaries and incident reports with JSON/CSV export, date-range validation and read-only generation; Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 27: Complete — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC; Windows/PostgreSQL verifier passed on 2026-09-30
-- Task 28: Verification Pending — migration 015 applied; Task 28 acceptance initially failed because the synthetic verifier fixture omitted the Rules service. Fixture corrected; rerun verify:mitre.
+- Task 28: Complete — migration 015 applied, documented seven-rule partial ATT&CK technique/tactic mappings and incident-context propagation verified; corrected Windows/PostgreSQL `verify:mitre` acceptance passed on 2026-09-30.
 - Task 29: Complete — deterministic 80-record synthetic research dataset, documented provenance/privacy/labels and cross-platform reproducibility verified; Windows `verify:dataset` acceptance passed on 2026-09-30.
 - Tasks 30–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–27 and Task 29 are Complete. The earlier Windows quality suite passed 137/137, migration 015 applied successfully, and Tasks 26–27 passed their PostgreSQL acceptance verifiers. Task 29's corrected Windows `verify:dataset` acceptance also passed on 2026-09-30. Task 28 remains Verification Pending; rerun `verify:mitre` against the updated branch. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–29 are Complete. The Windows quality suite passed 137/137 during the Tasks 26–29 acceptance cycle; migration 015 applied successfully. Tasks 26–27 passed their PostgreSQL verifiers, and the corrected Windows acceptance verifiers for Tasks 28–29 also passed on 2026-09-30. Migrations 001–015 remain immutable/checksum protected. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
