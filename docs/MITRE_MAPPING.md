@@ -74,3 +74,16 @@ Expected:
 
 After migration 015 is applied, preserve migrations 001–015 under the existing
 append-only/checksum rule.
+
+## Completion
+
+Task 28 is **Complete**. After correcting the synthetic verifier's Rules-service
+wiring, the user reported successful Windows/PostgreSQL acceptance on
+2026-09-30:
+
+`Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
+
+The accepted scope is deliberately partial: seven documented mapped core rules,
+eight intentionally unmapped rules. The result does not claim full ATT&CK
+coverage or independent proof of technique execution. Migration 015 has already
+been applied; migrations 001–015 remain immutable and checksum protected.
