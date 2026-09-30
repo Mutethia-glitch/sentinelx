@@ -1,7 +1,7 @@
 # Task 21: Investigation Workspace
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Build the incident investigation view with evidence, timeline, related events/alerts, affected entities, and analyst notes.
@@ -61,7 +61,9 @@ Do not mark this task complete until:
 - Viewer/Management can read investigations but cannot record findings.
 - Task 21 introduces no new migration; migrations 001–013 remain unchanged.
 - PostgreSQL and browser verifiers are implemented.
-- Windows/PostgreSQL `verify:investigations` remains required before completion.
+- Windows/PostgreSQL `verify:investigations` passed on 2026-09-30.
+- Migration replay/checksum check passed: `PostgreSQL migrations verified/applied.`
+- Verified result: `Investigation evidence, affected entities, chronological timeline, analyst findings, RBAC, evidence validation, auditing and rollback verified. Synthetic changes cleaned up.`
 - Task 22 Response Workflow remains Not Started.
 - No external API or API key is required.
 
