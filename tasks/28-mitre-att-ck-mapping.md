@@ -1,7 +1,7 @@
 # Task 28: MITRE ATT&CK Mapping
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Map implemented detection scenarios to appropriate MITRE ATT&CK tactics and techniques.
@@ -58,10 +58,21 @@ Do not mark this task complete until:
 - Incident investigation/report output references mappings through linked alert rules.
 - No claim of complete ATT&CK coverage or per-event technique proof is made.
 - Focused tests and a PostgreSQL verifier are implemented.
-- Task 29 remains separately scoped.
+- Task 29 is separately scoped and Complete.
 
 - Initial Windows/PostgreSQL acceptance attempt on 2026-09-30 failed because the synthetic server fixture omitted the existing Rules service; this is now corrected without modifying applied migration 015.
-- The verifier now reports a safe phase label if a later assertion fails. Repeat `npm.cmd run verify:mitre` after pulling `main`; remain Verification Pending until accepted.
+- The corrected verifier includes safe phase-specific diagnostics; its Windows/PostgreSQL acceptance gate passed on 2026-09-30.
+
+## Acceptance — 2026-09-30
+
+The user reported the successful Windows/PostgreSQL verifier result:
+
+`Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
+
+The acceptance covers the persisted technique/tactic mappings, partial core-rule
+coverage, authenticated rule catalog/detail, and propagation to linked incident
+investigation/report context. Synthetic changes were cleaned up. Migration 015
+was previously applied and remains immutable under the checksum policy.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
