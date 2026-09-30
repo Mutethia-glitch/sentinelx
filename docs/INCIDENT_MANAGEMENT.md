@@ -144,3 +144,14 @@ Expected verifier output:
 
 No external API or API key is required. Task 19 remains separate and owns
 classification/severity adjustment.
+
+
+## Completion
+
+Task 18 is Complete. Focused Task 18 tests passed 10/10, and the
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Incident creation, alert linking, severity inheritance, assignment, lifecycle, terminal notes, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
+
+Task 19 incident classification/severity adjustment remains separate and Not Started.
+No external API or API key is required.
