@@ -1,3 +1,30 @@
+# Task 40 accepted — 2026-10-01
+
+Task 40 is **Complete**. Tasks 01–40 are Complete; Task 41 has not started.
+
+Final accepted Task 40 verifier result:
+
+`15 threat categories propagated through detection, alert, incident, investigation, response, resolution, search, dashboard and reporting; required Task 40 scenarios and false-positive control verified. Synthetic changes cleaned up.`
+
+The accepted system-wide taxonomy contract covers all fifteen canonical SentinelX categories:
+BRUTE_FORCE, CREDENTIAL_ATTACK, PRIVILEGE_ESCALATION, SUSPICIOUS_ACCOUNT_ACTIVITY, UNAUTHORIZED_ACCESS, RECONNAISSANCE, SUSPICIOUS_NETWORK_ACTIVITY, PHISHING_SOCIAL_ENGINEERING, MALWARE, RANSOMWARE, DENIAL_OF_SERVICE, DATA_EXFILTRATION, WEB_APPLICATION_ATTACK, INSIDER_THREAT and SUPPLY_CHAIN_COMPROMISE.
+
+Task 40 also preserves the accepted supporting changes:
+- no category truncation in Dashboard threat aggregation;
+- no category truncation in security-summary Reporting;
+- all fifteen category codes exposed as filter suggestions on Events, Alerts and Incidents;
+- category-aware search and incident classification use the same canonical taxonomy;
+- isolated temporary scenario rules leave existing detection-rule policy unchanged;
+- original category availability/timestamps are restored;
+- synthetic users, sessions, rules, events, alerts, correlations, incidents, investigation notes, response actions and audits are cleaned up;
+- MITRE ATT&CK remains intentionally partial according to Task 28; unsupported mappings were not fabricated.
+
+Task 41 — Deployment — is next and remains Not Started. Do not start it without explicit instruction.
+
+See `docs/END_TO_END_DETECTION_SCENARIOS.md` and `tasks/40-end-to-end-detection-scenarios.md`.
+
+---
+
 # Task 40 implementation checkpoint — 2026-10-01
 
 Task 40 is **Implemented — awaiting local acceptance**. Tasks 01–39 remain Complete. Task 41 has not started.

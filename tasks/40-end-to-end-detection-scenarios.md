@@ -1,7 +1,7 @@
 # Task 40: End-to-End Detection Scenarios
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
@@ -63,7 +63,7 @@ Task 40 also removes category truncation in Dashboard/Reporting and exposes all 
 
 See `docs/END_TO_END_DETECTION_SCENARIOS.md`.
 
-Local acceptance is required before Task 40 is Complete. Task 41 must not start until Task 40 is accepted.
+Windows/local acceptance completed on 2026-10-01. The controlled end-to-end verifier confirmed all fifteen threat categories across detection, alert, incident, investigation, response, resolution, search, dashboard and reporting; required Task 40 scenarios, correlation and the false-positive control passed, and synthetic changes were cleaned up. Task 40 is Complete. Task 41 remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

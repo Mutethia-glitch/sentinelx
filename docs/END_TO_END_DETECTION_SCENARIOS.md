@@ -100,3 +100,12 @@ Expected verifier output:
 `15 threat categories propagated through detection, alert, incident, investigation, response, resolution, search, dashboard and reporting; required Task 40 scenarios and false-positive control verified. Synthetic changes cleaned up.`
 
 The equivalent Node integration regression is available as `npm.cmd run test:end-to-end:integration`.
+
+
+## Acceptance — 2026-10-01
+
+Windows/local controlled verification passed with the expected result:
+
+`15 threat categories propagated through detection, alert, incident, investigation, response, resolution, search, dashboard and reporting; required Task 40 scenarios and false-positive control verified. Synthetic changes cleaned up.`
+
+Task 40 is Complete. The accepted result confirms the fifteen-category propagation contract, required scenario set, persisted correlation case, benign zero-alert control and cleanup behavior. Task 41 remains Not Started.
