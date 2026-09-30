@@ -1,12 +1,11 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–17 are Complete. Task 18 (Incident Management) is implemented and is
-Verification Pending. Do not begin Task 19 until Task 18's Windows/PostgreSQL gate
-passes and Task 18 is explicitly marked Complete.
+Tasks 01–18 are Complete. Task 18 (Incident Management) passed its
+Windows/PostgreSQL acceptance gate on 2026-09-30. Task 19 (Incident Classification
+and Severity) remains Not Started and must not begin until the user requests it.
 
 Task 18 follows the authoritative Task 02 baseline lifecycle:
-NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. The older Task 18
-Open/Closed wording was stale and has been corrected; OPEN and CLOSED remain
+NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. OPEN and CLOSED remain
 unsupported by the database and API.
 
 Incident managers can:
@@ -29,34 +28,19 @@ Migration `011_incident_management.sql` adds update/assignment/status attributio
 and terminal resolution metadata. Creation, assignment and status mutations recheck
 live RBAC inside PostgreSQL transactions and write audit records atomically.
 
-Focused Task 18 model/service/repository tests passed 10/10 before repository
-update. PostgreSQL and browser verification entry points are implemented.
-
-Run the Windows/PostgreSQL acceptance gate:
-
-```powershell
-git pull origin main
-npm.cmd run quality
-node scripts/migrate.js
-npm.cmd run verify:incidents
-```
-
-Expected final output:
+Focused Task 18 model/service/repository tests passed 10/10. Windows/PostgreSQL
+acceptance verification passed on 2026-09-30 with:
 
 `Incident creation, alert linking, severity inheritance, assignment, lifecycle, terminal notes, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
 
-Optional explicit integration checks on a disposable database:
-```powershell
-$env:SENTINELX_TEST_DATABASE='1'
-npm.cmd run test:incidents:integration
-npm.cmd run test:incidents:ui
-```
+Migration 011 is now part of the applied append-only/checksum-tracked chain. Do not
+edit migrations 001–011 or bypass migration checksum verification.
 
 PostgreSQL remains hosted on the user's Windows computer. Task 18 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-Migrations remain append-only/checksum tracked. Do not edit migrations 001–011
-after migration 011 is successfully applied.
-
-Task 19 (Incident Classification and Severity) remains Not Started.
+When work resumes, read repository instructions, this handoff,
+`docs/DEVELOPMENT_STATUS.md`, and
+`tasks/19-incident-classification-and-severity.md` before beginning. Proceed
+numerically from Task 19 only when requested.
