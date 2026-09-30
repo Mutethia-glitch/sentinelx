@@ -1,9 +1,9 @@
 const {AuthError}=require('../auth/errors');
 const {timestamp}=require('../events/model');
 const UUID=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
-function reportQuery(params,{allowFormat=true}={}){
+function reportQuery(params,{allowDates=true}={}){
  if(!(params instanceof URLSearchParams))throw new AuthError(400,'Invalid report parameters.');
- const allowed=new Set(allowFormat?['from','to','format']:['from','to']);
+ const allowed=new Set(allowDates?['from','to','format']:['format']);
  for(const key of params.keys())if(!allowed.has(key)||params.getAll(key).length!==1)throw new AuthError(400,'Invalid report parameters.');
  const out={format:params.get('format')||'json'};
  if(!['json','csv'].includes(out.format))throw new AuthError(400,'Unsupported report format.');
