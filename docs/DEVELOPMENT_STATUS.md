@@ -30,7 +30,8 @@
 - Task 13: Complete — deterministic rule evaluation, thresholds/windows/grouping, alert evidence, duplicate-trigger suppression and atomic rollback verified; Windows/PostgreSQL acceptance gate passed on 2026-09-30
 - Task 14: Complete — fifteen-category core rule set, test scenarios and migration 007 implemented; local checks passed 16/16 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 15: Complete — persisted alert snapshot model and migration 008 implemented; focused Task 13–15 regressions passed 11/11 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 16–43: Not Started
+- Task 16: Verification Pending — alert API/UI, filters, source-event tracing, NEW/ACKNOWLEDGED workflow, transactional RBAC/audit and migration 009 implemented; focused checks pass 7/7; Windows/PostgreSQL gate pending
+- Tasks 17–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–15 are Complete. Task 15 now persists the required alert signal fields while preserving event/rule separation and prior detection behavior; focused Task 13–15 regressions passed 11/11 and the Windows/PostgreSQL acceptance verifier passed on 2026-09-30. Tasks 16–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–15 are Complete. Task 16 alert management is implemented with read/filter/detail/source-event tracing and audited NEW/ACKNOWLEDGED analyst workflow; focused checks pass 7/7. Task 16 remains Verification Pending until migration 009 and `verify:alerts` pass on Windows/PostgreSQL. Tasks 17–43 remain Not Started. See SESSION_HANDOFF.md.
