@@ -131,3 +131,14 @@ No risk mutation endpoint is provided. Task 19 severity adjustment changes the
 underlying factor and PostgreSQL recalculates the generated score automatically.
 Confidence and asset impact are not used until trustworthy implemented inputs exist.
 See [RISK_SCORING.md](RISK_SCORING.md).
+
+
+## Task 21 investigation workspace
+
+Implemented endpoints:
+- `GET /api/investigations/{incidentId}`: authorized investigation workspace containing incident context, linked alerts, distinct linked events, affected entities, analyst findings, and chronological timeline.
+- `POST /api/investigations/{incidentId}/notes`: Administrator/Security Analyst append-only finding creation with optional linked alert/event evidence references.
+
+Finding references are validated against the incident before persistence. Viewer/Management is read-only. Successful findings write an `INVESTIGATION_NOTE_ADDED` incident audit entry atomically.
+
+Task 21 does not execute response actions; Task 22 remains responsible for controlled response workflows. See [INVESTIGATION_WORKSPACE.md](INVESTIGATION_WORKSPACE.md).
