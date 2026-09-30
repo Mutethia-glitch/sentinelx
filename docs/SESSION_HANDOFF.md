@@ -19,7 +19,7 @@ Task 27 Audit Trail:
 
 Task 28 MITRE ATT&CK Mapping:
 - migration `015_mitre_tactics_and_core_mappings.sql`;
-- partial documented rule mappings with tactic metadata;
+- partial documented rule mappings with tactic metadata (seven core rules mapped; eight intentionally unmapped);
 - rule catalog/detail plus incident investigation/report propagation;
 - broad rules without precise technique semantics remain intentionally unmapped;
 - verify with `npm.cmd run verify:mitre`.
