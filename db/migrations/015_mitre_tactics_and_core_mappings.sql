@@ -47,7 +47,6 @@ SELECT r.id,m.id FROM (VALUES
  ('SX-CORE-008 Phishing or social engineering report','T1566'),
  ('SX-CORE-010 Ransomware event','T1486'),
  ('SX-CORE-011 Denial of service indicators','T1498'),
- ('SX-CORE-013 Web application attack event','T1190'),
  ('SX-CORE-015 Supply chain compromise classification','T1195')
 ) x(rule_name,technique_id)
 JOIN detection_rules r ON r.name=x.rule_name
