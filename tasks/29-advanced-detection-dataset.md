@@ -60,5 +60,8 @@ Do not mark this task complete until:
 - No Task 30 feature engineering is included.
 - Task 30 remains Not Started.
 
+- Initial Windows acceptance attempt on 2026-09-30 failed when comparing checkout-dependent JSONL line endings. Verification now compares canonical LF content after CRLF normalization.
+- The checked-in fixture comparison also runs in normal `quality`; a simulated Windows CRLF copy passed the isolated check. Repeat `npm.cmd run verify:dataset` after pulling `main`; remain Verification Pending until accepted.
+
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
