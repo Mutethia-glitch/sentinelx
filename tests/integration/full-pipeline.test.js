@@ -21,9 +21,14 @@ const {correlationEngine}=require('../../src/correlation/engine');
 const {incidentService}=require('../../src/incidents/service');
 
 test('automated PostgreSQL pipeline preserves raw evidence through normalization, detection, correlation and incident creation',async t=>{
+  let stage='guard';
+  const at=name=>{stage=name;};
+  try{
   assert.equal(process.env.SENTINELX_TEST_DATABASE,'1','Use a disposable test database.');
+  at('migration replay');
   executeSql(migrationSql());
 
+  at('pool setup');
   const pool=createPool();
   const ruleIds=[];
   const eventIds=[];
@@ -64,6 +69,9 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
         await pool.query('DELETE FROM user_roles WHERE user_id=$1',[userId]);
         await pool.query('DELETE FROM users WHERE id=$1',[userId]);
       }
+    }catch(error){
+      error.message='Task 38 pipeline cleanup failed: '+error.message;
+      throw error;
     }finally{await pool.end();}
   });
 
@@ -75,6 +83,7 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
   const email=`task38-${suffix}@example.invalid`;
   const password='Synthetic Task 38 pipeline passphrase';
 
+  at('synthetic analyst setup');
   const config=configFromEnv({});
   const authRepo=authRepository(pool);
   userId=await authRepo.createUser(email,'Synthetic Task 38 analyst',await hashPassword(password),'Task 38 automated test');
@@ -98,6 +107,7 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
     groupBy:['sourceIp','user'],
   };
 
+  at('synthetic detection-rule setup');
   for(const severity of ['HIGH','CRITICAL']){
     const row=(await pool.query(`INSERT INTO detection_rules
       (name,description,enabled,definition,threat_level,category_code)
@@ -106,6 +116,7 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
     ruleIds.push(row.id);
   }
 
+  at('pipeline service wiring');
   const detector=detectionEngine(
     detectionRepository(pool),
     correlationEngine(correlationRepository(pool))
@@ -134,19 +145,23 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
     },
   });
 
+  at('first raw-event ingestion');
   const first=await ingestion.ingestRaw(token,rawEvent('2030-01-01T00:00:00Z'));
   eventIds.push(first.id);
   assert.equal(Number((await pool.query('SELECT count(*) FROM alerts WHERE rule_id=ANY($1::uuid[])',[ruleIds])).rows[0].count),0);
 
+  at('second raw-event ingestion and detection');
   const second=await ingestion.ingestRaw(token,rawEvent('2030-01-01T00:00:10Z'));
   eventIds.push(second.id);
 
+  at('normalization and raw-evidence assertions');
   const stored=await eventRepository(pool).getById(second.id);
   assert.equal(stored.event.metadata.normalization.format,'simulated-flat-v1');
   assert.equal(stored.event.user,user);
   assert.equal(stored.event.sourceIp,sourceIp);
   assert.equal(stored.rawData.task38_marker,suffix);
 
+  at('alert-evidence assertions');
   const generated=(await pool.query(`SELECT id,rule_id,threat_level,category_code,match_evidence
     FROM alerts WHERE rule_id=ANY($1::uuid[]) AND trigger_event_id=$2
     ORDER BY threat_level,id`,[ruleIds,second.id])).rows;
@@ -159,6 +174,7 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
   }
   assert.deepEqual(new Set(generated.map(row=>row.threat_level)),new Set(['HIGH','CRITICAL']));
 
+  at('correlation assertions');
   const customAlertIds=generated.map(row=>row.id);
   const correlation=(await pool.query(`SELECT relationship FROM alert_correlations
     WHERE (alert_id=$1 AND related_alert_id=$2) OR (alert_id=$2 AND related_alert_id=$1)`,
@@ -167,6 +183,7 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
   assert.ok(correlation[0].relationship.matchedFields.includes('category'));
   assert.ok(correlation[0].relationship.matchedFields.includes('user'));
 
+  at('incident creation');
   const incidents=incidentService(incidentRepository(pool),access);
   const incident=await incidents.create(token,{
     title:'Task 38 automated pipeline incident',
@@ -183,10 +200,12 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
   assert.equal(incident.assignedTo.id,userId);
   assert.equal(incident.risk.eventCount,2);
 
+  at('incident evidence inspection');
   const inspected=await incidents.inspect(token,incident.id);
   assert.equal(inspected.alerts.length,2);
   assert.deepEqual(new Set(inspected.alerts.map(alert=>alert.id)),new Set(customAlertIds));
 
+  at('audit and linkage assertions');
   const links=Number((await pool.query('SELECT count(*) FROM incident_alerts WHERE incident_id=$1',[incident.id])).rows[0].count);
   assert.equal(links,2);
   const audits=(await pool.query(`SELECT action FROM audit_logs
@@ -194,4 +213,8 @@ test('automated PostgreSQL pipeline preserves raw evidence through normalization
   [userId,[...eventIds,incident.id]])).rows.map(row=>row.action);
   assert.ok(audits.filter(action=>action==='EVENT_INGESTED').length>=2);
   assert.ok(audits.includes('INCIDENT_CREATED'));
+  }catch(error){
+    error.message=`Task 38 pipeline failed during ${stage}: ${error.message}`;
+    throw error;
+  }
 });
