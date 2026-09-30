@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -30,7 +30,9 @@
     "test:alerts:integration": "node --test tests/integration/alert-management.test.js",
     "test:alerts:ui": "node --test tests/integration/alerts-ui.test.js",
     "verify:alerts": "node scripts/verify-alert-management.js",
-    "test:alert-management:integration": "node --test tests/integration/alert-management.test.js"
+    "test:alert-management:integration": "node --test tests/integration/alert-management.test.js",
+    "test:correlation:integration": "node --test tests/integration/correlation.test.js",
+    "verify:correlation": "node scripts/verify-correlation.js"
   },
   "engines": {
     "node": ">=20"
