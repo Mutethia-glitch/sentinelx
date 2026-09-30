@@ -43,10 +43,15 @@ accuracy, generalization, false-positive rates, or operational ML performance.
 
 ## Reproducibility
 
-The generator is deterministic: the same source produces byte-for-byte identical
-JSONL and manifest content. The verifier compares the pure generator result to
-the checked-in files and validates schema, counts, identifier constraints,
-documentation address ranges, and stated limitations.
+The generator is deterministic: the same source produces identical canonical
+LF-terminated JSONL and manifest content. On Windows, Git may check out text files
+with CRLF; the verifier normalizes CRLF to LF before comparing the JSONL while
+preserving all actual record and manifest checks. This avoids treating a
+platform-specific text checkout as changed research data.
+
+The verifier checks schema, counts, identifier constraints, documentation address
+ranges, and stated limitations. The checked-in fixture comparison is also included
+in the normal quality test suite.
 
 Run:
 
