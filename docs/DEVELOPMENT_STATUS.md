@@ -35,7 +35,8 @@
 - Task 18: Complete — incident creation from linked alerts, assignment, authoritative lifecycle, terminal notes and migration 011 implemented; focused Task 18 tests passed 10/10 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 19: Complete — controlled fifteen-taxonomy incident classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment implemented with assessment attribution; focused Task 19 tests passed 5/5 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 20: Complete — deterministic 0–100 severity/evidence-event risk formula, generated PostgreSQL score and migration 013 implemented; pure formula tests passed 4/4 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 21–43: Not Started
+- Task 21: Verification Pending — incident investigation API/workspace, linked evidence, affected entities, chronological timeline, append-only analyst findings, RBAC/audit rollback and PostgreSQL/browser verifiers implemented; focused logic checks pass 4/4; Windows/PostgreSQL gate pending
+- Tasks 22–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–20 are Complete. Task 20 provides a documented deterministic 0–100 formula using incident severity plus distinct linked evidence-event count; PostgreSQL generates the stored score so it cannot diverge from those factors. Pure Task 20 formula tests passed 4/4 and the Windows/PostgreSQL acceptance verifier passed on 2026-09-30. Tasks 21–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–20 are Complete. Task 21 is implemented with linked alert/event evidence, affected-entity aggregation, chronological investigation history, append-only findings, read/write RBAC, and atomic auditing. Focused Task 21 logic checks passed 4/4. Task 21 remains Verification Pending until `verify:investigations` passes on the user's Windows/PostgreSQL database. Tasks 22–43 remain Not Started. See SESSION_HANDOFF.md.
