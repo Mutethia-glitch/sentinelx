@@ -1,57 +1,84 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–19 are Complete. Task 19 (Incident Classification and Severity) passed
-its Windows/PostgreSQL acceptance gate on 2026-09-30. Task 20 (Risk Scoring)
-remains Not Started and must not begin until the user requests it.
+Tasks 01–19 are Complete. Task 20 (Risk Scoring) is implemented and is
+Verification Pending. Do not begin Task 21 until Task 20's Windows/PostgreSQL gate
+passes and Task 20 is explicitly marked Complete.
 
-Task 19 adds controlled incident assessment without changing the Task 18 lifecycle.
+Task 20 implements deterministic incident risk formula version 1 on a 0–100 scale:
 
-Approved classification:
-- any of the fifteen Task 11 taxonomy codes; or
-- null / unclassified when evidence does not justify one category.
+`risk = min(100, severityPoints + frequencyPoints)`
 
-Approved severity:
-- LOW
-- MEDIUM
-- HIGH
-- CRITICAL
+Severity points:
+- LOW = 20
+- MEDIUM = 40
+- HIGH = 60
+- CRITICAL = 80
 
-Task 19 uses severity as the visible triage-priority dimension because the approved
-requirements define no separate priority vocabulary or field. No P1/P2/P3/P4
-labels or numeric priority score were introduced. Task 20 remains the separate
-deterministic Risk Scoring task.
+Frequency/volume input is the count of distinct security events linked as evidence
+through the incident's alerts.
 
-Task 18's automatic creation behavior remains the initial default: highest linked
-alert severity and a common selectable linked-alert category when unambiguous.
-Task 19 lets an Administrator/Security Analyst correct that assessment through:
+`frequencyPoints = min(20, max(0, distinctEvidenceEvents - 1) * 2)`
 
-`PATCH /api/incidents/{uuid}/assessment`
+Examples:
+- LOW + 1 evidence event = 20
+- MEDIUM + 2 = 42
+- HIGH + 4 = 66
+- CRITICAL + 2 = 82
+- CRITICAL + 11 or more = 100
 
-Exact body: `{categoryCode, severity, reason}`.
+Task 20 does not use confidence because Task 15 intentionally leaves deterministic
+alert confidence null until a calibrated method exists. It does not use asset
+impact because SentinelX has no approved asset inventory/criticality model. No
+placeholder factor, AI prediction, taxonomy multiplier, or lifecycle multiplier is
+invented.
 
-New non-null category selections must currently be enabled/selectable. Existing
-historical classification may remain even if that category later becomes disabled.
-Assessment changes are permitted on active or terminal incidents because
-classification/severity and lifecycle status are independent; reassessment does not
-reopen an incident or erase its terminal note.
+Migration `013_incident_risk_scoring.sql` adds:
+- risk_event_count
+- generated risk_score
+- risk_formula_version
+- risk_calculated_at
 
-Material changes are audited as `INCIDENT_ASSESSMENT_CHANGED` with old/new
-category and severity plus the required reason. Actor permission is rechecked inside
-the database transaction, and audit failure rolls back the assessment update.
+The PostgreSQL `risk_score` column is generated from threat_level and
+risk_event_count, so it cannot be independently overwritten. Existing incidents are
+backfilled from incident_alerts → alert_events. New incident creation refreshes the
+distinct evidence-event count after alert links are created.
 
-Migration `012_incident_classification_severity.sql` adds assessment attribution
-and is now part of the applied append-only/checksum-tracked migration chain.
-Do not edit migrations 001–012 or bypass migration checksum verification.
+Task 19 severity reassessment automatically recomputes risk through PostgreSQL.
+Incident status changes do not alter risk. The incident API/UI exposes a read-only
+risk object with score, evidence-event count, formula version and calculation time;
+there is no manual risk override endpoint/control.
 
-Focused Task 19 tests passed 5/5. Windows/PostgreSQL acceptance verification passed
-on 2026-09-30 with:
+Pure Task 20 formula tests passed 4/4 before repository update. The Task 18 incident
+creation regression was updated for the evidence-count refresh. PostgreSQL and
+browser verification entry points are implemented.
 
-`Incident taxonomy classification, severity adjustment, lifecycle independence, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
+Run the Windows/PostgreSQL acceptance gate:
 
-PostgreSQL remains hosted on the user's Windows computer. Task 19 requires no
+```powershell
+git pull origin main
+npm.cmd run quality
+node scripts/migrate.js
+npm.cmd run verify:risk
+```
+
+Expected final output:
+
+`Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
+
+Optional explicit disposable-database checks:
+
+```powershell
+$env:SENTINELX_TEST_DATABASE='1'
+npm.cmd run test:risk:integration
+npm.cmd run test:risk:ui
+```
+
+PostgreSQL remains hosted on the user's Windows computer. Task 20 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-When work resumes, read repository instructions, this handoff,
-`docs/DEVELOPMENT_STATUS.md`, and `tasks/20-risk-scoring.md` before beginning.
-Proceed numerically from Task 20 only when requested.
+Migrations remain append-only/checksum tracked. Migration 013 has not yet been
+confirmed applied in the Windows database; after it applies successfully, do not
+edit migrations 001–013.
+
+Task 21 (Investigation Workspace) remains Not Started.
