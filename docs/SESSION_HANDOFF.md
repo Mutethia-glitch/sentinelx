@@ -1,65 +1,79 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–20 are Complete. Task 20 (Risk Scoring) passed its Windows/PostgreSQL
-acceptance gate on 2026-09-30. Task 21 (Investigation Workspace) remains Not
-Started and must not begin until the user requests it.
+Tasks 01–20 are Complete. Task 21 (Investigation Workspace) is implemented and is
+Verification Pending. Do not begin Task 22 until Task 21's Windows/PostgreSQL gate
+passes and Task 21 is explicitly marked Complete.
 
-Task 20 implements deterministic incident risk formula version 1 on a 0–100 scale:
+Task 21 implements the Investigation stage using the existing core
+`investigation_notes` table from migration 001. No new migration was required, so
+the applied append-only migration chain remains 001–013.
 
-`risk = min(100, severityPoints + frequencyPoints)`
+Investigation workspace endpoint:
+- `GET /api/investigations/{incidentId}`
 
-Severity points:
-- LOW = 20
-- MEDIUM = 40
-- HIGH = 60
-- CRITICAL = 80
+It returns:
+- incident context;
+- linked alert summaries;
+- distinct linked security-event summaries;
+- affected user/host/source-IP/destination-IP values;
+- append-only analyst findings;
+- one chronological timeline combining events, alerts, incident creation,
+  incident-targeted audit history, and findings.
 
-Frequency/volume input is the count of distinct security events linked as evidence
-through the incident's alerts.
+Finding endpoint:
+- `POST /api/investigations/{incidentId}/notes`
 
-`frequencyPoints = min(20, max(0, distinctEvidenceEvents - 1) * 2)`
+Exact body:
+`{content, alertIds, eventIds}`
 
-Examples:
-- LOW + 1 evidence event = 20
-- MEDIUM + 2 = 42
-- HIGH + 4 = 66
-- CRITICAL + 2 = 82
-- CRITICAL + 11 or more = 100
+Content is bounded to 4000 characters. Up to 50 unique alert IDs and 50 unique
+event IDs may be cited. Every cited alert/event must already belong to the incident;
+unrelated evidence is rejected.
 
-Task 20 does not use confidence because Task 15 intentionally leaves deterministic
-alert confidence null until a calibrated method exists. It does not use asset
-impact because SentinelX has no approved asset inventory/criticality model. No
-placeholder factor, AI prediction, taxonomy multiplier, or lifecycle multiplier is
-invented.
+Viewer/Management has `investigations.read` only. Administrator and Security
+Analyst roles have `investigations.write`. The repository rechecks the writer's
+live role inside PostgreSQL.
 
-Migration `013_incident_risk_scoring.sql` adds:
-- risk_event_count
-- generated risk_score
-- risk_formula_version
-- risk_calculated_at
+Findings are append-only in Task 21. Every successful finding writes
+`INVESTIGATION_NOTE_ADDED` to the incident audit trail in the same transaction;
+audit failure rolls back the note.
 
-The PostgreSQL `risk_score` column is generated from threat_level and
-risk_event_count, so it cannot be independently overwritten. Existing incidents are
-backfilled from incident_alerts → alert_events. New incident creation refreshes the
-distinct evidence-event count after alert links are created.
+The existing `/incidents` inspection UI now contains the investigation workspace.
+It displays affected entities, linked events, timeline, and findings. Only
+investigation writers see the Record finding form. User-derived content is rendered
+with textContent.
 
-Task 19 severity reassessment automatically recomputes risk through PostgreSQL.
-Incident status changes do not alter risk. The incident API/UI exposes a read-only
-risk object with score, evidence-event count, formula version and calculation time;
-there is no manual risk override endpoint/control.
+Task 21 does not perform containment, escalation, notification, tasks, or other
+response actions. Task 22 owns controlled response workflows.
 
-Pure Task 20 formula tests passed 4/4. Windows/PostgreSQL acceptance verification
-passed on 2026-09-30 with:
+Focused Task 21 isolated logic checks passed 4/4. PostgreSQL and browser
+verification entry points are implemented.
 
-`Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
+Run the Windows/PostgreSQL acceptance gate:
 
-Migration 013 is now part of the applied append-only/checksum-tracked migration
-chain. Do not edit migrations 001–013 or bypass migration checksum verification.
+```powershell
+git pull origin main
+npm.cmd run quality
+npm.cmd run verify:investigations
+```
 
-PostgreSQL remains hosted on the user's Windows computer. Task 20 requires no
+Expected output:
+
+`Investigation evidence, affected entities, chronological timeline, analyst findings, RBAC, evidence validation, auditing and rollback verified. Synthetic changes cleaned up.`
+
+Optional explicit disposable-database checks:
+
+```powershell
+$env:SENTINELX_TEST_DATABASE='1'
+npm.cmd run test:investigations:integration
+npm.cmd run test:investigations:ui
+```
+
+No Task 21 migration is required because `investigation_notes` already existed in
+migration 001. Migrations 001–013 remain immutable and checksum tracked.
+
+PostgreSQL remains hosted on the user's Windows computer. Task 21 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-When work resumes, read repository instructions, this handoff,
-`docs/DEVELOPMENT_STATUS.md`, and `tasks/21-investigation-workspace.md` before
-beginning. Proceed numerically from Task 21 only when requested.
+Task 22 (Response Workflow) remains Not Started.
