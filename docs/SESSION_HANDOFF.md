@@ -1,3 +1,28 @@
+# Task 37 final polish accepted — 2026-10-01
+
+Task 37 is **Complete**. Tasks 01–37 are Complete; Task 38 has not started.
+
+The final accepted SentinelX frontend retains the user-approved Lovable dark SOC design and now also includes the requested polish:
+- one authoritative shared runtime stylesheet with page-scoped exceptions to prevent CSS overlap;
+- normalized content, panel and form spacing;
+- Refresh and Sign out grouped in the sticky top-right header;
+- standard logout/exit-door icon for Sign out;
+- structured Access sign-in screen with administrator-provisioned account messaging;
+- semantic dashboard metric icon colors;
+- severity/status pills rendered inside normal table cells so HIGH/NEW and related values remain correctly aligned.
+
+No backend source, PostgreSQL migration, API contract, authentication/RBAC behavior, session model, database behavior, or Task 38 work changed during this polish pass.
+
+Final acceptance on Windows on 2026-10-01:
+- full quality suite: **189/189**
+- `npm.cmd run verify:frontend-design`: passed
+- `npm.cmd run test:frontend-design:ui`: **1/1 passed**
+- manual visual review: passed
+
+Task 38 — Automated Testing — is next. Do not start it without explicit instruction.
+
+---
+
 # Task 37 polish revision — 2026-10-01
 
 Task 37 is **Implemented — awaiting polish re-acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.

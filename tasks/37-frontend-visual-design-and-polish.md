@@ -1,7 +1,7 @@
 # Task 37: Frontend Visual Design and Polish
 
 ## Status
-Implemented — awaiting polish re-acceptance
+Complete
 
 ## Objective
 Transform the existing secure SentinelX web interface from a functional/raw presentation into a cohesive, professional SOC-style interface with clear visual hierarchy, consistent components, responsive layouts, and accessible analyst workflows.
@@ -102,7 +102,7 @@ The Lovable React/Tailwind runtime is not introduced into production. The design
 
 No backend file, migration, runtime dependency, Supabase integration, database change, API behavior change, authentication replacement, unsafe HTML sink, browser security-record storage, or Task 38 implementation is part of this final design port.
 
-Final Windows acceptance previously passed on 2026-10-01 (quality 186/186, design verifier, browser 1/1). After that acceptance, the user requested an additional Task 37 polish pass to remove CSS cascade overlap, normalize spacing, pin Refresh/Sign out to the top-right, use the standard logout icon, and restructure Access authentication. Those frontend-only changes are implemented and require fresh local acceptance before Task 37 is closed again. See `docs/FRONTEND_VISUAL_DESIGN.md`.
+Final polish acceptance passed on 2026-10-01. The full quality suite passed 189/189, `verify:frontend-design` passed, `test:frontend-design:ui` passed 1/1, and the user manually approved the final presentation. The accepted frontend includes centralized/scoped CSS, normalized spacing, top-right Refresh/Sign out actions, the standard logout icon, the structured Access sign-in screen, semantic dashboard icon colors, and correctly contained severity/status badges. Task 37 is Complete. See `docs/FRONTEND_VISUAL_DESIGN.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into Task 38 or later work. Do not redesign SentinelX's security architecture. Do not trade security correctness or analyst usability for decorative effects.**

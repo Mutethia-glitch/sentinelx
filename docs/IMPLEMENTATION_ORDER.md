@@ -14,4 +14,4 @@
 | Validation | 38–40 | Automated testing, security testing, controlled end-to-end scenarios |
 | Delivery | 41–44 | Deployment, observability/recovery, final validation, handoff |
 
-The core event-to-incident pipeline and approved frontend visual-design pass are complete through Task 37. Task 38 Automated Testing is next; do not start it without explicit instruction.
+The core event-to-incident pipeline and final accepted frontend visual-design/polish pass are complete through Task 37. Task 38 Automated Testing is next; do not start it without explicit instruction.
