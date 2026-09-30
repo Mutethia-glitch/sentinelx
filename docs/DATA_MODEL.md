@@ -166,3 +166,16 @@ Migration 012 adds `assessment_updated_at` and `assessment_updated_by` to incide
 No separate priority column or risk score is added by Task 19. Task 20 owns risk scoring. Assessment attribution references users with ON DELETE RESTRICT, and material assessment changes are also preserved in the audit trail.
 
 See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
+
+
+## Task 20 incident risk scoring
+
+Migration 013 adds `risk_event_count`, generated `risk_score`,
+`risk_formula_version`, and `risk_calculated_at` to incidents.
+
+The score is generated from the existing incident `threat_level` and stored
+distinct linked evidence-event count. It is not independently writable. Existing
+incidents are backfilled from `incident_alerts → alert_events`.
+
+Formula version 1 does not add asset-impact, confidence, lifecycle, or taxonomy
+multipliers. See [RISK_SCORING.md](RISK_SCORING.md).
