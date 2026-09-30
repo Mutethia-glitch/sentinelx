@@ -58,7 +58,7 @@ labels cannot establish real-world accuracy, prevalence, maliciousness, uncertai
 or operational readiness. No deployment recommendation follows from these metrics.
 
 Tasks 31 and 32 were authorized as a batch and implemented in order. Both passed Windows local
-acceptance on 2026-09-30. Task 33 has not started. No external API,
+acceptance on 2026-09-30. Task 33 is Implemented — awaiting local acceptance; the fixed evaluation remains synthetic and is reused only by the explicit synthetic-demo integration mode. No external API,
 database, credentials, migration or new dependency is required.
 
 ```powershell
@@ -79,4 +79,4 @@ output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
 records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
 Together with the recorded automated quality suite of 161/161, these results
 satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
-output was supplied in this acceptance message. Task 33 remains Not Started.
+output was supplied in this acceptance message. Task 33 is Implemented — awaiting local acceptance; see ML_INTEGRATION.md.

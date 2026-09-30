@@ -1,6 +1,7 @@
 const { transaction } = require('./auth-repository');
 const { requirePermission } = require('../access/policy');
 const { AuthError } = require('../auth/errors');
+const { matchEvidenceView } = require('../ml/integration');
 
 class AlertPersistenceError extends Error {
   constructor() { super('Alert persistence unavailable.'); this.name = 'AlertPersistenceError'; }
@@ -105,7 +106,7 @@ function alertRepository(pool) {
             status: event.status ?? null,
             trigger: event.id === row.trigger_event_id,
           }));
-        return { ...summary(row), matchEvidence: row.match_evidence, events };
+        return { ...summary(row), matchEvidence: matchEvidenceView(row.match_evidence), events };
       } catch (error) { failure(error); }
     },
     async updateStatus(actorId, id, input) {

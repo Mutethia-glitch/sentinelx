@@ -1,5 +1,6 @@
 const { createHash } = require('node:crypto');
 const { ALERT_STATUS } = require('../alerts/model');
+const { DEFAULT_WINDOW_SECONDS } = require('../ml/features');
 
 class DetectionPersistenceError extends Error {
   constructor() { super('Detection persistence unavailable.'); this.name = 'DetectionPersistenceError'; }
@@ -54,6 +55,24 @@ function detectionRepository(pool) {
       return result.rows.map(row => ({ id: row.id, timestamp: row.occurred_at.toISOString() }));
     } catch (error) { if (error instanceof DetectionPersistenceError) throw error; throw new DetectionPersistenceError(); }
   }
+  async function mlHistory(event, db = pool) {
+    try {
+      const result = await db.query(`SELECT id,event_type,occurred_at,
+        normalized_data->>'sourceIp' AS "sourceIp",normalized_data->>'user' AS "user",
+        normalized_data->>'host' AS host,normalized_data->>'action' AS action,
+        normalized_data->>'status' AS status
+        FROM security_events
+        WHERE normalized_at IS NOT NULL
+          AND occurred_at >= $1::timestamptz - ($2::text || ' seconds')::interval
+          AND occurred_at <= $1::timestamptz
+        ORDER BY occurred_at ASC,id ASC`, [event.timestamp, DEFAULT_WINDOW_SECONDS]);
+      return result.rows.map(row => ({
+        recordId: row.id, timestamp: row.occurred_at.toISOString(), type: row.event_type,
+        sourceIp: row.sourceIp ?? null, user: row.user ?? null, host: row.host ?? null,
+        action: row.action ?? null, status: row.status ?? null,
+      }));
+    } catch { throw new DetectionPersistenceError(); }
+  }
   async function insertAlert(client, rule, events, evidence) {
     const id = deterministicAlertId(rule.id, evidence.triggerEventId);
     const reason = `${rule.name} matched ${events.length} event(s) within ${evidence.windowSeconds} seconds.`;
@@ -66,6 +85,7 @@ function detectionRepository(pool) {
       groupValues: evidence.groupValues,
       eventIds: events.map(item => item.id),
     };
+    if (evidence.ml) matchEvidence.ml = evidence.ml;
     const created = await client.query(`INSERT INTO alerts
       (id, rule_id, trigger_event_id, category_code, threat_level, source, affected_entities, status, confidence, match_reason, match_evidence)
       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10,$11::jsonb)
@@ -98,6 +118,6 @@ function detectionRepository(pool) {
       throw new DetectionPersistenceError();
     } finally { client.release(); }
   }
-  return { enabledRules, matchingEvents, createAlert };
+  return { enabledRules, matchingEvents, mlHistory, createAlert };
 }
 module.exports = { detectionRepository, deterministicAlertId, DetectionPersistenceError };

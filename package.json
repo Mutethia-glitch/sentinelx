@@ -66,7 +66,8 @@
     "verify:features": "node scripts/verify-features.js",
     "verify:correlation:concurrency": "node scripts/verify-correlation-concurrency.js",
     "verify:ml:model": "node scripts/verify-ml-model.js",
-    "verify:ml:evaluation": "node scripts/verify-ml-evaluation.js"
+    "verify:ml:evaluation": "node scripts/verify-ml-evaluation.js",
+    "verify:ml:integration": "node scripts/verify-ml-integration.js"
   },
   "engines": {
     "node": ">=20"

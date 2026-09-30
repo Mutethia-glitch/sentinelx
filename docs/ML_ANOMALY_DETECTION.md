@@ -27,11 +27,13 @@ Failed fits clear the old model; failed scoring returns an empty scores array,
 never a misleading zero/benign score. Errors and input contents are not exposed.
 The service retains its own model copy. Disabled calls do not train or score.
 
-This is a research service module with no HTTP endpoint, database, credentials,
-external API, package dependency or migration. Production detection imports none
-of these modules. Consequently ML failures cannot stop rule evaluation. Task 33
-owns production integration and any integration-specific failure safeguards.
-No alerts, incidents, risk scores or automatic responses are changed here.
+Task 31 itself remains a research service module with no HTTP endpoint, external API,
+package dependency or migration. Task 33 now imports it through the guarded
+evidence-only adapter documented in ML_INTEGRATION.md. The adapter runs only after
+a deterministic rule qualifies, stores a snapshot in existing alert JSON, and
+uses savepoint recovery so recoverable optional-ML SQL failures do not replace
+normal rule evaluation. Alert severity/confidence, incident risk and automatic
+response behavior are not changed by ML.
 
 Run `npm.cmd run verify:ml:model` and `npm.cmd run quality` on Windows.
 The verifier covers bounded scores, deterministic training, schema validation,
@@ -45,4 +47,4 @@ output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
 records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
 Together with the recorded automated quality suite of 161/161, these results
 satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
-output was supplied in this acceptance message. Task 33 remains Not Started.
+output was supplied in this acceptance message. Task 33 is Implemented — awaiting local acceptance; see ML_INTEGRATION.md.

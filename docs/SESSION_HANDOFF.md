@@ -1,3 +1,19 @@
+# Task 33 checkpoint — 2026-09-30
+
+Task 33 is **Implemented — awaiting local acceptance**. Tasks 01–32 remain Complete; Task 34 has not started.
+
+The production detection engine now attaches optional anomaly evidence only after a deterministic rule qualifies. ML remains disabled by default; explicit `SENTINELX_ML_MODE=synthetic-demo` fits the accepted synthetic Task 31/32 baseline. A trigger-event snapshot is stored in existing alert `match_evidence`, using prior-only 15-minute history with equal-timestamp exclusion. Alerts created before Task 33 render as historical and are never rescored. Linked incident alerts display the stored state/score.
+
+Optional ML SQL is isolated inside a PostgreSQL savepoint with a 2-second local statement timeout. Recoverable ML failure records unavailable evidence and deterministic alert creation continues. RBAC, auditing, duplicate suppression, severity, confidence, incident risk and response controls are unchanged. No migration, external API, new dependency or credential access was added. Migrations 001–015 remain unchanged. The visible green incident-creation success banner remains intact.
+
+Validation in the available tool runtime before publication: 10/10 focused Task 33 tests passed; then 20/20 combined focused Task 33 plus existing deterministic detection/duplicate-suppression/Task 15 alert-persistence regressions passed. JavaScript syntax checks for the reconstructed integration/detection/persistence/verifier files passed. These are not Windows/PostgreSQL/browser acceptance and the earlier lost-workspace results are not counted.
+
+Windows acceptance: run `npm.cmd run quality`, `npm.cmd run verify:ml:model`, `npm.cmd run verify:ml:evaluation`, `npm.cmd run verify:ml:integration`, `npm.cmd run test:alerts:ui`, and `npm.cmd run test:investigations:ui`. Keep Task 33 awaiting acceptance until successful local results are supplied. Do not start Task 34.
+
+See `docs/ML_INTEGRATION.md` and `tasks/33-ml-integration.md`.
+
+---
+
 # Tasks 31–32 checkpoint — 2026-09-30
 
 Tasks 31–32 are **Complete**, accepted on Windows on 2026-09-30. The user authorized

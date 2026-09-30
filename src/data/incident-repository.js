@@ -1,6 +1,7 @@
 const { transaction } = require('./auth-repository');
 const { accessForRoles, requirePermission } = require('../access/policy');
 const { AuthError } = require('../auth/errors');
+const { mlEvidenceView } = require('../ml/integration');
 
 class IncidentPersistenceError extends Error {
   constructor() { super('Incident persistence unavailable.'); this.name = 'IncidentPersistenceError'; }
@@ -123,11 +124,12 @@ function incidentRepository(pool) {
       try {
         const incident = await read(pool, id);
         if (!incident) return null;
-        const alerts = (await pool.query(`SELECT a.id,a.category_code,a.threat_level,a.source,a.created_at,a.status,r.name AS rule_name
+        const alerts = (await pool.query(`SELECT a.id,a.category_code,a.threat_level,a.source,a.created_at,a.status,a.match_evidence,r.name AS rule_name
           FROM incident_alerts ia JOIN alerts a ON a.id=ia.alert_id JOIN detection_rules r ON r.id=a.rule_id
           WHERE ia.incident_id=$1 ORDER BY a.created_at ASC,a.id ASC`, [id])).rows.map(row => ({
             id: row.id, threat: row.category_code, severity: row.threat_level, source: row.source,
             timestamp: row.created_at.toISOString(), status: row.status, ruleName: row.rule_name,
+            mlEvidence: mlEvidenceView(row.match_evidence),
           }));
         return { ...incident, alerts };
       } catch (error) { failure(error); }

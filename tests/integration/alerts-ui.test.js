@@ -21,7 +21,7 @@ test('alert browser workflow traces raw evidence, audits acknowledgement and kee
   const analyst=pages[1],viewer=pages[2];
   await analyst.getByRole('button',{name:'Next',exact:true}).click();await analyst.waitForFunction(()=>document.getElementById('page').textContent==='Page 2');assert.equal(await analyst.locator('#rows tr').count(),1);
   await analyst.locator('#rows button').first().click();await analyst.locator('#detail-panel').waitFor({state:'visible'});
-  assert.ok((await analyst.locator('#detail-fields').textContent()).includes('Not calibrated'));assert.equal(await analyst.locator('#detail-panel img').count(),0);
+  assert.ok((await analyst.locator('#detail-fields').textContent()).includes('Not calibrated'));assert.ok((await analyst.locator('#match-evidence').textContent()).includes('historical'));assert.equal(await analyst.locator('#detail-panel img').count(),0);
   await analyst.getByRole('button',{name:`Inspect source event ${f.event.id}`}).click();await analyst.locator('#event-detail').waitFor({state:'visible'});
   assert.equal(JSON.parse(await analyst.locator('#raw-event').textContent()).html,f.malicious);assert.equal(await analyst.locator('#raw-event img').count(),0);
   await analyst.locator('#alert-status').selectOption('ACKNOWLEDGED');await analyst.locator('#status-reason').fill('Browser source evidence reviewed');await analyst.getByRole('button',{name:'Update alert status'}).click();

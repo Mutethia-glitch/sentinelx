@@ -42,6 +42,7 @@ test('incident console reconstructs investigation and keeps Viewer findings read
   assert.equal(await analyst.locator('#investigation-event-rows tr').count(),2);
   assert.ok((await analyst.locator('#affected-entities').textContent()).includes('task18-user'));
   assert.ok((await analyst.locator('#affected-entities').textContent()).includes('task18-host'));
+  assert.ok((await analyst.locator('#alert-rows').textContent()).includes('historical'));
   assert.ok(await analyst.locator('#investigation-timeline li').count()>=5);
   assert.equal(await analyst.locator('#investigation-note-form').isVisible(),true);
   assert.equal(await viewer.locator('#investigation-note-form').isVisible(),false);

@@ -1,10 +1,13 @@
 const { isIP } = require('node:net');
 const { securityEvent } = require('../events/model');
 const { generatedAlert } = require('../alerts/model');
+const { mlIntegration } = require('../ml/integration');
 
 const SUPPORTED_FIELDS = new Set(['source','type','sourceIp','destinationIp','user','host','action','status','severity']);
 const OPERATORS = new Set(['equals','notEquals','in','exists']);
 const SEVERITIES = new Set(['LOW','MEDIUM','HIGH','CRITICAL']);
+const ML_SAVEPOINT = 'sentinelx_ml_supporting_evidence';
+const ML_STATEMENT_TIMEOUT_MS = 2000;
 
 function exactKeys(value, keys) {
   return value && typeof value === 'object' && !Array.isArray(value) &&
@@ -49,18 +52,42 @@ function eventMatches(event, definition) {
   return validDefinition(definition) && definition.conditions.every(condition => conditionMatches(event, condition));
 }
 function groupValues(event, fields) { return fields.map(field => event[field] ?? null); }
-function detectionEngine(repository, correlator = null) {
+async function recoverMlSavepoint(db) {
+  await db.query(`ROLLBACK TO SAVEPOINT ${ML_SAVEPOINT}`);
+  await db.query(`RELEASE SAVEPOINT ${ML_SAVEPOINT}`);
+}
+async function supportingMlEvidence(integration, repository, saved, db) {
+  if (!integration.requiresHistory()) return integration.snapshot(saved);
+  if (!db || typeof repository.mlHistory !== 'function') return integration.unavailable(saved);
+  await db.query(`SAVEPOINT ${ML_SAVEPOINT}`);
+  let records;
+  try {
+    await db.query(`SET LOCAL statement_timeout = '${ML_STATEMENT_TIMEOUT_MS}ms'`);
+    records = await repository.mlHistory(saved.event, db);
+  } catch {
+    await recoverMlSavepoint(db);
+    return integration.unavailable(saved);
+  }
+  let evidence;
+  try { evidence = integration.score(saved, records); }
+  catch { evidence = integration.unavailable(saved); }
+  await recoverMlSavepoint(db);
+  return evidence;
+}
+function detectionEngine(repository, correlator = null, integration = mlIntegration()) {
   return {
     async evaluate(saved, db = undefined) {
       if (!saved?.id || !saved.event) return [];
       const event = securityEvent(saved.event);
       const rules = await repository.enabledRules(db);
       const alerts = [];
+      let mlEvidence = null;
       for (const rule of rules) {
         if (!validDefinition(rule.definition) || !eventMatches(event, rule.definition)) continue;
         const group = groupValues(event, rule.definition.groupBy);
         const matches = await repository.matchingEvents(rule.definition, event, group, db);
         if (matches.length < rule.definition.threshold) continue;
+        if (mlEvidence === null) mlEvidence = await supportingMlEvidence(integration, repository, saved, db);
         const selected = matches.slice(-rule.definition.threshold);
         const model = generatedAlert(rule, event, saved.id);
         const alert = await repository.createAlert(rule, selected, {
@@ -72,6 +99,7 @@ function detectionEngine(repository, correlator = null) {
           source: model.source,
           affectedEntities: model.affectedEntities,
           confidence: model.confidence,
+          ml: mlEvidence,
         }, db);
         if (alert) {
           if (correlator) alert.correlation = await correlator.evaluate(alert, db);
@@ -82,4 +110,4 @@ function detectionEngine(repository, correlator = null) {
     },
   };
 }
-module.exports = { detectionEngine, validDefinition, conditionMatches, eventMatches, groupValues };
+module.exports = { detectionEngine, validDefinition, conditionMatches, eventMatches, groupValues, supportingMlEvidence, ML_STATEMENT_TIMEOUT_MS };
