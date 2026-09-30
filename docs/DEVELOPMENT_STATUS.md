@@ -32,7 +32,8 @@
 - Task 15: Complete — persisted alert snapshot model and migration 008 implemented; focused Task 13–15 regressions passed 11/11 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 16: Complete — alert UI/API implemented; 62 unit/API, 13 PostgreSQL and 3 browser checks passed; migration integrity passed; Windows/PostgreSQL acceptance passed on 2026-09-30
 - Task 17: Complete — explainable 15-minute alert correlation, canonical pair deduplication, connected grouping and migration 010 implemented; focused Task 13/17 tests passed 14/14 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 18–43: Not Started
+- Task 18: Verification Pending — incident creation from linked alerts, assignment, authoritative lifecycle, terminal notes, migration 011, UI/API and PostgreSQL/browser verifiers implemented; focused local tests pass 10/10; Windows/PostgreSQL gate pending
+- Tasks 19–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–17 are Complete. Task 17 provides explainable user/source-IP/host/category/time correlation, canonical pair deduplication and connected alert groups; focused Task 13/17 tests passed 14/14 and the Windows/PostgreSQL acceptance verifier passed on 2026-09-30. Tasks 18–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–17 are Complete. Task 18 is implemented with alert-linked incident creation, assignment, authoritative NEW/INVESTIGATING/CONTAINED/RESOLVED/DISMISSED lifecycle handling, terminal notes and transactional auditing. Focused Task 18 tests passed 10/10. Task 18 remains Verification Pending until migration 011 and `verify:incidents` pass on the user's Windows/PostgreSQL database. Tasks 19–43 remain Not Started. See SESSION_HANDOFF.md.
