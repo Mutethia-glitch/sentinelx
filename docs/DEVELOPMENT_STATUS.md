@@ -29,7 +29,8 @@
 - Task 12: Complete — rule configuration, lifecycle/version protection and Viewer denial verified automatically and on Windows
 - Task 13: Complete — deterministic rule evaluation, thresholds/windows/grouping, alert evidence, duplicate-trigger suppression and atomic rollback verified; Windows/PostgreSQL acceptance gate passed on 2026-09-30
 - Task 14: Complete — fifteen-category core rule set, test scenarios and migration 007 implemented; local checks passed 16/16 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 15–43: Not Started
+- Task 15: Verification Pending — persisted alert snapshot model, migration 008, focused tests and transactional PostgreSQL verifier implemented; local Task 13–15 regressions pass 11/11; Windows/PostgreSQL gate pending
+- Tasks 16–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–14 are Complete. Task 14 covers all fifteen approved taxonomy categories; local automated checks passed 16/16 and the Windows/PostgreSQL acceptance verifier passed on 2026-09-30. Tasks 15–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–14 are Complete. Task 15 implementation now persists the required alert signal fields while preserving event/rule separation and prior detection behavior. Focused Task 13–15 regressions passed 11/11; Task 15 remains Verification Pending until migration 008 and `verify:alert-model` pass on the user's Windows/PostgreSQL database. Tasks 16–43 remain Not Started. See SESSION_HANDOFF.md.
