@@ -49,7 +49,7 @@ function eventMatches(event, definition) {
   return validDefinition(definition) && definition.conditions.every(condition => conditionMatches(event, condition));
 }
 function groupValues(event, fields) { return fields.map(field => event[field] ?? null); }
-function detectionEngine(repository) {
+function detectionEngine(repository, correlator = null) {
   return {
     async evaluate(saved, db = undefined) {
       if (!saved?.id || !saved.event) return [];
@@ -73,7 +73,10 @@ function detectionEngine(repository) {
           affectedEntities: model.affectedEntities,
           confidence: model.confidence,
         }, db);
-        if (alert) alerts.push(alert);
+        if (alert) {
+          if (correlator) alert.correlation = await correlator.evaluate(alert, db);
+          alerts.push(alert);
+        }
       }
       return alerts;
     },
