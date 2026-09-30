@@ -1,7 +1,7 @@
 # Task 20: Risk Scoring
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement the documented risk-score calculation using approved factors such as severity, confidence, asset impact, and event frequency.
@@ -63,7 +63,8 @@ Do not mark this task complete until:
 - Incident creation refreshes evidence-event count; Task 19 severity changes automatically recompute risk.
 - Incident API/UI display the read-only score and formula metadata; no manual risk override was introduced.
 - Focused pure Task 20 formula tests passed 4/4 before repository update.
-- Windows/PostgreSQL migration plus `verify:risk` remains required before completion.
+- Windows/PostgreSQL migration plus `verify:risk` passed on 2026-09-30.
+- Windows/PostgreSQL result: `Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
 - Task 21 Investigation Workspace remains Not Started.
 - No external API or API key is required.
 
