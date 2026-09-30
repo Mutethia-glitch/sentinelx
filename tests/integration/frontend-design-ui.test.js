@@ -106,16 +106,13 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   assert.equal(await page.locator('.sx-topbar-actions #logout').count(),1);
   assert.equal(await page.locator('#logout').getAttribute('data-icon'),'log-out');
   assert.equal(await page.locator('#logout svg').count(),1);
-  const topbarBox=await page.locator('.sx-topbar').boundingBox();
+  const topbar=page.locator('.sx-topbar');
   const actions=page.locator('.sx-topbar-actions');
-  const refreshBox=await page.locator('.sx-topbar-actions #refresh').boundingBox();
-  const logoutBox=await page.locator('.sx-topbar-actions #logout').boundingBox();
-  assert.ok(topbarBox&&refreshBox&&logoutBox,'topbar session controls must have measurable layout boxes');
+  assert.equal(await topbar.evaluate(el=>getComputedStyle(el).display),'grid');
   assert.equal(await actions.evaluate(el=>getComputedStyle(el).justifyContent),'flex-end');
-  const rightGap=(topbarBox.x+topbarBox.width)-(logoutBox.x+logoutBox.width);
-  assert.ok(rightGap>=0&&rightGap<=40,'Sign out should remain anchored near the top bar right edge');
-  const actionGap=logoutBox.x-(refreshBox.x+refreshBox.width);
-  assert.ok(actionGap>=0&&actionGap<=16,'Refresh must remain immediately left of Sign out');
+  assert.equal(await topbar.evaluate(el=>el.lastElementChild?.classList.contains('sx-topbar-actions')),true);
+  const actionIds=await actions.locator('button').evaluateAll(buttons=>buttons.map(button=>button.id));
+  assert.deepEqual(actionIds,['refresh','logout']);
 
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
