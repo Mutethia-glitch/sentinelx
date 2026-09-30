@@ -1,0 +1,33 @@
+{
+  "baseEvent": {
+    "timestamp": "2026-09-30T00:00:00.000Z",
+    "source": "sentinelx-simulated",
+    "type": "generic",
+    "sourceIp": "192.0.2.44",
+    "destinationIp": "198.51.100.25",
+    "user": "task14-user",
+    "host": "task14-host",
+    "action": "none",
+    "status": "normal",
+    "severity": "MEDIUM",
+    "rawData": {"synthetic": true, "task": 14},
+    "metadata": {"dataset": "task14-core-rules"}
+  },
+  "scenarios": [
+    {"categoryCode":"BRUTE_FORCE","match":{"type":"authentication","action":"login","status":"failed"},"nonMatch":{"status":"success"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"CREDENTIAL_ATTACK","match":{"type":"authentication","action":"password_spray","status":"failed"},"nonMatch":{"action":"login"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"PRIVILEGE_ESCALATION","match":{"type":"authorization","action":"privilege_escalation","status":"success"},"nonMatch":{"status":"denied"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"SUSPICIOUS_ACCOUNT_ACTIVITY","match":{"type":"account","status":"suspicious"},"nonMatch":{"status":"normal"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"UNAUTHORIZED_ACCESS","match":{"type":"access","status":"denied"},"nonMatch":{"status":"allowed"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"RECONNAISSANCE","match":{"type":"reconnaissance","action":"scan"},"nonMatch":{"action":"login"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"SUSPICIOUS_NETWORK_ACTIVITY","match":{"type":"network","status":"suspicious"},"nonMatch":{"status":"normal"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"PHISHING_SOCIAL_ENGINEERING","match":{"type":"phishing","status":"reported"},"nonMatch":{"status":"clean"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"MALWARE","match":{"type":"malware","status":"detected"},"nonMatch":{"status":"clean"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"RANSOMWARE","match":{"type":"ransomware","status":"detected"},"nonMatch":{"type":"malware"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"DENIAL_OF_SERVICE","match":{"type":"network","action":"ddos","status":"active"},"nonMatch":{"action":"normal_connection"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"DATA_EXFILTRATION","match":{"type":"data_transfer","action":"exfiltration","status":"detected"},"nonMatch":{"action":"upload"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"WEB_APPLICATION_ATTACK","match":{"type":"web_application","action":"sql_injection","status":"attempted"},"nonMatch":{"action":"page_view"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"INSIDER_THREAT","match":{"type":"insider_threat","status":"suspected"},"nonMatch":{"status":"cleared"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0},
+    {"categoryCode":"SUPPLY_CHAIN_COMPROMISE","match":{"type":"supply_chain_compromise","status":"confirmed"},"nonMatch":{"status":"clean"},"expectedAlerts":1,"belowThresholdAlerts":0,"nonMatchAlerts":0}
+  ]
+}
