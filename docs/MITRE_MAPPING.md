@@ -25,7 +25,6 @@ technique and rule associations.
 | SX-CORE-008 Phishing or social engineering report | T1566 Phishing | TA0001 Initial Access |
 | SX-CORE-010 Ransomware event | T1486 Data Encrypted for Impact | TA0040 Impact |
 | SX-CORE-011 Denial of service indicators | T1498 Network Denial of Service | TA0040 Impact |
-| SX-CORE-013 Web application attack event | T1190 Exploit Public-Facing Application | TA0001 Initial Access |
 | SX-CORE-015 Supply chain compromise classification | T1195 Supply Chain Compromise | TA0001 Initial Access |
 
 These mappings are contextual labels for the implemented detector scenario.
@@ -42,6 +41,7 @@ rule evidence does not identify one precise ATT&CK technique:
 - SX-CORE-007 Suspicious network activity flag
 - SX-CORE-009 Malware event
 - SX-CORE-012 Data exfiltration event
+- SX-CORE-013 Web application attack event — the current rule lacks enough deployment-context evidence for a precise technique association.
 - SX-CORE-014 Insider threat classification
 
 This is deliberate. Task 28 favors accurate partial coverage over artificial
