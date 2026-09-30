@@ -1,45 +1,62 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–17 are Complete. Task 17 (Alert Correlation) passed its
-Windows/PostgreSQL acceptance gate on 2026-09-30. Task 18 (Incident Management)
-remains Not Started and must not begin until the user requests it.
+Tasks 01–17 are Complete. Task 18 (Incident Management) is implemented and is
+Verification Pending. Do not begin Task 19 until Task 18's Windows/PostgreSQL gate
+passes and Task 18 is explicitly marked Complete.
 
-Task 17 adds deterministic explainable correlation between Alerts and future
-Incidents. Newly generated alerts are evaluated against prior alerts within a
-fixed 900-second window.
+Task 18 follows the authoritative Task 02 baseline lifecycle:
+NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. The older Task 18
+Open/Closed wording was stale and has been corrected; OPEN and CLOSED remain
+unsupported by the database and API.
 
-A pair correlates only when:
-- at least two signals match from user, sourceIp, host and threat category; and
-- at least one match is an entity field (user, sourceIp or host).
+Incident managers can:
+- create incidents from 1–100 existing alerts;
+- inspect linked alert summaries;
+- assign/unassign incidents to active Administrator/Security Analyst users;
+- move incidents to INVESTIGATING;
+- RESOLVE or DISMISS with a required terminal note.
 
-This prevents category-only grouping while allowing cross-category correlation
-when two entity relationships tie alerts together.
+Every incident starts in NEW. Initial incident severity is the highest linked-alert
+severity; Task 19 owns later controlled classification/severity adjustment. A common
+currently selectable alert category is copied when unambiguous; otherwise category
+remains unset for Task 19.
 
-Each persisted `alert_correlations` row records matchedFields, timeDeltaSeconds
-and windowSeconds. Migration `010_alert_correlation.sql` stores one canonical
-UUID-ordered row per alert pair and structurally rejects duplicate/reverse pairs.
+CONTAINED is a valid baseline state but Task 18 does not expose a direct mutation
+to it. FR-017 requires a successful approved containment action to be recorded
+first, and Task 22 owns that response workflow.
 
-Correlation groups are connected components of these pairwise edges. Correlation
-does not create incidents, change alert status, merge alerts/events, use ML, or
-invent confidence. Task 18 incident management remains Not Started.
+Migration `011_incident_management.sql` adds update/assignment/status attribution
+and terminal resolution metadata. Creation, assignment and status mutations recheck
+live RBAC inside PostgreSQL transactions and write audit records atomically.
 
-Production alert generation invokes the correlation engine using the same
-PostgreSQL transaction client supplied by event ingestion. Duplicate-suppressed
-alerts are not correlated again, and correlation failure propagates so normal
-ingestion can roll back rather than silently persisting a partial result.
+Focused Task 18 model/service/repository tests passed 10/10 before repository
+update. PostgreSQL and browser verification entry points are implemented.
 
-Focused Task 13/17 tests passed 14/14. Windows/PostgreSQL acceptance verification
-passed on 2026-09-30 with:
+Run the Windows/PostgreSQL acceptance gate:
 
-`Explainable alert correlation, connected grouping, time-window rejection and pair deduplication verified. Synthetic changes rolled back.`
+```powershell
+git pull origin main
+npm.cmd run quality
+node scripts/migrate.js
+npm.cmd run verify:incidents
+```
 
-Migration 010 is now part of the applied append-only/checksum-tracked chain. Do not
-edit migrations 001–010 or bypass migration checksum verification.
+Expected final output:
 
-PostgreSQL remains hosted on the user's Windows computer. Task 17 requires no
+`Incident creation, alert linking, severity inheritance, assignment, lifecycle, terminal notes, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
+
+Optional explicit integration checks on a disposable database:
+```powershell
+$env:SENTINELX_TEST_DATABASE='1'
+npm.cmd run test:incidents:integration
+npm.cmd run test:incidents:ui
+```
+
+PostgreSQL remains hosted on the user's Windows computer. Task 18 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-When work resumes, read repository instructions, this handoff,
-`docs/DEVELOPMENT_STATUS.md`, and `tasks/18-incident-management.md` before
-beginning. Proceed numerically from Task 18 only when requested.
+Migrations remain append-only/checksum tracked. Do not edit migrations 001–011
+after migration 011 is successfully applied.
+
+Task 19 (Incident Classification and Severity) remains Not Started.
