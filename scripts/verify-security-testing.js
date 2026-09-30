@@ -17,9 +17,28 @@ function main(){
     '/access/%2e%2e/.env','loginLimiter','Authentication temporarily unavailable'
   ])assert.ok(testSource.includes(token),token);
 
-  const frontend=fs.readFileSync(path.join(root,'tests/frontend/ui-security.test.js'),'utf8');
-  for(const pattern of ['innerHTML','insertAdjacentHTML','document.write','localStorage','sessionStorage']){
-    assert.ok(frontend.includes(pattern),pattern);
+  const frontendRoot=path.join(root,'frontend');
+  const frontendFiles=[];
+  (function walk(dir){
+    for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+      const item=path.join(dir,entry.name);
+      if(entry.isDirectory())walk(item);
+      else if(/\.(?:js|html)$/.test(entry.name))frontendFiles.push(item);
+    }
+  })(frontendRoot);
+  const forbidden=[
+    [/\.innerHTML\s*=/,'innerHTML assignment'],
+    [/insertAdjacentHTML\s*\(/,'insertAdjacentHTML'],
+    [/document\.write\s*\(/,'document.write'],
+    [/\beval\s*\(/,'eval'],
+    [/localStorage\b/,'localStorage'],
+    [/sessionStorage\b/,'sessionStorage'],
+  ];
+  for(const file of frontendFiles){
+    const source=fs.readFileSync(file,'utf8');
+    for(const [pattern,label] of forbidden){
+      assert.doesNotMatch(source,pattern,path.relative(root,file)+' contains prohibited '+label);
+    }
   }
 
   const browser=fs.readFileSync(path.join(root,'tests/integration/frontend-security-ui.test.js'),'utf8');
@@ -32,5 +51,5 @@ function main(){
 
   console.log('Controlled authentication, authorization, input, API, session, CSP, path-exposure, XSS-regression and error-sanitization security coverage verified.');
 }
-if(require.main===module){try{main();}catch{console.error('Task 39 security-testing verification failed.');process.exitCode=1;}}
+if(require.main===module){try{main();}catch(error){console.error('Task 39 security-testing verification failed: '+error.message);process.exitCode=1;}}
 module.exports={main};
