@@ -1,3 +1,7 @@
+const { incidentRepository } = require('../data/incident-repository');
+const { incidentService } = require('../incidents/service');
+const { incidentHandler } = require('./incident-handler');
+const { incidentPage } = require('./incident-page');
 const { correlationRepository } = require('../data/correlation-repository');
 const { correlationEngine } = require('../correlation/engine');
 const { alertRepository } = require('../data/alert-repository');
@@ -28,7 +32,8 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null) {
+  const incidentManagement = incidents ? incidentHandler(incidents, config) : null;
   const alertManagement = alerts ? alertHandler(alerts, config) : null;
   const ruleManagement = rules ? ruleHandler(rules, config) : null;
   const taxonomy = categories ? categoryHandler(categories, config) : null;
@@ -37,9 +42,11 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if (incidentManagement && req.url.startsWith('/api/incidents')) return incidentManagement(req, res);
     if (alertManagement && req.url.startsWith('/api/alerts')) return alertManagement(req, res);
     if (ruleManagement && req.url.startsWith('/api/rules')) return ruleManagement(req, res);
     if (taxonomy && req.url.startsWith('/api/threat-categories')) return taxonomy(req, res);
+    if (incidentPage(req, res)) return;
     if (alertPage(req, res)) return;
     if (eventPage(req, res)) return;
     if (reading && req.method === 'GET' && req.url.startsWith('/api/events') && !req.url.startsWith('/api/events/raw')) return reading(req, res);
@@ -67,7 +74,8 @@ async function main() {
       eventViewService(eventRepository(pool), access),
       categoryService(categoryRepository(pool), access),
       ruleService(ruleRepository(pool), access),
-      alertService(alertRepository(pool), access));
+      alertService(alertRepository(pool), access),
+      incidentService(incidentRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
