@@ -75,7 +75,9 @@
     "verify:frontend-design": "node scripts/verify-frontend-design.js",
     "test:frontend-design:ui": "node --test tests/integration/frontend-design-ui.test.js",
     "verify:automated-testing": "node scripts/verify-automated-testing.js",
-    "test:automated:pipeline": "node --test tests/integration/full-pipeline.test.js"
+    "test:automated:pipeline": "node --test tests/integration/full-pipeline.test.js",
+    "verify:security-testing": "node scripts/verify-security-testing.js",
+    "test:security:application": "node --test tests/security/application-security.test.js"
   },
   "engines": {
     "node": ">=20"

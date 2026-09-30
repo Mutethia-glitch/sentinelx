@@ -29,3 +29,12 @@ Task 38 adds a dedicated disposable-PostgreSQL integration gate for the complete
 The test uses production services/repositories and live RBAC rather than mock persistence. It is synthetic-only, requires `SENTINELX_TEST_DATABASE=1`, and cleans its generated records.
 
 This gate complements the broad unit/API `npm test` suite. It does not replace the later Task 40 controlled end-to-end scenario validation.
+
+
+## Task 39 controlled application-security validation
+
+Task 39 adds a dedicated database-free security regression suite covering authentication/session transport, exact-origin mutation protection, backend RBAC, input validation, API access, rate limits, error sanitization, CSP/clickjacking protection, sensitive-path exposure and common frontend XSS/storage regressions.
+
+The security-validation suite is intentionally synthetic and non-destructive. It complements, rather than replaces, the already accepted Task 35 API-hardening and Task 36 frontend-security tests.
+
+Known deployment-boundary considerations such as distributed rate limiting, trusted reverse-proxy identity and production HTTPS/HSTS remain documented for the later deployment phase rather than being silently invented here.

@@ -1,7 +1,7 @@
 # Task 39: Security Testing
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
@@ -50,6 +50,16 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-10-01
+
+Task 39 performs controlled, synthetic application-security validation only. It adds no destructive attack tooling and does not probe any real third-party target.
+
+The dedicated regression suite validates session-cookie transport, authentication bypass attempts, exact-origin mutation protection, absence of permissive CORS, backend-authoritative RBAC despite forged client role headers, malformed/oversized/unsupported input rejection, rate limiting, sanitized failures, restrictive CSP/clickjacking protections, sensitive-path probing, and the existing safe-DOM/XSS protections.
+
+The findings register in `docs/SECURITY_TESTING.md` records the tested controls and residual deployment considerations. The controlled review found no new exploitable application defect requiring production-code remediation, so Task 39 changes tests/documentation only.
+
+Local acceptance is still required. Task 40 must not start until Task 39 is accepted.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

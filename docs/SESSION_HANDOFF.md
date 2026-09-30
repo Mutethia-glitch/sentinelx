@@ -1,3 +1,35 @@
+# Task 39 implementation checkpoint — 2026-10-01
+
+Task 39 is **Implemented — awaiting local acceptance**. Tasks 01–38 remain Complete. Task 40 has not started.
+
+Controlled security validation added:
+- session cookie attributes and cookie-only token transport;
+- rejection of query-token, bearer-token and duplicate-cookie substitutes;
+- exact-origin mutation/CSRF protection and no permissive CORS;
+- backend-authoritative RBAC despite forged client `X-Role` state;
+- malformed JSON, extra fields, unsupported content type/encoding, oversized bodies and invalid methods;
+- login rate-limit regression coverage;
+- sanitized unexpected failures with no connection-string/credential/SQL leakage;
+- restrictive CSP and clickjacking/object/base/form protections across all seven consoles;
+- sensitive path/.env/package traversal probes returning Not Found;
+- linkage to existing safe-DOM/XSS and no-Web-Storage browser regressions.
+
+The findings register documents ten validated control areas. No new exploitable application defect requiring production-code remediation was identified in this controlled review, so no production source, migration, API contract, RBAC behavior or database behavior was changed.
+
+Residual deployment considerations remain explicitly documented: in-process rate limiting, trusted reverse-proxy identity, and production HTTPS/HSTS belong to deployment architecture rather than Task 39 application code.
+
+Windows acceptance required:
+- `npm.cmd run quality`
+- `npm.cmd run verify:security-testing`
+- `npm.cmd run test:security:application`
+- `npm.cmd run test:frontend-security:ui`
+
+Do not mark Task 39 Complete or start Task 40 until those gates pass.
+
+See `docs/SECURITY_TESTING.md` and `tasks/39-security-testing.md`.
+
+---
+
 # Task 38 accepted — 2026-10-01
 
 Task 38 is **Complete**. Tasks 01–38 are Complete; Task 39 has not started at this checkpoint.
