@@ -107,3 +107,12 @@ Implemented endpoints:
 - `PATCH /api/incidents/{uuid}/status`: audited Task 18 lifecycle transition.
 
 The authoritative incident states remain NEW, CONTAINED, INVESTIGATING, RESOLVED and DISMISSED. OPEN/CLOSED are unsupported. Direct CONTAINED mutation is not exposed in Task 18 because successful approved containment is reserved for Task 22. RESOLVED/DISMISSED require a terminal note. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
+
+
+## Task 19 incident classification and severity
+
+`PATCH /api/incidents/{uuid}/assessment` is implemented for Administrator/Security Analyst users. The exact body is `{categoryCode, severity, reason}`, where categoryCode is one of the fifteen approved taxonomy codes or null and severity is LOW, MEDIUM, HIGH or CRITICAL.
+
+A newly selected non-null category must currently be selectable. Assessment changes are audited transactionally and do not change incident status, assignment, alert links or terminal resolution metadata. Viewer/Management remains read-only.
+
+Task 19 does not define a separate priority label/score; severity is the approved triage-priority dimension. Task 20 owns deterministic risk scoring. See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
