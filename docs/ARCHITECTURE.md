@@ -340,3 +340,15 @@ The service enforces the Task 02 baseline lifecycle: NEW, INVESTIGATING, CONTAIN
 ## Task 19 runtime mapping
 
 Incident classification/severity remains inside the Incident service and uses the shared Task 11 taxonomy. The service exposes an authorized assessment operation that updates category/severity independently from lifecycle state and records old/new values in the audit trail. No independent priority taxonomy is introduced. The Risk service remains unimplemented until Task 20.
+
+
+## Task 20 runtime mapping
+
+The Risk service is now implemented as a deterministic formula over persisted
+incident severity and distinct linked evidence-event count. PostgreSQL stores the
+factor count and generates the 0–100 score, while `src/risk/engine.js` provides
+the same versioned formula for application/tests.
+
+Risk is read-only derived context; it does not replace incident severity,
+classification, lifecycle, investigation, or response decisions. Unimplemented
+confidence/asset-impact inputs are not fabricated.
