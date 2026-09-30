@@ -1,7 +1,7 @@
 # Task 29: Advanced Detection Dataset
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Prepare a controlled, documented dataset for anomaly-detection research.
@@ -61,7 +61,17 @@ Do not mark this task complete until:
 - Task 30 remains Not Started.
 
 - Initial Windows acceptance attempt on 2026-09-30 failed when comparing checkout-dependent JSONL line endings. Verification now compares canonical LF content after CRLF normalization.
-- The checked-in fixture comparison also runs in normal `quality`; a simulated Windows CRLF copy passed the isolated check. Repeat `npm.cmd run verify:dataset` after pulling `main`; remain Verification Pending until accepted.
+- The checked-in fixture comparison also runs in normal `quality`; a simulated Windows CRLF copy passed the isolated check. The user reran `npm.cmd run verify:dataset` after the fix and reported the successful acceptance output below.
+
+## Acceptance — 2026-09-30
+
+Windows verifier passed:
+
+`Controlled synthetic dataset schema, provenance, labels, privacy constraints and deterministic reproduction verified.`
+
+The 80-record synthetic fixture and manifest were validated, including schema,
+provenance, artificial identifiers, documentation-only network ranges, labels and
+cross-platform reproducibility. Task 30 remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
