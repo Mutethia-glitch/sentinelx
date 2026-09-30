@@ -18,3 +18,14 @@ Use synthetic or explicitly authorized data. Do not test against real third-part
 
 ## Completion Rule
 A feature is not complete merely because it renders. Relevant behavior requires automated or documented verification.
+
+
+## Task 38 automated pipeline gate
+
+Task 38 adds a dedicated disposable-PostgreSQL integration gate for the complete event-to-incident path:
+
+**Raw synthetic event → normalization → persisted event → deterministic detection → alerts → correlation → incident creation**
+
+The test uses production services/repositories and live RBAC rather than mock persistence. It is synthetic-only, requires `SENTINELX_TEST_DATABASE=1`, and cleans its generated records.
+
+This gate complements the broad unit/API `npm test` suite. It does not replace the later Task 40 controlled end-to-end scenario validation.

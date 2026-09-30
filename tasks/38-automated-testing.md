@@ -1,7 +1,7 @@
 # Task 38: Automated Testing
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Build unit and integration tests for core services and the complete event-to-incident pipeline.
@@ -50,6 +50,20 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-10-01
+
+Task 38 adds automated coverage only; it does not change production behavior.
+
+The existing broad quality suite is retained and now includes `tests/automated/*.test.js`. A dedicated PostgreSQL integration test, `tests/integration/full-pipeline.test.js`, uses synthetic data and the real SentinelX authentication/RBAC, event repository, raw normalization path, deterministic detection engine, correlation engine, and incident service to verify:
+
+**Raw event → Normalization → Detection → Alert → Correlation → Incident**
+
+Two synthetic deterministic rules are used so correlation is explicitly demonstrated. The test verifies retained raw evidence, normalization metadata, alert evidence, correlation evidence, incident linkage, severity/category/risk, and audit records, then removes all synthetic changes.
+
+Task 40 controlled end-to-end scenarios are not implemented here. Task 39 must not start until Task 38 passes local acceptance.
+
+See `docs/AUTOMATED_TESTING.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

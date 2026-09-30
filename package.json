@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js tests/integrations/*.test.js tests/security/*.test.js tests/frontend/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js tests/integrations/*.test.js tests/security/*.test.js tests/frontend/*.test.js tests/automated/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -73,7 +73,9 @@
     "verify:frontend-security": "node scripts/verify-frontend-security.js",
     "test:frontend-security:ui": "node --test tests/integration/frontend-security-ui.test.js",
     "verify:frontend-design": "node scripts/verify-frontend-design.js",
-    "test:frontend-design:ui": "node --test tests/integration/frontend-design-ui.test.js"
+    "test:frontend-design:ui": "node --test tests/integration/frontend-design-ui.test.js",
+    "verify:automated-testing": "node scripts/verify-automated-testing.js",
+    "test:automated:pipeline": "node --test tests/integration/full-pipeline.test.js"
   },
   "engines": {
     "node": ">=20"

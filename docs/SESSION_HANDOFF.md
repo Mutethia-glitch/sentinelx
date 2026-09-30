@@ -1,3 +1,28 @@
+# Task 38 implementation checkpoint — 2026-10-01
+
+Task 38 is **Implemented — awaiting local acceptance**. Tasks 01–37 remain Complete. Task 39 has not started.
+
+Task 38 adds no production feature behavior. It extends the broad quality suite with an automated coverage contract and adds one dedicated disposable-PostgreSQL pipeline integration test using the real authentication/RBAC, raw normalization, event persistence, deterministic detection, alert persistence, correlation, and incident service boundaries.
+
+The pipeline verifies:
+
+**Raw synthetic event → normalization → persisted event → deterministic detection → two correlated alerts → incident creation**
+
+It checks retained raw evidence, normalization metadata, alert match evidence, correlation evidence, incident severity/category/assignment/risk, incident-alert links, and audit records. Synthetic users, sessions, rules, events, alerts, correlations, incident links, incidents and audit rows are cleaned after the test.
+
+Task 38 does not implement Task 40 controlled end-to-end scenarios. Task 39 Security Testing remains blocked by the Task 38 completion gate even though the user authorized Tasks 38 and 39 as a batch.
+
+Windows acceptance required:
+- `npm.cmd run quality`
+- `npm.cmd run verify:automated-testing`
+- with a disposable PostgreSQL test database and `SENTINELX_TEST_DATABASE=1`: `npm.cmd run test:automated:pipeline`
+
+Do not mark Task 38 Complete or start Task 39 until all three gates pass.
+
+See `docs/AUTOMATED_TESTING.md` and `tasks/38-automated-testing.md`.
+
+---
+
 # Task 37 final polish accepted — 2026-10-01
 
 Task 37 is **Complete**. Tasks 01–37 are Complete; Task 38 has not started.
