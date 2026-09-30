@@ -30,8 +30,7 @@ normalized fields already approved by Task 12: `source`, `type`, `sourceIp`,
 `destinationIp`, `user`, `host`, `action`, `status` and `severity`.
 
 - `equals`: literal equality, including null.
-- `notEquals`: literal inequality; null follows PostgreSQL `IS DISTINCT FROM`
-  semantics.
+- `notEquals`: literal inequality; null follows PostgreSQL `IS DISTINCT FROM` semantics.
 - `in`: literal membership in the configured bounded set, including optional null.
 - `exists`: tests whether the normalized field is non-null.
 
@@ -45,10 +44,15 @@ event exactly, including null. An empty group is global.
 
 When at least `threshold` events exist in that group/window, the latest threshold
 events become the alert evidence. Re-processing the same trigger event for the same
-rule is idempotent: an advisory transaction lock plus the existing alert-event
-relationship prevents a duplicate alert for that rule/trigger pair. A later matching
-event may legitimately trigger another threshold alert; correlation/deduplication
-across distinct alerts belongs to later tasks.
+rule is idempotent: SentinelX derives a deterministic alert UUID from the rule id
+and trigger event id and inserts it with `ON CONFLICT (id) DO NOTHING`. A later
+matching trigger event produces a different deterministic alert id and may
+legitimately create another alert; correlation across distinct alerts belongs to
+later tasks.
+
+The detection engine can run inside the ingestion transaction or outside an
+existing transaction. When no transaction client is supplied, repository methods
+use their configured PostgreSQL pool.
 
 ## Alert persistence
 
@@ -58,35 +62,16 @@ No new migration or external service is required. Generated alerts persist:
 - the matched rule identifier;
 - the rule threat level;
 - a deterministic human-readable match reason;
-- evidence containing category code, trigger event id, threshold, window, group
-  fields/values and the selected event ids;
+- evidence containing category code, trigger event id, threshold, window, group fields/values and the selected event ids;
 - one `alert_events` link for each selected evidence event.
 
-The ingestion HTTP receipt now includes `alertsGenerated`, for example:
-
-```json
-{
-  "event": {
-    "id": "generated UUID",
-    "receivedAt": "UTC time",
-    "normalizedAt": "UTC time",
-    "alertsGenerated": 1
-  }
-}
-```
-
-Raw event evidence is still not returned by ingestion.
+The ingestion HTTP receipt includes `alertsGenerated`.
 
 ## Verification
 
-Pure automated checks are included in `tests/rules/detection.test.js`.
-PostgreSQL integration coverage is in `tests/integration/detection.test.js` and
-requires the existing disposable-database guard:
-
-```powershell
-$env:SENTINELX_TEST_DATABASE='1'
-npm.cmd run test:detection:integration
-```
+Pure automated checks are included in `tests/rules/detection.test.js` and
+`tests/rules/detection-repository.test.js`. PostgreSQL integration coverage is in
+`tests/integration/detection.test.js`.
 
 The local Windows/PostgreSQL acceptance verifier is:
 
@@ -99,7 +84,10 @@ It creates synthetic rule/event/alert data, verifies matching, non-matching,
 threshold, event-time window, grouping, duplicate-trigger suppression, persisted
 evidence and transaction rollback, then removes its synthetic records and restores
 the prior BRUTE_FORCE category enabled state. It never reads or prints application
-credentials. Use the same PostgreSQL environment variables already configured for
-SentinelX; the application does not automatically load `.env`.
+credentials.
 
-Task 13 requires no external API key.
+Windows/PostgreSQL acceptance verification passed on 2026-09-30 with:
+
+`Deterministic matching, non-match rejection, thresholds, grouping, windows, duplicate suppression and atomic rollback verified.`
+
+Task 13 is Complete and requires no external API key.
