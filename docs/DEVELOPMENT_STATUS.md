@@ -44,7 +44,8 @@
 - Task 27: Complete — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC; Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 28: Complete — migration 015 applied, documented seven-rule partial ATT&CK technique/tactic mappings and incident-context propagation verified; corrected Windows/PostgreSQL `verify:mitre` acceptance passed on 2026-09-30.
 - Task 29: Complete — deterministic 80-record synthetic research dataset, documented provenance/privacy/labels and cross-platform reproducibility verified; Windows `verify:dataset` acceptance passed on 2026-09-30.
-- Tasks 30–43: Not Started
+- Task 30: Implemented — awaiting local acceptance; reproducible research feature pipeline, tests and read-only Windows verifier added. Full quality suite 149/149, dataset/feature verifiers and simulated CRLF verification passed.
+- Tasks 31–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–29 are Complete. The Windows quality suite passed 137/137 during the Tasks 26–29 acceptance cycle; migration 015 applied successfully. Tasks 26–27 passed their PostgreSQL verifiers, and the corrected Windows acceptance verifiers for Tasks 28–29 also passed on 2026-09-30. Migrations 001–015 remain immutable/checksum protected. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–29 are Complete. Review fixes subsequently passed 142 quality tests and 36 PostgreSQL/browser integration checks; Windows correlation/concurrency/reporting checks and manual incident creation were accepted. The visible green incident success banner is retained. Task 30 is implemented and awaits Windows acceptance; Tasks 31–43 remain Not Started. Migrations 001–015 remain immutable/checksum protected. See SESSION_HANDOFF.md and ML_FEATURE_ENGINEERING.md.

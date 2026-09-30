@@ -1,5 +1,30 @@
 # SentinelX continuation checkpoint — 2026-09-30
 
+## Current Task 30 checkpoint
+
+Task 30 is **Implemented — awaiting local acceptance**. Tasks 01–29 remain
+Complete; Tasks 31–43 remain Not Started. The historical acceptance records below
+describe the state before this implementation.
+
+Added a pure versioned research feature pipeline with prior-only 15-minute
+user login/failed-login, source-IP, host and global event counts and UTC timing.
+Inputs are validated and preserved, ties are processed together, and labels,
+scenarios and severity never enter numeric features. No production detection
+integration, model, migration, external API or credential access is needed.
+
+Automated validation: full quality suite 149/149 passed; dataset and feature
+verifiers passed, including a simulated Windows CRLF checkout of the fixture.
+Task 30 has no PostgreSQL/API/UI integration surface; prior integration acceptance
+records remain unchanged.
+
+Read `docs/ML_FEATURE_ENGINEERING.md` and the Task 30 contract. On Windows run
+`npm.cmd run quality`, `npm.cmd run verify:dataset` and `npm.cmd run verify:features`.
+Await user-reported local acceptance before marking Task 30 Complete. Do not
+start Task 31 without instruction. The database remains on the user's Windows
+computer; never read, reveal or commit `.env` or credentials.
+
+## Historical Tasks 01–29 checkpoint
+
 Tasks 01–29 are **Complete**. The full user-requested Tasks 26–29 implementation
 batch has passed its Windows acceptance gates. Tasks 30–43 remain **Not Started**.
 Begin Task 30 (ML Feature Engineering) only on the user's explicit request.

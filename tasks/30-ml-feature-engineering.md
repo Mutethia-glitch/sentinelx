@@ -1,7 +1,7 @@
 # Task 30: ML Feature Engineering
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Extract behavioral features such as login frequency, failed-login frequency, source frequency, timing, and event frequency.
@@ -50,6 +50,21 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+
+- Pure versioned feature pipeline implemented in `src/ml/features.js`.
+- Prior-only rolling login, failed-login, source-IP, host and overall event counts,
+  plus UTC timing fields. Equal timestamps do not count one another.
+- Deterministic sorting, explicit null handling, input validation and immutable inputs.
+- Research labels, scenarios, severity and identities excluded from numeric predictors.
+- Behavior, assumptions and PowerShell acceptance commands documented in
+  `docs/ML_FEATURE_ENGINEERING.md`.
+- Automated validation: full quality suite 149/149 passed, dataset and feature
+  verifiers passed, and simulated Windows CRLF fixture verification passed.
+  Local Windows acceptance remains pending.
+- No model training, production integration, schema change or external API.
+- Task 31 remains Not Started. Do not mark Task 30 Complete before user acceptance.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
