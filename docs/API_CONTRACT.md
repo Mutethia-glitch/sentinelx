@@ -211,8 +211,7 @@ Invalid, unknown or duplicated filters return 400. See
 ## Task 26 reporting
 
 `GET /api/reports/security` and `GET /api/reports/incidents/{incidentId}`
-require `reports.read`. Optional inclusive `from`/`to` ISO timestamps and
-`format=json|csv` are validated. Reports are generated from persisted data in
+require `reports.read`. The security summary accepts optional inclusive `from`/`to` ISO timestamps plus `format=json|csv`; the single-incident report accepts only `format=json|csv`. Reports are generated from persisted data in
 repeatable-read, read-only PostgreSQL transactions. See [REPORTING.md](REPORTING.md).
 
 ## Task 27 audit trail
