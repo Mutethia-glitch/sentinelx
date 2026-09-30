@@ -1,7 +1,7 @@
 # Task 19: Incident Classification and Severity
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement threat classification, severity, priority, and controlled analyst adjustment.
@@ -37,7 +37,9 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Severity values are validated, stored, displayed, and tested.
+Severity values are validated, stored, displayed, and tested. Incident taxonomy classification can be adjusted through an authorized, audited workflow.
+
+No separate priority labels or score are introduced because the approved requirements define none; LOW/MEDIUM/HIGH/CRITICAL severity is the Task 19 triage-priority dimension. Task 20 owns deterministic risk scoring.
 
 ## Required Deliverables
 Classification/severity.
@@ -50,6 +52,19 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Controlled incident taxonomy/severity adjustment is implemented through the incident assessment API and console.
+- Classification supports the fifteen approved taxonomy codes or null/unclassified.
+- Severity supports only LOW, MEDIUM, HIGH and CRITICAL.
+- No P1/P2 labels, numeric priority, or undocumented score was introduced.
+- Assessment changes do not alter incident lifecycle, assignment, alert links or terminal notes.
+- Live RBAC, selectable-category checks and audit persistence are enforced transactionally.
+- Migration 012 records assessment attribution.
+- Focused Task 19 local tests passed 5/5 before repository update.
+- Windows/PostgreSQL migration plus `verify:incident-classification` remains required before completion.
+- Task 20 Risk Scoring remains Not Started.
+- No external API or API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
