@@ -1,7 +1,7 @@
 # Task 38: Automated Testing
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Build unit and integration tests for core services and the complete event-to-incident pipeline.
@@ -61,7 +61,7 @@ The existing broad quality suite is retained and now includes `tests/automated/*
 
 Two synthetic deterministic rules are used so correlation is explicitly demonstrated. The test verifies retained raw evidence, normalization metadata, alert evidence, correlation evidence, incident linkage, severity/category/risk, and audit records, then removes all synthetic changes.
 
-Task 40 controlled end-to-end scenarios are not implemented here. Task 39 must not start until Task 38 passes local acceptance.
+Task 40 controlled end-to-end scenarios are not implemented here. Windows/local acceptance passed on 2026-10-01: the quality gate and automated-testing verifier passed, and the disposable-PostgreSQL pipeline integration passed 1/1 after the local PostgreSQL environment was configured. Task 38 is Complete.
 
 See `docs/AUTOMATED_TESTING.md`.
 
