@@ -1,3 +1,4 @@
+const { apiSecurityBoundary } = require('./security');
 const { externalWebhook } = require('../integrations/webhook');
 const { auditRepository }=require('../data/audit-repository');
 const { auditService }=require('../audit/service');
@@ -54,7 +55,7 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = apiSecurityBoundary()) {
   const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
   const dashboardMetrics = dashboard ? dashboardHandler(dashboard, config) : null;
@@ -70,6 +71,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if (apiSecurity(req, res)) return;
     if (auditing && req.url.startsWith('/api/audit')) return auditing(req, res);
     if (reporting && req.url.startsWith('/api/reports')) return reporting(req, res);
     if (dashboardMetrics && req.url.startsWith('/api/dashboard')) return dashboardMetrics(req, res);

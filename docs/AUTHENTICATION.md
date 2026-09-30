@@ -46,9 +46,11 @@ portions of NFR-002–005, NFR-007 and NFR-015.
 - Login is throttled to 20 attempts per connection IP and 10 per normalized email
   in 15 minutes, including successful attempts. IP identity comes from the socket,
   not caller-controlled forwarding headers. The bounded in-memory limiter is for
-  this single-process core; it resets on restart. Behind a future proxy, requests
-  share its connection IP until Task 35 defines trusted proxy handling. Distributed
-  throttling and production edge controls belong to later hardening/deployment.
+  this single-process core; it resets on restart. Task 35 adds a broader API limiter
+  but deliberately continues to use the actual socket peer and does not trust
+  caller-supplied forwarding headers. Behind a reverse proxy, requests therefore
+  share the proxy connection identity unless complementary deployment-edge controls
+  are configured later.
 - The server binds only to 127.0.0.1. Production requires an explicit HTTPS origin
   and a correctly configured local TLS reverse proxy. The core does not provision
   hosting or TLS. Database credentials come from process environment variables.

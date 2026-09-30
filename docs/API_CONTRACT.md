@@ -234,3 +234,15 @@ Task 34 adds no new public SentinelX HTTP endpoint. It defines one optional outb
 When configured, SentinelX sends an HTTPS POST containing payload schema version 1 and a minimal normalized `sentinelx.security_event` snapshot. The request uses an environment-supplied bearer token, rejects redirects, and applies a bounded timeout. Raw event evidence and metadata are not exported.
 
 The integration is disabled by default. Missing/invalid configuration, timeout, network failure, redirect, or non-2xx responses degrade to an unavailable optional adapter state and do not change the normal event-ingestion response or roll back SentinelX core records. See [EXTERNAL_INTEGRATION.md](EXTERNAL_INTEGRATION.md).
+
+
+## Task 35 shared API hardening
+
+Every `/api` route now passes through a common request-security boundary before normal route handling. The boundary:
+
+- limits API traffic by the actual socket peer to 600 requests/minute and 120 POST/PUT/PATCH/DELETE requests/minute;
+- rejects API request targets larger than 4096 bytes, fragments, backslashes, and body-bearing GET/HEAD requests;
+- applies no-store, no-sniff, no-referrer, and same-origin resource-policy headers;
+- returns bounded JSON errors for shared-boundary failures.
+
+Existing endpoint contracts remain unchanged. Route/service layers continue to enforce authentication, live RBAC, exact-origin mutation protection, bounded JSON/schema validation, authorized record access, parameterized database operations, and sanitized internal failures. The existing login throttle remains stricter. Forwarding headers are not trusted for rate-limit identity. See [API_HARDENING.md](API_HARDENING.md).

@@ -435,3 +435,10 @@ the canonical event model. Task 30 owns later feature engineering.
 `src/integrations/webhook.js` is the isolated outbound adapter for the optional external log/SIEM boundary. The standalone SentinelX event pipeline remains authoritative and commits before any webhook attempt. The adapter exports only a versioned normalized event snapshot over configured HTTPS and treats disabled, invalid, timeout, network, redirect, and non-2xx conditions as optional integration states rather than core-pipeline failures.
 
 No vendor-specific SDK or database dependency is introduced. External delivery cannot create, replace, or authorize SentinelX alerts, incidents, response actions, or state transitions. See [EXTERNAL_INTEGRATION.md](EXTERNAL_INTEGRATION.md).
+
+
+## Task 35 shared API security boundary
+
+All SentinelX `/api` traffic now passes through `src/api/security.js` before route dispatch. This shared boundary adds bounded socket-peer rate limiting, basic request-target/body-shape rejection, and uniform safe API response headers. Domain handlers and services still own authentication, live RBAC authorization, origin checks, input schemas, record scoping, persistence, and auditable response decisions.
+
+The limiter deliberately ignores caller-supplied forwarding headers. The current server remains loopback-bound; deployment/proxy trust configuration is not invented by Task 35. See [API_HARDENING.md](API_HARDENING.md).
