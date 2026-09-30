@@ -1,6 +1,6 @@
 # Tasks 31–32 checkpoint — 2026-09-30
 
-Tasks 31–32 are **Implemented — awaiting local acceptance**. The user authorized
+Tasks 31–32 are **Complete**, accepted on Windows on 2026-09-30. The user authorized
 both tasks as a batch. Implemented Task 31 first, then evaluated it for Task 32.
 Tasks 01–30 remain Complete; Tasks 33–43 remain Not Started.
 
@@ -12,8 +12,18 @@ Read docs/ML_ANOMALY_DETECTION.md and docs/ML_EVALUATION.md. No external API,
 new dependency, production integration, migration or credential access is needed.
 Full quality suite 161/161 passed; model and evaluation verifiers passed.
 
-Windows acceptance: npm.cmd run quality; npm.cmd run verify:ml:model;
-npm.cmd run verify:ml:evaluation. Await user results before completing either task.
+
+## Local acceptance — 2026-09-30
+
+The user reported successful Windows `verify:ml:model` and `verify:ml:evaluation`
+output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
+records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
+Together with the recorded automated quality suite of 161/161, these results
+satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
+output was supplied in this acceptance message. Task 33 remains Not Started.
+
+Next contract: tasks/33-ml-integration.md. Read the working rules, current status,
+this handoff and the full contract before implementing. Await instruction to start.
 Task 33 has not started. Earlier checkpoints below are historical.
 
 # SentinelX continuation checkpoint — 2026-09-30

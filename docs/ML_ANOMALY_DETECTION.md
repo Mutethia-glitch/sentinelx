@@ -36,4 +36,13 @@ No alerts, incidents, risk scores or automatic responses are changed here.
 Run `npm.cmd run verify:ml:model` and `npm.cmd run quality` on Windows.
 The verifier covers bounded scores, deterministic training, schema validation,
 unavailable/disabled behavior and protection against stale or mutated models.
-Task 31 is implemented, awaiting local acceptance.
+Task 31 is Complete following Windows acceptance on 2026-09-30.
+
+## Local acceptance — 2026-09-30
+
+The user reported successful Windows `verify:ml:model` and `verify:ml:evaluation`
+output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
+records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
+Together with the recorded automated quality suite of 161/161, these results
+satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
+output was supplied in this acceptance message. Task 33 remains Not Started.

@@ -1,7 +1,7 @@
 # Task 32: ML Evaluation
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Evaluate the ML component with appropriate metrics and document dataset limitations.
@@ -56,8 +56,18 @@ Do not mark this task complete until:
 Implemented in the user-authorized Task 31–32 batch, in numerical order.
 See docs/ML_ANOMALY_DETECTION.md and docs/ML_EVALUATION.md for behavior,
 limitations and Windows acceptance commands. Quality suite 161/161 passed;
-both model and evaluation verifiers passed. Local acceptance remains pending.
+both model and evaluation verifiers passed. Windows local acceptance passed on 2026-09-30.
 Task 33 remains Not Started. No production integration, migration or new dependency.
+
+
+## Local acceptance — 2026-09-30
+
+The user reported successful Windows `verify:ml:model` and `verify:ml:evaluation`
+output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
+records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
+Together with the recorded automated quality suite of 161/161, these results
+satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
+output was supplied in this acceptance message. Task 33 remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
