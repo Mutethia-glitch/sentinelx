@@ -60,5 +60,8 @@ Do not mark this task complete until:
 - Focused tests and a PostgreSQL verifier are implemented.
 - Task 29 remains separately scoped.
 
+- Initial Windows/PostgreSQL acceptance attempt on 2026-09-30 failed because the synthetic server fixture omitted the existing Rules service; this is now corrected without modifying applied migration 015.
+- The verifier now reports a safe phase label if a later assertion fails. Repeat `npm.cmd run verify:mitre` after pulling `main`; remain Verification Pending until accepted.
+
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
