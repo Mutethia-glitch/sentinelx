@@ -175,3 +175,16 @@ Expected verifier output:
 `Investigation evidence, affected entities, chronological timeline, analyst findings, RBAC, evidence validation, auditing and rollback verified. Synthetic changes cleaned up.`
 
 No external API or API key is required.
+
+## Completion
+
+Task 21 is Complete. Focused Task 21 logic checks passed 4/4, and the
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Investigation evidence, affected entities, chronological timeline, analyst findings, RBAC, evidence validation, auditing and rollback verified. Synthetic changes cleaned up.`
+
+The migration integrity/replay check also passed:
+`PostgreSQL migrations verified/applied.`
+
+Task 22 Response Workflow remains separate and Not Started. No external API or
+API key is required.
