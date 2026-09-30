@@ -116,3 +116,18 @@ The authoritative incident states remain NEW, CONTAINED, INVESTIGATING, RESOLVED
 A newly selected non-null category must currently be selectable. Assessment changes are audited transactionally and do not change incident status, assignment, alert links or terminal resolution metadata. Viewer/Management remains read-only.
 
 Task 19 does not define a separate priority label/score; severity is the approved triage-priority dimension. Task 20 owns deterministic risk scoring. See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
+
+
+## Task 20 risk scoring
+
+Incident list/detail responses now include a read-only `risk` object with
+`score`, `eventCount`, `formulaVersion`, and `calculatedAt`.
+
+Risk formula version 1 is deterministic: severity contributes 20/40/60/80 points
+for LOW/MEDIUM/HIGH/CRITICAL and distinct linked evidence events add 2 points per
+event after the first, capped at 20; total score is capped at 100.
+
+No risk mutation endpoint is provided. Task 19 severity adjustment changes the
+underlying factor and PostgreSQL recalculates the generated score automatically.
+Confidence and asset impact are not used until trustworthy implemented inputs exist.
+See [RISK_SCORING.md](RISK_SCORING.md).
