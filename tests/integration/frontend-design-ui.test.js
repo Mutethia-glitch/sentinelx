@@ -39,6 +39,7 @@ test('approved SOC shell renders safely on desktop and narrow viewport',async t=
   assert.equal(await page.locator('.app-shell').count(),1);
   assert.equal(await page.locator('.sidebar').count(),1);
   assert.equal(await page.locator('nav a[aria-current="page"]').getAttribute('href'),'/dashboard');
+  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).colorScheme),'light');
   const background=await page.evaluate(()=>getComputedStyle(document.body).backgroundColor);
   assert.notEqual(background,'rgba(0, 0, 0, 0)');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

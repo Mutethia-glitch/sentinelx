@@ -15,6 +15,10 @@ function main(){
   }
   const css=fs.readFileSync(path.join(root,'shared/sentinelx-theme.css'),'utf8');
   for(const token of ['--sx-bg','--sx-sidebar','--sx-primary','--sx-critical','--sx-success'])assert.ok(css.includes(token));
+  assert.ok(css.includes('color-scheme:light'));
+  assert.ok(!css.includes('color-scheme:dark'));
+  assert.ok(css.includes('--sx-bg:#f5f7fb'));
+  assert.ok(css.includes('--sx-surface:#ffffff'));
   assert.ok(css.includes('@media(max-width:900px)'));
   assert.ok(css.includes('.tone-contained'));
   assert.ok(css.includes('.tone-resolved'));
@@ -22,7 +26,7 @@ function main(){
   assert.ok(incident.includes("message('Incident created.',false,true);"));
   const combined=consoles.map(name=>fs.readFileSync(path.join(root,name,name+'.js'),'utf8')).join('\n')+'\n'+fs.readFileSync(path.join(root,'shared/sentinelx-ui.js'),'utf8');
   for(const pattern of [/\.innerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\beval\s*\(/,/localStorage\b/,/sessionStorage\b/])assert.doesNotMatch(combined,pattern);
-  console.log('Shared SOC design system, seven-console shell, responsive styling, semantic state treatment and preserved frontend security verified.');
+  console.log('Light SOC design system, seven-console shell, responsive styling, semantic state treatment and preserved frontend security verified.');
 }
 if(require.main===module){try{main();}catch{console.error('Task 37 frontend visual design verification failed.');process.exitCode=1;}}
 module.exports={main};

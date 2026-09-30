@@ -23,6 +23,10 @@ test('shared theme contains the approved SOC tokens and responsive shell',()=>{
   for(const token of ['--sx-bg','--sx-sidebar','--sx-primary','--sx-critical','--sx-success','--sx-code'])assert.match(css,new RegExp(token));
   assert.match(css,/grid-template-columns:240px minmax\(0,1fr\)/);
   assert.match(css,/@media\(max-width:900px\)/);
+  assert.match(css,/color-scheme:light/);
+  assert.doesNotMatch(css,/color-scheme:dark/);
+  assert.match(css,/--sx-bg:#f5f7fb/);
+  assert.match(css,/--sx-surface:#ffffff/);
   assert.match(css,/\.semantic-value/);
   assert.match(css,/\.tone-contained/);
   assert.match(css,/\.tone-resolved/);

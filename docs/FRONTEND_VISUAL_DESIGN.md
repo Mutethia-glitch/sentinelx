@@ -4,7 +4,7 @@ Task 37 applies the approved SentinelX visual direction to the existing secure f
 
 ## Design source and implementation boundary
 
-A separate private Lovable mock-data prototype was used only to establish the visual direction: a restrained dark SOC interface with deep navy/slate surfaces, cyan/blue operational accents, semantic severity/status colors, dense but readable tables, clear analyst workspaces, and responsive navigation.
+A separate private Lovable mock-data prototype was used only to establish the visual direction: a restrained professional SOC interface with strong information hierarchy, cyan/blue operational accents, semantic severity/status colors, dense but readable tables, clear analyst workspaces, and responsive navigation. After prototype approval, the user selected a light production theme for SentinelX.
 
 The Lovable React/Tailwind prototype is not imported into SentinelX and is not connected to the SentinelX repository. SentinelX remains the existing Node.js/PostgreSQL application with static HTML/CSS/JavaScript consoles. No Supabase, frontend framework, runtime dependency, database, authentication replacement, API replacement, or external integration was added by Task 37.
 
@@ -12,7 +12,7 @@ The Lovable React/Tailwind prototype is not imported into SentinelX and is not c
 
 All seven consoles load `/ui/sentinelx-theme.css`. The shared theme defines:
 
-- dark application/background/sidebar surfaces;
+- light off-white/slate application and sidebar surfaces with white operational panels;
 - typography, spacing, border, radius and focus conventions;
 - responsive desktop sidebar and compact narrow-screen navigation;
 - page headers, operational panels and metric cards;
@@ -32,7 +32,7 @@ Task 36 permission-aware navigation remains unchanged: protected links start hid
 
 API/user values continue to render through `textContent`, DOM nodes and form values. Task 37 does not introduce `innerHTML`, browser credential storage, client-side tokens, or unsafe script execution. Existing CSP and shared-asset no-store/no-sniff/same-origin protections remain in force.
 
-The theme includes visible focus states, labeled form controls, high-contrast text/surfaces, status labels in addition to color, reduced-motion handling, and a responsive layout designed for approximately 390px and wider. Wide tables scroll inside their table containers rather than forcing page-level horizontal scrolling.
+The light theme includes visible focus states, labeled form controls, high-contrast dark text on light surfaces, status labels in addition to color, reduced-motion handling, and a responsive layout designed for approximately 390px and wider. Technical evidence/code blocks deliberately remain dark for legibility and visual separation. Wide tables scroll inside their table containers rather than forcing page-level horizontal scrolling.
 
 ## Verification
 
