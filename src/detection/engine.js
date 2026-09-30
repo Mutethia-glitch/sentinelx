@@ -1,5 +1,6 @@
 const { isIP } = require('node:net');
 const { securityEvent } = require('../events/model');
+const { generatedAlert } = require('../alerts/model');
 
 const SUPPORTED_FIELDS = new Set(['source','type','sourceIp','destinationIp','user','host','action','status','severity']);
 const OPERATORS = new Set(['equals','notEquals','in','exists']);
@@ -61,12 +62,16 @@ function detectionEngine(repository) {
         const matches = await repository.matchingEvents(rule.definition, event, group, db);
         if (matches.length < rule.definition.threshold) continue;
         const selected = matches.slice(-rule.definition.threshold);
+        const model = generatedAlert(rule, event, saved.id);
         const alert = await repository.createAlert(rule, selected, {
           triggerEventId: saved.id,
           threshold: rule.definition.threshold,
           windowSeconds: rule.definition.windowSeconds,
           groupBy: rule.definition.groupBy,
           groupValues: group,
+          source: model.source,
+          affectedEntities: model.affectedEntities,
+          confidence: model.confidence,
         }, db);
         if (alert) alerts.push(alert);
       }
