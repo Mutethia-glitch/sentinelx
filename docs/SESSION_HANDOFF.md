@@ -1,50 +1,52 @@
 # SentinelX continuation checkpoint — 2026-09-30
 
-Tasks 01–27 and Task 29 are **Complete**. Task 28 MITRE ATT&CK Mapping
-is **Verification Pending**. Tasks 30–43 remain **Not Started**.
+Tasks 01–29 are **Complete**. The full user-requested Tasks 26–29 implementation
+batch has passed its Windows acceptance gates. Tasks 30–43 remain **Not Started**.
+Begin Task 30 (ML Feature Engineering) only on the user's explicit request.
 
-The user previously ran the Windows quality suite (137/137 passing), applied
-and verified migration 015, and reported that Tasks 26 Reporting and 27 Audit
-Trail acceptance verifiers passed.
+Task 26 Reporting:
+- Stored-data security summary and incident reports with JSON/CSV output.
+- Read-only, consistent PostgreSQL reporting; accepted verifier:
+  `Stored-data security summaries, incident reports, date ranges, JSON/CSV export, RBAC and read-only reporting verified. Synthetic changes cleaned up.`
 
-Task 29 Advanced Detection Dataset is now **Complete**. The checked-in
-80-record deterministic research fixture has 60 synthetic baseline and
-20 injected anomaly examples; both the manifest and JSONL are derived from
-a pure generator. The initial Windows verification failed due to possible Git
-CRLF checkout differences. The verifier now canonicalizes CRLF to LF before
-comparing JSONL. Its platform-specific fixture regression is included in
-normal quality tests. On 2026-09-30 the user reported successful Windows output:
+Task 27 Audit Trail:
+- Protected read-only `GET /api/audit` plus console.
+- Administrator/Security Analyst may read; Viewer/Management is denied.
+- Accepted verifier:
+  `Protected actor/action/resource/time/context audit retrieval, filtering, RBAC and read-only API behavior verified. Synthetic changes cleaned up.`
 
-`Controlled synthetic dataset schema, provenance, labels, privacy constraints and deterministic reproduction verified.`
+Task 28 MITRE ATT&CK Mapping:
+- Applied migration `015_mitre_tactics_and_core_mappings.sql` adds tactic metadata
+  and contextual technique mappings.
+- Seven documented core-rule mappings; eight broad/underspecified rules
+  intentionally unmapped. Do not claim full ATT&CK coverage or treat a mapping
+  as independent proof that an event exhibits the technique.
+- Existing rules catalog/detail and incident investigation/report linked alerts
+  expose structured mapping context.
+- Initial verifier failure was corrected by mounting the Rules service in the
+  synthetic incident fixture. The user reran the corrected verifier and reported:
+  `Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
 
-Task 28 is the sole remaining pending gate in the requested 26–29 batch.
-Its first verifier attempt failed because the shared synthetic incident fixture
-omitted the existing Rules service. The fixture has been patched to mount
-`ruleService(ruleRepository(pool),access)`; the MITRE verifier now also
-reports a safe phase label if any later assertion fails. Migration 015 was
-already applied and **must not be modified**. The documented contextual
-mapping covers seven implemented core rules; eight broad/underspecified rules
-remain intentionally unmapped.
+Task 29 Advanced Detection Dataset:
+- Pure deterministic generator `src/ml/dataset.js`; checked-in JSONL fixture
+  and manifest, 80 records total (60 synthetic baseline, 20 injected anomaly).
+- Artificial identities and documentation-only IP ranges; no production data,
+  private personal data, or real-world performance/prevalence claim.
+- Cross-platform verifier normalizes a Windows CRLF checkout to canonical LF;
+  corresponding fixture regression also runs in the quality suite.
+- Accepted verifier:
+  `Controlled synthetic dataset schema, provenance, labels, privacy constraints and deterministic reproduction verified.`
 
-On the user's Windows machine, run:
+The Windows quality suite passed 137/137 during the batch acceptance cycle;
+migration 015 was successfully applied and verified. All four acceptance
+verifiers were subsequently reported as successful. Do not rewrite migrations
+001–015; they are append-only/checksum tracked. PostgreSQL runs on the user's
+Windows computer; no Supabase or external API key is required.
 
-```powershell
-git pull origin main
-npm.cmd run verify:mitre
-```
-
-Expected:
-
-`Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
-
-If this passes, mark Task 28 Complete and sync:
-`tasks/28-mitre-att-ck-mapping.md`, `docs/MITRE_MAPPING.md`,
-`docs/DEVELOPMENT_STATUS.md`, and this handoff. If it fails, use the safe
-phase label to inspect only the failing verifier/implementation boundary,
-without printing credentials or private evidence.
-
-Migrations 001–015 are immutable and checksum protected. PostgreSQL remains
-local to the user's Windows system. No Supabase or external API key was added.
-
-Do not begin Task 30 ML Feature Engineering until Task 28 passes and the user
-explicitly requests continuation.
+Next contract: `tasks/30-ml-feature-engineering.md`.
+Before implementation, read the repository working rules, this handoff,
+`docs/DEVELOPMENT_STATUS.md`, `docs/ADVANCED_DETECTION_DATASET.md`, the Task 29
+generator/manifest/tests, and the full Task 30 contract. Keep ML research
+separate from the deterministic production detection engine unless an explicit
+future task requires otherwise. Await local acceptance before marking Task 30
+Complete and do not advance to Task 31 without instruction.
