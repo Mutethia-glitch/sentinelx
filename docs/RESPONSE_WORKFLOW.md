@@ -144,3 +144,13 @@ npm.cmd run test:responses:ui
 
 No additional migration, integration credential, or external API key is required.
 Task 23 Notifications remains Not Started.
+
+## Completion
+
+Task 22 is **Complete**. Focused staged backend/API checks passed 12/12.
+The Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Controlled manual response recording, failed/successful containment, incident history, RBAC, terminal protection and atomic audit rollback verified. Synthetic changes cleaned up.`
+
+Task 23 Notifications remains Not Started. No new migration or external API key
+was required.
