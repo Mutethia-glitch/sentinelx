@@ -84,3 +84,14 @@ Expected output:
 The verifier executes inside a transaction and rolls back its synthetic rule, event, alert, category-state change, and constraint probes. It does not print credentials and requires no external API or API key.
 
 Task 16, not Task 15, owns alert listing, filtering, detail retrieval, status handling, and analyst workflows.
+
+
+## Completion
+
+Task 15 is Complete. Focused Task 13–15 regressions passed 11/11, and the
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Alert rule/event/threat/severity/source/timestamp/entities/status and nullable confidence verified. Synthetic changes rolled back.`
+
+Task 16 alert management remains separate and Not Started. No external API or API
+key is required.
