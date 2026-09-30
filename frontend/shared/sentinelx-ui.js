@@ -135,13 +135,13 @@
     const mapping=[
       [/active incidents/i,'clock-3','tone-investigating'],
       [/new alerts/i,'bell','tone-new'],
-      [/security events|events received/i,'activity',null],
+      [/security events|events received/i,'activity','tone-info'],
       [/alerts/i,'shield-alert','tone-high'],
       [/incidents/i,'siren','tone-critical'],
-      [/successful containment/i,'shield-check','tone-contained'],
-      [/reported successful/i,'shield-check','tone-contained'],
+      [/successful containment/i,'shield-check','tone-success'],
+      [/reported successful/i,'shield-check','tone-success'],
       [/reported unsuccessful/i,'x-circle','tone-critical'],
-      [/responses|response actions/i,'clipboard-check',null],
+      [/responses|response actions/i,'clipboard-check','tone-info'],
       [/risk/i,'gauge','tone-medium']
     ];
     const cards=[
@@ -164,10 +164,36 @@
       ...root.querySelectorAll('td,dd,.bar-label'),
     ];
     for(const node of candidates){
-      for(const tone of TONES.values())node.classList.remove(tone);
+      const value=String(node.textContent||'').trim();
+      const tone=TONES.get(value.toUpperCase());
+
+      if(node.matches('.bar-label')){
+        for(const toneClass of TONES.values())node.classList.remove(toneClass);
+        node.classList.remove('semantic-value');
+        if(tone)node.classList.add('semantic-value',tone);
+        continue;
+      }
+
+      for(const toneClass of TONES.values())node.classList.remove(toneClass);
       node.classList.remove('semantic-value');
-      const tone=TONES.get(String(node.textContent||'').trim().toUpperCase());
-      if(tone)node.classList.add('semantic-value',tone);
+
+      const existing=node.querySelector('[data-sx-semantic-value="1"]');
+      if(!tone){
+        if(existing&&existing.parentNode===node)node.textContent=value;
+        continue;
+      }
+
+      if(existing&&existing.parentNode===node){
+        existing.className='semantic-value '+tone;
+        existing.textContent=value;
+        continue;
+      }
+
+      const badge=node.ownerDocument.createElement('span');
+      badge.dataset.sxSemanticValue='1';
+      badge.className='semantic-value '+tone;
+      badge.textContent=value;
+      node.replaceChildren(badge);
     }
   }
   function selectIncidentTab(name,doc=globalThis.document){

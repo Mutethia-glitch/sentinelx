@@ -60,6 +60,48 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   assert.equal(await page.getByRole('link',{name:'Events'}).isVisible(),true);
   assert.ok(await page.locator('#total-cards .sx-card-icon svg').count()>0);
   assert.ok(await page.locator('.semantic-value.tone-critical').count()>0);
+
+  const metricColors=await page.evaluate(()=>{
+    const colorFor=label=>{
+      const card=[...document.querySelectorAll('#total-cards .card')].find(item=>item.querySelector('dt')?.textContent===label);
+      return card?getComputedStyle(card.querySelector('.sx-card-icon')).color:null;
+    };
+    return {
+      events:colorFor('Security events'),
+      alerts:colorFor('Alerts'),
+      incidents:colorFor('Incidents'),
+      success:colorFor('Reported successful'),
+      failure:colorFor('Reported unsuccessful')
+    };
+  });
+  assert.ok(metricColors.events&&metricColors.alerts&&metricColors.incidents&&metricColors.success&&metricColors.failure);
+  assert.notEqual(metricColors.events,metricColors.alerts);
+  assert.notEqual(metricColors.alerts,metricColors.incidents);
+  assert.notEqual(metricColors.success,metricColors.failure);
+
+  const badgeLayout=await page.evaluate(()=>{
+    const table=document.createElement('table');
+    const tbody=document.createElement('tbody');
+    const tr=document.createElement('tr');
+    const high=document.createElement('td');
+    const fresh=document.createElement('td');
+    high.textContent='HIGH';fresh.textContent='NEW';
+    tr.append(high,fresh);tbody.append(tr);table.append(tbody);document.body.append(table);
+    window.SentinelXUi.decorateSemanticValues(table);
+    const result={
+      highCellDisplay:getComputedStyle(high).display,
+      newCellDisplay:getComputedStyle(fresh).display,
+      highBadge:high.querySelector('.semantic-value.tone-high')?.textContent||null,
+      newBadge:fresh.querySelector('.semantic-value.tone-new')?.textContent||null
+    };
+    table.remove();
+    return result;
+  });
+  assert.equal(badgeLayout.highCellDisplay,'table-cell');
+  assert.equal(badgeLayout.newCellDisplay,'table-cell');
+  assert.equal(badgeLayout.highBadge,'HIGH');
+  assert.equal(badgeLayout.newBadge,'NEW');
+
   assert.equal(await page.locator('.sx-topbar-actions #refresh').count(),1);
   assert.equal(await page.locator('.sx-topbar-actions #logout').count(),1);
   assert.equal(await page.locator('#logout').getAttribute('data-icon'),'log-out');

@@ -33,6 +33,10 @@ function main(){
   assert.ok(css.includes('body[data-page="incidents"] #status-form'));
   assert.ok(!/(?:^|\n)#status-form\{/.test(css));
   assert.ok(css.includes('justify-content:flex-end'));
+  assert.ok(css.includes('.sx-card-icon.tone-high{color:var(--severity-high)'));
+  assert.ok(css.includes('.sx-card-icon.tone-critical{color:var(--severity-critical)'));
+  assert.ok(css.includes('.sx-card-icon.tone-success{color:var(--success)'));
+  assert.ok(css.includes('td>.semantic-value'));
   const reference=fs.readFileSync(path.join(root,'design-reference/lovable/sentinelx-console.tsx'),'utf8');
   assert.ok(reference.includes('export function SentinelXConsole'));
   assert.ok(reference.includes('PanelLeftClose'));
@@ -47,8 +51,11 @@ function main(){
     ...consoles.map(name=>path.join(root,name,name+'.js'))
   ];
   const combined=sourceFiles.map(file=>fs.readFileSync(file,'utf8')).join('\n');
+  const sharedUi=fs.readFileSync(path.join(root,'shared/sentinelx-ui.js'),'utf8');
+  assert.ok(sharedUi.includes('data-sx-semantic-value'));
+  assert.ok(sharedUi.includes('node.replaceChildren(badge)'));
   for(const pattern of [/\.innerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\beval\s*\(/,/localStorage\b/,/sessionStorage\b/])assert.doesNotMatch(combined,pattern);
-  console.log('Lovable dark SOC design, centralized non-overlapping CSS, normalized spacing, top-right session actions, structured sign-in and preserved frontend security verified.');
+  console.log('Lovable dark SOC design, semantic metric icon colors, correctly contained severity/status badges, centralized spacing and preserved frontend security verified.');
 }
 if(require.main===module){try{main();}catch{console.error('Task 37 frontend visual design verification failed.');process.exitCode=1;}}
 module.exports={main};

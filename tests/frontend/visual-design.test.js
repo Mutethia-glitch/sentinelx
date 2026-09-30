@@ -39,6 +39,16 @@ test('runtime theme preserves final Lovable dark tokens',()=>{
   assert.match(css,/body\[data-page="incidents"\] #status-form/);
   assert.doesNotMatch(css,/(?:^|\n)#status-form\{/);
   assert.match(css,/\.sx-topbar-actions\{[^}]*justify-content:flex-end/);
+  assert.match(css,/\.sx-card-icon\.tone-high\{color:var\(--severity-high\)/);
+  assert.match(css,/\.sx-card-icon\.tone-critical\{color:var\(--severity-critical\)/);
+  assert.match(css,/\.sx-card-icon\.tone-success\{color:var\(--success\)/);
+  assert.match(css,/td>\.semantic-value/);
+});
+
+test('semantic badges stay inside table cells instead of changing table-cell display',()=>{
+  const ui=fs.readFileSync(path.join(__dirname,'../../frontend/shared/sentinelx-ui.js'),'utf8');
+  assert.match(ui,/data-sx-semantic-value/);
+  assert.match(ui,/node\.replaceChildren\(badge\)/);
 });
 
 test('page styles do not compete with the shared stylesheet',()=>{
