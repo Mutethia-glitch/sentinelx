@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -38,7 +38,10 @@
     "verify:incidents": "node scripts/verify-incident-management.js",
     "test:incident-classification:integration": "node --test tests/integration/incident-classification.test.js",
     "test:incident-classification:ui": "node --test tests/integration/incident-classification-ui.test.js",
-    "verify:incident-classification": "node scripts/verify-incident-classification.js"
+    "verify:incident-classification": "node scripts/verify-incident-classification.js",
+    "test:risk:integration": "node --test tests/integration/risk-scoring.test.js",
+    "test:risk:ui": "node --test tests/integration/risk-scoring-ui.test.js",
+    "verify:risk": "node scripts/verify-risk-scoring.js"
   },
   "engines": {
     "node": ">=20"
