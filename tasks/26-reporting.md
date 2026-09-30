@@ -1,7 +1,7 @@
 # Task 26: Reporting
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement incident reports, security summaries, and date-range reporting.
@@ -50,6 +50,15 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Security-summary and incident-report APIs are implemented using persisted data.
+- JSON and CSV export are supported.
+- Reporting reads use repeatable-read, read-only PostgreSQL transactions.
+- Date ranges and formats are validated and all three reader roles use reports.read.
+- Focused tests and a Windows/PostgreSQL verifier are implemented.
+- No schema migration or external reporting service is required.
+- Task 27 remains separately scoped.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

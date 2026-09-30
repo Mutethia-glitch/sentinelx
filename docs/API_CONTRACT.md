@@ -207,3 +207,10 @@ one list item per record rather than multiplying results when linked evidence
 is present. Read RBAC, stable ordering and existing 50-row pages are unchanged.
 Invalid, unknown or duplicated filters return 400. See
 [SEARCH_FILTERING.md](SEARCH_FILTERING.md). Task 26 report filtering remains separate.
+
+## Task 26 reporting
+
+`GET /api/reports/security` and `GET /api/reports/incidents/{incidentId}`
+require `reports.read`. Optional inclusive `from`/`to` ISO timestamps and
+`format=json|csv` are validated. Reports are generated from persisted data in
+repeatable-read, read-only PostgreSQL transactions. See [REPORTING.md](REPORTING.md).

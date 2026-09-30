@@ -232,3 +232,9 @@ domain fields. EXISTS matching prevents duplicate records in list pagination.
 No migration 015 is needed; applied migrations 001–014 remain checksum protected.
 
 See [SEARCH_FILTERING.md](SEARCH_FILTERING.md).
+
+## Task 26 reporting query layer
+
+Task 26 adds no tables. Reports read existing event, alert, incident,
+investigation-note and response-action records under one read-only consistent
+snapshot. JSON is canonical; CSV is a flattened export representation.

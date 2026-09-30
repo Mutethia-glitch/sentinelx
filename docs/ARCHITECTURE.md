@@ -403,3 +403,10 @@ search route, denormalized copy, new migration or external indexing provider.
 
 See [SEARCH_FILTERING.md](SEARCH_FILTERING.md). Task 26 remains responsible for
 report generation and exports.
+
+## Task 26 reporting boundary
+
+Reporting is a read-only application layer over persisted SentinelX records.
+Security summaries and incident reports share existing report-read authorization
+and do not introduce a report cache, external analytics vendor, or mutation path.
+See [REPORTING.md](REPORTING.md).
