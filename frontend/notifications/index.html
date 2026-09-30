@@ -1,21 +1,36 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SentinelX · Notifications</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/notifications/notifications.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/notifications/notifications.js" defer></script></head><body data-page="notifications"><div class="app-shell"><aside class="sidebar">
-<div class="brand-block"><p class="brand">SentinelX</p><p class="brand-subtitle">IPHYN Security Operations</p></div>
-<nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a><a href="/events" data-permission="events.read" hidden>Events</a><a href="/alerts" data-permission="alerts.read" hidden>Alerts</a><a href="/incidents" data-permission="incidents.read" hidden>Incidents</a><a href="/notifications" data-permission="notifications.read" hidden>Notifications</a><a href="/audit" data-permission="audit.read" hidden>Audit</a><a href="/access">Access</a></nav>
-<p class="sidebar-note">Navigation reflects authenticated grants. Backend RBAC remains authoritative.</p>
-</aside><main class="app-main">
-<header class="page-header"><p class="eyebrow">IPHYN Security Operations</p><h1>Notifications</h1><p>Authenticated in-app delivery; notification does not replace incident handling.</p></header>
-<p id="message" role="status" aria-live="polite"></p>
-<section id="login-panel"><h2>Sign in</h2><form id="login-form"><label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label><label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button></form></section>
-<section id="identity-panel" hidden><h2>Your access</h2><p id="identity"></p><button id="logout" type="button">Sign out</button></section>
-<section id="inbox-panel" hidden><h2>Your inbox</h2><p id="unread-count" aria-live="polite"></p>
-<form id="filters"><label>State<select id="filter-status"><option value="ALL">All notifications</option><option value="UNREAD">Unread</option><option value="READ">Read</option></select></label><button type="submit">Apply filter</button></form>
-<div id="notification-rows"></div><div class="pagination"><button id="previous" type="button" disabled>Previous</button><span id="page"></span><button id="next" type="button" disabled>Next</button></div></section>
-<section id="send-panel" hidden><h2>Send an in-app notification</h2><p>Explicit dispatch only. Use a recipient UUID or send to yourself. At most one unread notification per recipient and source; no email is sent.</p>
-<form id="send-form">
-<label><input id="send-self" type="checkbox" checked> Send to me</label>
-<label>Recipient UUID<input id="recipient-id" maxlength="36" placeholder="Active SentinelX user UUID" disabled></label>
-<label>Source<select id="target-kind"><option value="INCIDENT">Incident</option><option value="ALERT">Alert</option></select></label>
-<label>Incident or alert UUID<input id="target-id" maxlength="36" required></label>
-<label>Dispatch reason (audit-only; not sent to recipient)<textarea id="send-reason" maxlength="500" required></textarea></label>
-<button type="submit">Deliver in-app notification</button></form></section>
-</main></div></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Notifications</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/notifications/notifications.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/notifications/notifications.js" defer></script></head><body data-page="notifications"><div class="sx-app"><aside class="sx-sidebar" aria-label="SentinelX navigation">
+  <div class="sx-brand">
+    <span class="sx-brand-mark" data-icon="shield"></span>
+    <div class="sx-brand-copy"><p class="sx-brand-name">SentinelX</p><p class="sx-brand-subtitle">IPHYN Security Operations</p></div>
+  </div>
+  <nav class="sx-nav" aria-label="SentinelX sections">
+    <a href="/dashboard" data-permission="dashboard.read" data-icon="layout-dashboard" hidden><span class="sx-nav-label">Dashboard</span></a>
+    <a href="/events" data-permission="events.read" data-icon="activity" hidden><span class="sx-nav-label">Events</span></a>
+    <a href="/alerts" data-permission="alerts.read" data-icon="shield-alert" hidden><span class="sx-nav-label">Alerts</span></a>
+    <a href="/incidents" data-permission="incidents.read" data-icon="siren" hidden><span class="sx-nav-label">Incidents</span></a>
+    <a href="/notifications" data-permission="notifications.read" data-icon="bell" hidden><span class="sx-nav-label">Notifications</span></a>
+    <a href="/audit" data-permission="audit.read" data-icon="file-clock" hidden><span class="sx-nav-label">Audit</span></a>
+    <a href="/access" data-icon="user-cog"><span class="sx-nav-label">Access</span></a>
+  </nav>
+  <div class="sx-sidebar-footer"><button class="sx-collapse" type="button" data-sx-sidebar-toggle data-icon="panel-left-close" aria-label="Collapse sidebar"><span class="sx-collapse-label">Collapse</span></button></div>
+</aside><div class="sx-main"><header class="sx-topbar">
+  <button class="sx-icon-button sx-mobile-menu" type="button" data-sx-nav-toggle data-icon="menu" aria-label="Open navigation"></button>
+  <div class="sx-title"><h1>Notifications</h1><p>Operational messages and analyst notices. Notifications do not replace incident handling.</p></div>
+  <div class="sx-topbar-actions"><section id="identity-panel" class="sx-topbar-identity" hidden>
+   <div class="sx-user-copy"><p id="identity"></p><p class="sx-user-role">Authenticated session</p></div>
+   
+   <button id="logout" class="sx-button-ghost" type="button" data-icon="signpost">Sign out</button>
+ </section></div>
+</header><main class="sx-content"><div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div><p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel" class="sx-panel sx-auth-panel" aria-labelledby="login-heading">
+   <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Authenticate to access protected SentinelX operations.</p></div></div>
+   <form id="login-form" class="sx-panel-body">
+     <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label>
+     <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+     <button type="submit" data-icon="key-round">Sign in</button>
+   </form>
+ </section>
+<div class="sx-notification-layout">
+  <section id="inbox-panel" class="sx-panel" hidden><div class="sx-panel-head"><div><h2>Notification inbox</h2><p>Operational messages only — not a substitute for incident handling</p></div><span id="unread-count" class="semantic-value tone-new" aria-live="polite"></span></div><form id="filters"><label>State<select id="filter-status"><option value="ALL">All notifications</option><option value="UNREAD">Unread</option><option value="READ">Read</option></select></label><button type="submit" data-icon="filter">Apply filter</button></form><div id="notification-rows"></div><div class="pagination"><button id="previous" type="button" disabled data-icon="chevron-left">Previous</button><span id="page"></span><button id="next" type="button" disabled data-icon="chevron-right">Next</button></div></section>
+  <section id="send-panel" class="sx-panel" hidden><div class="sx-panel-head"><div><h2>Send in-app notification</h2><p>Explicit dispatch only</p></div></div><p>Use a recipient UUID or send to yourself. At most one unread notification per recipient and source; no email is sent.</p><form id="send-form"><label><input id="send-self" type="checkbox" checked> Send to me</label><label>Recipient UUID<input id="recipient-id" maxlength="36" placeholder="Active SentinelX user UUID" disabled></label><label>Source<select id="target-kind"><option value="INCIDENT">Incident</option><option value="ALERT">Alert</option></select></label><label>Incident or alert UUID<input id="target-id" maxlength="36" required></label><label>Dispatch reason (audit-only; not sent to recipient)<textarea id="send-reason" maxlength="500" required></textarea></label><button type="submit" data-icon="send">Deliver in-app notification</button></form><div class="sx-panel-body"><div class="sx-notice sx-notice-info"><span data-icon="circle-dot"></span><div><p class="sx-notice-title">Incident handling remains separate</p><p class="sx-notice-copy">Use the Incidents workspace to investigate, respond, and manage lifecycle.</p></div></div></div></section>
+</div></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

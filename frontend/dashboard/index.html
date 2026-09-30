@@ -1,24 +1,54 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SentinelX · Security dashboard</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/dashboard/dashboard.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/dashboard/dashboard.js" defer></script></head><body data-page="dashboard"><div class="app-shell"><aside class="sidebar">
-<div class="brand-block"><p class="brand">SentinelX</p><p class="brand-subtitle">IPHYN Security Operations</p></div>
-<nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a><a href="/events" data-permission="events.read" hidden>Events</a><a href="/alerts" data-permission="alerts.read" hidden>Alerts</a><a href="/incidents" data-permission="incidents.read" hidden>Incidents</a><a href="/notifications" data-permission="notifications.read" hidden>Notifications</a><a href="/audit" data-permission="audit.read" hidden>Audit</a><a href="/access">Access</a></nav>
-<p class="sidebar-note">Navigation reflects authenticated grants. Backend RBAC remains authoritative.</p>
-</aside><main class="app-main">
-<header class="page-header"><p class="eyebrow">IPHYN Security Operations</p><h1>Security operations dashboard</h1><p>Read-only operational metrics derived from persisted SentinelX records.</p></header>
-<p id="message" role="status" aria-live="polite"></p>
-<section id="login-panel"><h2>Sign in</h2><form id="login-form"><label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label><label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button></form></section>
-<section id="identity-panel" hidden><div class="section-heading"><div><h2>Authenticated view</h2><p id="identity"></p></div><div><button id="refresh" type="button">Refresh metrics</button> <button id="logout" type="button">Sign out</button></div></div></section>
-<div id="dashboard-panel" hidden>
-<section><h2>All-time operational totals</h2><p id="as-of"></p><dl id="total-cards" class="cards"></dl><p class="hint">Reported response success is an analyst-recorded outcome, not independently verified endpoint execution. Risk is the documented Task 20 score, not a probability.</p></section>
-<section><h2>Rolling 24-hour activity</h2><p>Event counts use receipt time; alerts/incidents use creation time; response actions use recording time.</p><dl id="recent-cards" class="cards"></dl></section>
-<div class="columns">
-<section><h2>Severity distribution · all time</h2><h3>Alerts</h3><div id="alert-severity"></div><h3>Incidents</h3><div id="incident-severity"></div></section>
-<section><h2>Workflow state · all time</h2><h3>Alert status</h3><div id="alert-status"></div><h3>Incident status</h3><div id="incident-status"></div></section>
-</div>
-<div class="columns">
-<section><h2>Threat categories · all time</h2><h3>Alerts · leading 10</h3><div id="alert-threats"></div><h3>Incidents · leading 10</h3><div id="incident-threats"></div><p class="hint">Unclassified incident assessments remain visible as UNCLASSIFIED.</p></section>
-<section><h2>Recorded response outcomes · all time</h2><p class="hint">Outcome flags are manual attestations from Task 22.</p><div id="response-types"></div></section>
-</div>
-<section><h2>Seven UTC calendar days</h2><p id="trend-explanation">The current UTC day is partial. Source timestamps: event received, alert/incident created, and response recorded.</p>
-<div class="table-scroll"><table aria-describedby="trend-explanation"><thead><tr><th>UTC date</th><th>Events received</th><th>Alerts created</th><th>Incidents created</th><th>Responses recorded</th></tr></thead><tbody id="trend-rows"></tbody></table></div></section>
-</div>
-</main></div></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Security operations overview</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/dashboard/dashboard.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/dashboard/dashboard.js" defer></script></head><body data-page="dashboard"><div class="sx-app"><aside class="sx-sidebar" aria-label="SentinelX navigation">
+  <div class="sx-brand">
+    <span class="sx-brand-mark" data-icon="shield"></span>
+    <div class="sx-brand-copy"><p class="sx-brand-name">SentinelX</p><p class="sx-brand-subtitle">IPHYN Security Operations</p></div>
+  </div>
+  <nav class="sx-nav" aria-label="SentinelX sections">
+    <a href="/dashboard" data-permission="dashboard.read" data-icon="layout-dashboard" hidden><span class="sx-nav-label">Dashboard</span></a>
+    <a href="/events" data-permission="events.read" data-icon="activity" hidden><span class="sx-nav-label">Events</span></a>
+    <a href="/alerts" data-permission="alerts.read" data-icon="shield-alert" hidden><span class="sx-nav-label">Alerts</span></a>
+    <a href="/incidents" data-permission="incidents.read" data-icon="siren" hidden><span class="sx-nav-label">Incidents</span></a>
+    <a href="/notifications" data-permission="notifications.read" data-icon="bell" hidden><span class="sx-nav-label">Notifications</span></a>
+    <a href="/audit" data-permission="audit.read" data-icon="file-clock" hidden><span class="sx-nav-label">Audit</span></a>
+    <a href="/access" data-icon="user-cog"><span class="sx-nav-label">Access</span></a>
+  </nav>
+  <div class="sx-sidebar-footer"><button class="sx-collapse" type="button" data-sx-sidebar-toggle data-icon="panel-left-close" aria-label="Collapse sidebar"><span class="sx-collapse-label">Collapse</span></button></div>
+</aside><div class="sx-main"><header class="sx-topbar">
+  <button class="sx-icon-button sx-mobile-menu" type="button" data-sx-nav-toggle data-icon="menu" aria-label="Open navigation"></button>
+  <div class="sx-title"><h1>Security operations overview</h1><p>Documented security activity and analyst-reported outcomes across the last 24 hours.</p></div>
+  <div class="sx-topbar-actions"><section id="identity-panel" class="sx-topbar-identity" hidden>
+   <div class="sx-user-copy"><p id="identity"></p><p class="sx-user-role">Authenticated session</p></div>
+   <button id="refresh" class="sx-icon-button" type="button" data-icon="refresh-cw" aria-label="Refresh metrics"></button>
+   <button id="logout" class="sx-button-ghost" type="button" data-icon="signpost">Sign out</button>
+ </section></div>
+</header><main class="sx-content"><div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div><p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel" class="sx-panel sx-auth-panel" aria-labelledby="login-heading">
+   <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Authenticate to access protected SentinelX operations.</p></div></div>
+   <form id="login-form" class="sx-panel-body">
+     <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label>
+     <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+     <button type="submit" data-icon="key-round">Sign in</button>
+   </form>
+ </section>
+<div id="dashboard-panel" class="sx-stack" hidden>
+  <section class="sx-stack">
+    <div class="sx-panel">
+      <div class="sx-panel-head"><div><h2>All-time operational totals</h2><p id="as-of"></p></div></div>
+      <div class="sx-panel-body"><dl id="total-cards" class="cards"></dl><p class="hint">Reported response success is an analyst-recorded outcome, not independently verified endpoint execution. Risk is the documented Task 20 score, not a probability.</p></div>
+    </div>
+    <div class="sx-panel">
+      <div class="sx-panel-head"><div><h2>Rolling 24-hour activity</h2><p>Event counts use receipt time; alerts/incidents use creation time; response actions use recording time.</p></div></div>
+      <div class="sx-panel-body"><dl id="recent-cards" class="cards"></dl></div>
+    </div>
+  </section>
+  <div class="sx-grid-3">
+    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Severity distribution</h2><p>Alerts and incidents · all time</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alerts</h3><div id="alert-severity"></div><h3 class="sx-section-title">Incidents</h3><div id="incident-severity"></div></div></section>
+    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Workflow state</h2><p>Current persisted alert and incident lifecycle</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alert status</h3><div id="alert-status"></div><h3 class="sx-section-title">Incident status</h3><div id="incident-status"></div></div></section>
+    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Threat categories</h2><p>Deterministic rule classifications</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alerts · leading 10</h3><div id="alert-threats"></div><h3 class="sx-section-title">Incidents · leading 10</h3><div id="incident-threats"></div><p class="hint">Unclassified incident assessments remain visible as UNCLASSIFIED.</p></div></section>
+  </div>
+  <div class="sx-grid-2">
+    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Seven-day UTC trend</h2><p id="trend-explanation">The current UTC day is partial. Source timestamps: event received, alert/incident created, and response recorded.</p></div></div><div class="table-scroll"><table aria-describedby="trend-explanation"><thead><tr><th>UTC date</th><th>Events received</th><th>Alerts created</th><th>Incidents created</th><th>Responses recorded</th></tr></thead><tbody id="trend-rows"></tbody></table></div></section>
+    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Recorded response outcomes</h2><p>Human-controlled, analyst-reported</p></div></div><div class="sx-panel-body"><p class="hint">Outcome flags are manual attestations from Task 22.</p><div id="response-types"></div></div></section>
+  </div>
+  <div class="sx-notice sx-notice-info"><span data-icon="circle-dot"></span><div><p class="sx-notice-title">Interpretation guidance</p><p class="sx-notice-copy">Risk is a documented score, not a probability. Values support prioritization and do not predict incident likelihood.</p></div></div>
+</div></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

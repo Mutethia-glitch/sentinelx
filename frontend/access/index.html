@@ -1,35 +1,34 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SentinelX · Access management</title>
-  <link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/access/access.css">
-  <script src="/ui/sentinelx-ui.js" defer></script><script src="/access/access.js" defer></script>
-</head>
-<body data-page="access"><div class="app-shell"><aside class="sidebar">
-<div class="brand-block"><p class="brand">SentinelX</p><p class="brand-subtitle">IPHYN Security Operations</p></div>
-<nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a><a href="/events" data-permission="events.read" hidden>Events</a><a href="/alerts" data-permission="alerts.read" hidden>Alerts</a><a href="/incidents" data-permission="incidents.read" hidden>Incidents</a><a href="/notifications" data-permission="notifications.read" hidden>Notifications</a><a href="/audit" data-permission="audit.read" hidden>Audit</a><a href="/access">Access</a></nav>
-<p class="sidebar-note">Navigation reflects authenticated grants. Backend RBAC remains authoritative.</p>
-</aside><main class="app-main">
-    <header class="page-header"><p class="eyebrow">IPHYN Security Operations</p><h1>Access management</h1><p>Sign in to view your access. Administrators can assign approved roles.</p></header>
-    <p id="message" role="status" aria-live="polite"></p>
-    <section id="login-panel" aria-labelledby="login-heading">
-      <h2 id="login-heading">Sign in</h2>
-      <form id="login-form">
-        <label>Email<input id="email" type="email" autocomplete="username" required maxlength="254"></label>
-        <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
-        <button type="submit">Sign in</button>
-      </form>
-    </section>
-    <section id="identity-panel" hidden aria-labelledby="identity-heading">
-      <div class="section-heading"><h2 id="identity-heading">Your access</h2><button id="logout" type="button">Sign out</button></div>
-      <p id="identity"></p><p id="assigned-roles"></p>
-      <button id="refresh" type="button">Refresh access</button>
-    </section>
-    <section id="users-panel" hidden aria-labelledby="users-heading">
-      <h2 id="users-heading">Assign roles</h2>
-      <p>Role changes require a reason and sign the affected user out. At least one active Administrator must remain.</p>
-      <div id="users"></div>
-    </section>
-  </main></div></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Access management</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/access/access.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/access/access.js" defer></script></head><body data-page="access"><div class="sx-app"><aside class="sx-sidebar" aria-label="SentinelX navigation">
+  <div class="sx-brand">
+    <span class="sx-brand-mark" data-icon="shield"></span>
+    <div class="sx-brand-copy"><p class="sx-brand-name">SentinelX</p><p class="sx-brand-subtitle">IPHYN Security Operations</p></div>
+  </div>
+  <nav class="sx-nav" aria-label="SentinelX sections">
+    <a href="/dashboard" data-permission="dashboard.read" data-icon="layout-dashboard" hidden><span class="sx-nav-label">Dashboard</span></a>
+    <a href="/events" data-permission="events.read" data-icon="activity" hidden><span class="sx-nav-label">Events</span></a>
+    <a href="/alerts" data-permission="alerts.read" data-icon="shield-alert" hidden><span class="sx-nav-label">Alerts</span></a>
+    <a href="/incidents" data-permission="incidents.read" data-icon="siren" hidden><span class="sx-nav-label">Incidents</span></a>
+    <a href="/notifications" data-permission="notifications.read" data-icon="bell" hidden><span class="sx-nav-label">Notifications</span></a>
+    <a href="/audit" data-permission="audit.read" data-icon="file-clock" hidden><span class="sx-nav-label">Audit</span></a>
+    <a href="/access" data-icon="user-cog"><span class="sx-nav-label">Access</span></a>
+  </nav>
+  <div class="sx-sidebar-footer"><button class="sx-collapse" type="button" data-sx-sidebar-toggle data-icon="panel-left-close" aria-label="Collapse sidebar"><span class="sx-collapse-label">Collapse</span></button></div>
+</aside><div class="sx-main"><header class="sx-topbar">
+  <button class="sx-icon-button sx-mobile-menu" type="button" data-sx-nav-toggle data-icon="menu" aria-label="Open navigation"></button>
+  <div class="sx-title"><h1>Access management</h1><p>Authenticate and manage approved SentinelX roles.</p></div>
+  <div class="sx-topbar-actions"></div>
+</header><main class="sx-content"><div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div><p id="message" role="status" aria-live="polite"></p>
+<div class="sx-notice sx-notice-warning"><span data-icon="alert-triangle"></span><div><p class="sx-notice-title">Backend authorization remains authoritative</p><p class="sx-notice-copy">Navigation visibility and role-management controls are presentation only. Server-side RBAC decides access.</p></div></div>
+<div class="sx-grid-3">
+  <section id="login-panel" class="sx-panel sx-auth-panel" aria-labelledby="login-heading">
+   <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Authenticate to access protected SentinelX operations.</p></div></div>
+   <form id="login-form" class="sx-panel-body">
+     <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label>
+     <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+     <button type="submit" data-icon="key-round">Sign in</button>
+   </form>
+ </section>
+  <section id="identity-panel" class="sx-panel" hidden aria-labelledby="identity-heading"><div class="sx-panel-head"><div><h2 id="identity-heading">Authenticated identity</h2><p>Current SentinelX session</p></div></div><div class="sx-panel-body"><p id="identity"></p><p id="assigned-roles"></p><div class="sx-stack"><button id="refresh" type="button" data-icon="refresh-cw">Refresh access</button><button id="logout" class="sx-button-outline" type="button" data-icon="signpost">Sign out</button></div></div></section>
+  <section class="sx-panel"><div class="sx-panel-head"><div><h2>Access posture</h2><p>Role assignments remain server controlled</p></div></div><div class="sx-panel-body"><div class="sx-notice sx-notice-info"><span data-icon="lock-keyhole"></span><div><p class="sx-notice-title">Session protection</p><p class="sx-notice-copy">Role changes sign the affected user out. Updated privileges apply only after live backend checks.</p></div></div></div></section>
+</div>
+<section id="users-panel" class="sx-panel" hidden aria-labelledby="users-heading"><div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Role changes require a reason. At least one active Administrator must remain.</p></div></div><div id="users" class="sx-panel-body"></div></section></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

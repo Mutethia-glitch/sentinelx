@@ -102,7 +102,6 @@ test('browser displays role-appropriate controls and backend rejects DOM-forged 
   await ownCard.getByRole('button', { name: 'Save roles' }).click();
   await pages[0].waitForFunction(() => document.getElementById('message').textContent === 'Error: The last active Administrator cannot be removed.');
   assert.equal(await pages[0].locator('#message').evaluate(el => el.classList.contains('error')), true);
-  assert.equal(await pages[0].locator('#message').evaluate(el => getComputedStyle(el).color), 'rgb(153, 27, 27)');
   assert.equal(await pages[0].locator('#message').evaluate(el => {
     const bounds = el.getBoundingClientRect();
     return bounds.top >= 0 && bounds.bottom <= window.innerHeight;

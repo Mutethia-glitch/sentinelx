@@ -1,1 +1,1 @@
-#inbox-panel,#send-panel{min-width:0}.notification{position:relative}.notification.urgent::before{content:"Priority";display:inline-flex;margin-bottom:6px;color:var(--sx-critical);font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.notification button{margin-top:8px}
+#unread-count{margin:0}#send-panel .sx-panel-body{padding-top:0}.notification:last-child{border-bottom:0}

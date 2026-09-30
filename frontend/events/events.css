@@ -1,1 +1,1 @@
-.filter-grid{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}td:first-child{min-width:180px}th:nth-child(3),td:nth-child(3){min-width:130px}#detail-panel h3{color:var(--sx-primary)}
+#detail-panel .sx-panel-body{padding-top:0}#detail-panel #detail-fields{padding-bottom:.25rem}#detail-panel h3{margin-top:1rem}

@@ -1,1 +1,1 @@
-.user-card{padding-top:14px}.user-card h3{margin:.1rem 0 1rem;overflow-wrap:anywhere}.user-card form{min-width:0}#users-panel>p{color:var(--sx-muted);font-size:.8rem}#assigned-roles{color:var(--sx-muted)}
+.sx-grid-3>#login-panel{max-width:none}.sx-grid-3>#identity-panel{align-self:start}.sx-grid-3>.sx-panel{min-height:100%}#identity{margin:.25rem 0;color:var(--foreground);font-size:.875rem;font-weight:600}#users-panel{margin-top:1rem}.user-card button{margin-top:.25rem}

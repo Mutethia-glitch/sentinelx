@@ -1,1 +1,1 @@
-#audit-panel #filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 12px}#audit-panel #filters label{margin-bottom:0}.entry{border-left:3px solid #466784}.context{max-height:18rem}
+#audit-panel{margin:0}#audit-detail-fields{padding:1rem}#audit-detail-fields dd{margin-bottom:.5rem}#audit-context{margin:0 1rem 1rem}

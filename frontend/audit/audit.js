@@ -14,11 +14,17 @@ async function request(path,options={}){
   if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}
   return body;
 }
+function clearDetail(){
+  el('audit-detail-panel').hidden=true;
+  el('audit-detail-id').textContent='';
+  el('audit-detail-fields').replaceChildren();
+  el('audit-context').textContent='';
+}
 function reset(){
   generation++;ui.clearAccess();
   el('login-panel').hidden=false;el('identity-panel').hidden=true;el('audit-panel').hidden=true;
   el('identity').textContent='';el('rows').replaceChildren();el('page').textContent='';
-  el('previous').disabled=true;el('next').disabled=true;
+  el('previous').disabled=true;el('next').disabled=true;clearDetail();
 }
 function handleError(error){
   if(error.status===401||error.status===403)reset();
@@ -26,6 +32,32 @@ function handleError(error){
   message(ui.safeError(error),true);
 }
 function iso(value){return value?new Date(value).toISOString():null;}
+function field(label,value){
+  const dt=document.createElement('dt'),dd=document.createElement('dd');
+  dt.textContent=label;dd.textContent=value??'None';el('audit-detail-fields').append(dt,dd);
+}
+function showDetail(item){
+  el('audit-detail-fields').replaceChildren();
+  el('audit-detail-id').textContent=item.action+' · '+item.occurredAt;
+  field('Actor',item.actor?.displayName||item.actorContext||'System');
+  field('Action',item.action);
+  field('Target',item.target.type+' / '+(item.target.id||'none'));
+  field('Occurred',item.occurredAt);
+  el('audit-context').textContent=JSON.stringify(item.context,null,2);
+  el('audit-detail-panel').hidden=false;
+}
+function row(item){
+  const tr=document.createElement('tr');
+  const actor=item.actor?.displayName||item.actorContext||'System';
+  const target=item.target.type+' / '+(item.target.id||'none');
+  const context=JSON.stringify(item.context);
+  for(const value of [item.occurredAt,actor,item.action,target,context.length>110?context.slice(0,107)+'...':context]){
+    const td=document.createElement('td');td.textContent=value;tr.append(td);
+  }
+  const td=document.createElement('td'),button=document.createElement('button');
+  button.type='button';button.textContent='Inspect';button.setAttribute('aria-label','Inspect audit entry '+item.action);
+  button.addEventListener('click',()=>showDetail(item));td.append(button);tr.append(td);return tr;
+}
 async function load(){
   const current=++generation;ui.loading('Loading audit trail…');
   try{
@@ -36,17 +68,11 @@ async function load(){
     if(!access.permissions.includes('audit.read')){el('audit-panel').hidden=true;message('Your account does not have permission to view the audit trail.',true);return;}
     const query=new URLSearchParams(filters);query.set('page',String(page));
     const data=await request('/api/audit?'+query);if(current!==generation)return;
-    el('rows').replaceChildren();
-    for(const item of data.entries){
-      const article=document.createElement('article');article.className='entry';
-      for(const text of [item.occurredAt+' · '+item.action,'Actor: '+(item.actor?.displayName||item.actorContext),'Target: '+item.target.type+' / '+(item.target.id||'none')]){
-        const p=document.createElement('p');p.textContent=text;article.append(p);
-      }
-      const pre=document.createElement('pre');pre.className='context';pre.textContent=JSON.stringify(item.context,null,2);article.append(pre);el('rows').append(article);
-    }
-    if(!data.entries.length){const p=document.createElement('p');p.textContent='No audit entries match these filters.';el('rows').append(p);}
+    el('rows').replaceChildren();clearDetail();
+    for(const item of data.entries)el('rows').append(row(item));
+    if(data.entries.length)showDetail(data.entries[0]);
     el('page').textContent='Page '+data.page;el('previous').disabled=data.page<=1;el('next').disabled=!data.hasMore;
-    el('audit-panel').hidden=false;message('Audit trail loaded.');
+    el('audit-panel').hidden=false;message(data.entries.length?'Audit trail loaded.':'No audit entries match these filters.');
   }catch(error){if(current===generation)handleError(error);}
 }
 el('filters').addEventListener('submit',event=>{
@@ -62,15 +88,11 @@ el('previous').addEventListener('click',()=>{if(page>1){page--;load();}});
 el('next').addEventListener('click',()=>{if(page<2000){page++;load();}});
 el('login-form').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;ui.loading('Signing in…');
-  try{
-    await request('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:el('email').value,password:el('password').value})});
-    await load();
-  }catch(error){handleError(error);}
-  finally{el('password').value='';button.disabled=false;}
+  try{await request('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:el('email').value,password:el('password').value})});await load();}
+  catch(error){handleError(error);}finally{el('password').value='';button.disabled=false;}
 });
 el('logout').addEventListener('click',async()=>{
-  reset();
-  try{await request('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});message('Signed out.');}
+  reset();try{await request('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});message('Signed out.');}
   catch(error){handleError(error);}
 });
 load();

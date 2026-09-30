@@ -4,7 +4,7 @@ const {chromium}=require('playwright');
 const {createServer}=require('../../src/api/server');
 const {AuthError}=require('../../src/auth/errors');
 
-test('approved SOC shell renders safely on desktop and narrow viewport',async t=>{
+test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async t=>{
   const config={origin:'http://placeholder.invalid',cookieName:'sentinelx_session',sessionSeconds:3600,idleSeconds:1800,secureCookie:false};
   const user={id:'11111111-1111-4111-8111-111111111111',email:'viewer@example.invalid',displayName:'<b>Viewer</b>'};
   const auth={
@@ -35,13 +35,11 @@ test('approved SOC shell renders safely on desktop and narrow viewport',async t=
   const page=await browser.newPage({viewport:{width:1365,height:900}});
   const response=await page.goto(base+'/dashboard');
   assert.equal(response.status(),200);
-  assert.equal(await page.locator('link[href="/ui/sentinelx-theme.css"]').count(),1);
-  assert.equal(await page.locator('.app-shell').count(),1);
-  assert.equal(await page.locator('.sidebar').count(),1);
+  assert.equal(await page.locator('.sx-app').count(),1);
+  assert.equal(await page.locator('.sx-sidebar').count(),1);
+  assert.equal(await page.locator('.sx-brand-mark svg').count(),1);
   assert.equal(await page.locator('nav a[aria-current="page"]').getAttribute('href'),'/dashboard');
-  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).colorScheme),'light');
-  const background=await page.evaluate(()=>getComputedStyle(document.body).backgroundColor);
-  assert.notEqual(background,'rgba(0, 0, 0, 0)');
+  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).colorScheme),'dark');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 
   await page.getByLabel('Email',{exact:true}).fill(user.email);
@@ -52,10 +50,14 @@ test('approved SOC shell renders safely on desktop and narrow viewport',async t=
   assert.equal(await page.locator('#identity b').count(),0);
   assert.equal(await page.getByRole('link',{name:'Audit'}).isVisible(),false);
   assert.equal(await page.getByRole('link',{name:'Events'}).isVisible(),true);
+  assert.ok(await page.locator('#total-cards .sx-card-icon svg').count()>0);
   assert.ok(await page.locator('.semantic-value.tone-critical').count()>0);
 
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-  assert.equal(await page.locator('.sidebar').evaluate(el=>getComputedStyle(el).position),'relative');
-  assert.equal(await page.locator('.table-scroll').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
+  assert.equal(await page.locator('.sx-sidebar').evaluate(el=>getComputedStyle(el).position),'fixed');
+  assert.equal(await page.getByRole('button',{name:'Open navigation'}).isVisible(),true);
+  await page.getByRole('button',{name:'Open navigation'}).click();
+  assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('sx-nav-open')),true);
+  assert.equal(await page.getByRole('link',{name:'Dashboard'}).isVisible(),true);
 });

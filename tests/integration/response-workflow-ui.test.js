@@ -32,6 +32,7 @@ test('incident response UI supports safe manual records, containment confirmatio
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
   await page.locator('#incidents-panel').waitFor({state:'visible'});
   await page.getByRole('button',{name:'Inspect incident '+incident.id}).click();
+  await page.getByRole('tab',{name:'Response'}).click();
   await page.locator('#response-workflow').waitFor({state:'visible'});
  }
  const analyst=pages[0],viewer=pages[1];
@@ -56,6 +57,7 @@ test('incident response UI supports safe manual records, containment confirmatio
  assert.equal(await analyst.locator('#response-action-rows img').count(),0);
  assert.equal((await pool.query('SELECT status FROM incidents WHERE id=$1',[incident.id])).rows[0].status,'CONTAINED');
  await viewer.getByRole('button',{name:'Inspect incident '+incident.id}).click();
+ await viewer.getByRole('tab',{name:'Response'}).click();
  await viewer.locator('#response-workflow').waitFor({state:'visible'});
  assert.equal(await viewer.locator('#response-form').isVisible(),false);
  assert.ok((await viewer.locator('#response-action-rows').textContent()).includes(malicious));

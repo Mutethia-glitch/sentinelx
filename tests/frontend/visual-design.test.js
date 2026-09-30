@@ -2,37 +2,54 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {markCurrentPage,decorateSemanticValues}=require('../../frontend/shared/sentinelx-ui');
+const {markCurrentPage}=require('../../frontend/shared/sentinelx-ui');
 
 const consoles=['access','events','alerts','incidents','dashboard','notifications','audit'];
 
-test('all consoles use the shared SentinelX design shell',()=>{
+test('all consoles use the imported Lovable shell and protected navigation',()=>{
   for(const name of consoles){
     const html=fs.readFileSync(path.join(__dirname,'../../frontend',name,'index.html'),'utf8');
     assert.match(html,/href="\/ui\/sentinelx-theme\.css"/);
-    assert.match(html,/class="app-shell"/);
-    assert.match(html,/class="sidebar"/);
-    assert.match(html,/class="app-main"/);
-    assert.match(html,/class="page-header"/);
-    assert.match(html,/IPHYN Security Operations/);
+    assert.match(html,/class="sx-app"/);
+    assert.match(html,/class="sx-sidebar"/);
+    assert.match(html,/class="sx-topbar"/);
+    assert.match(html,/class="sx-content"/);
+    assert.match(html,/data-icon="shield"/);
+    assert.match(html,/data-icon="layout-dashboard"/);
+    assert.match(html,/data-permission="[^"]+"[^>]*hidden/);
   }
 });
 
-test('shared theme contains the approved SOC tokens and responsive shell',()=>{
+test('runtime theme preserves final Lovable dark tokens',()=>{
   const css=fs.readFileSync(path.join(__dirname,'../../frontend/shared/sentinelx-theme.css'),'utf8');
-  for(const token of ['--sx-bg','--sx-sidebar','--sx-primary','--sx-critical','--sx-success','--sx-code'])assert.match(css,new RegExp(token));
-  assert.match(css,/grid-template-columns:240px minmax\(0,1fr\)/);
-  assert.match(css,/@media\(max-width:900px\)/);
-  assert.match(css,/color-scheme:light/);
-  assert.doesNotMatch(css,/color-scheme:dark/);
-  assert.match(css,/--sx-bg:#f5f7fb/);
-  assert.match(css,/--sx-surface:#ffffff/);
-  assert.match(css,/\.semantic-value/);
-  assert.match(css,/\.tone-contained/);
-  assert.match(css,/\.tone-resolved/);
+  assert.match(css,/color-scheme:dark/);
+  assert.match(css,/--background:oklch\(\.145 \.025 255\)/);
+  assert.match(css,/--foreground:oklch\(\.92 \.012 250\)/);
+  assert.match(css,/--primary:oklch\(\.72 \.13 225\)/);
+  assert.match(css,/--sidebar:oklch\(\.12 \.026 258\)/);
+  assert.match(css,/--surface-subtle:oklch\(\.17 \.024 255\)/);
+  assert.match(css,/--severity-critical:oklch\(\.68 \.2 25\)/);
+  assert.match(css,/@media\(max-width:767px\)/);
+  assert.match(css,/\.sx-incident-layout/);
+  assert.match(css,/\.sx-notification-layout/);
+  assert.match(css,/\.sx-audit-layout/);
 });
 
-test('current navigation marker and semantic decoration are presentation only',()=>{
+test('approved Lovable source is imported verbatim as design reference',()=>{
+  const component=fs.readFileSync(path.join(__dirname,'../../frontend/design-reference/lovable/sentinelx-console.tsx'),'utf8');
+  const styles=fs.readFileSync(path.join(__dirname,'../../frontend/design-reference/lovable/styles.css'),'utf8');
+  const note=fs.readFileSync(path.join(__dirname,'../../frontend/design-reference/lovable/README.md'),'utf8');
+  assert.match(component,/export function SentinelXConsole/);
+  assert.match(component,/LayoutDashboard/);
+  assert.match(component,/ShieldAlert/);
+  assert.match(component,/PanelLeftClose/);
+  assert.match(component,/function Incidents\(\)/);
+  assert.match(styles,/--background: oklch\(0\.145 0\.025 255\)/);
+  assert.match(styles,/--sidebar: oklch\(0\.12 0\.026 258\)/);
+  assert.match(note,/5514aa322c48e6c21cea1518a5b98e946fc4bc11/);
+});
+
+test('current navigation marker remains presentation only',()=>{
   const links=[
     {attrs:{href:'/dashboard'},getAttribute(k){return this.attrs[k]??null;},setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];}},
     {attrs:{href:'/events'},getAttribute(k){return this.attrs[k]??null;},setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];}},
@@ -41,21 +58,15 @@ test('current navigation marker and semantic decoration are presentation only',(
   markCurrentPage(doc,'/events');
   assert.equal(links[0].attrs['aria-current'],undefined);
   assert.equal(links[1].attrs['aria-current'],'page');
-
-  function node(text){
-    const classes=new Set();
-    return {textContent:text,classList:{add(...v){for(const x of v)classes.add(x);},remove(...v){for(const x of v)classes.delete(x);}},matches(){return true;},querySelectorAll(){return [];},classes};
-  }
-  const critical=node('CRITICAL');decorateSemanticValues(critical);
-  assert.equal(critical.classes.has('semantic-value'),true);
-  assert.equal(critical.classes.has('tone-critical'),true);
-  const contained=node('CONTAINED');decorateSemanticValues(contained);
-  const resolved=node('RESOLVED');decorateSemanticValues(resolved);
-  assert.equal(contained.classes.has('tone-contained'),true);
-  assert.equal(resolved.classes.has('tone-resolved'),true);
 });
 
-test('incident creation success state remains visible and exact',()=>{
+test('incident workspace keeps Lovable tabs and exact creation success behavior',()=>{
+  const html=fs.readFileSync(path.join(__dirname,'../../frontend/incidents/index.html'),'utf8');
   const js=fs.readFileSync(path.join(__dirname,'../../frontend/incidents/incidents.js'),'utf8');
+  assert.match(html,/data-sx-tab="evidence"/);
+  assert.match(html,/data-sx-tab="investigation"/);
+  assert.match(html,/data-sx-tab="response"/);
+  assert.match(html,/data-icon="shield-alert"/);
+  assert.match(html,/data-icon="book-open-check"/);
   assert.match(js,/message\('Incident created\.',false,true\);/);
 });

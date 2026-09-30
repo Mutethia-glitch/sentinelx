@@ -1,1 +1,1 @@
-.filter-grid{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}td:first-child{min-width:180px}#detail-panel>h3{color:var(--sx-primary)}#event-detail{padding:14px;border:1px solid var(--sx-border);border-radius:7px;background:var(--sx-surface-soft)}
+#detail-fields{padding:0 0 1rem}.sx-alert-main .sx-notice{margin:1rem 0}#event-detail h4{margin:.75rem 0 .35rem;color:var(--muted-foreground);font-size:.6875rem;text-transform:uppercase}

@@ -92,15 +92,17 @@ Do not mark this task complete until:
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
 
-## Implementation Note — 2026-09-30
+## Implementation Note — 2026-10-01
 
-The user approved a private Lovable mock-data prototype as the visual reference. The prototype itself is not connected to the SentinelX repository and its React/Tailwind stack is not imported. SentinelX keeps its existing static HTML/CSS/JavaScript frontend, Node.js backend and PostgreSQL architecture.
+The user approved the private Lovable prototype and then explicitly required the production frontend to use that design directly rather than an approximation. The earlier light-theme revision is superseded.
 
-Task 37 adds one shared native design system at `frontend/shared/sentinelx-theme.css`, a common responsive application shell across all seven consoles, presentation-only active-navigation and semantic severity/status decoration, and focused source/browser regression checks. The visual direction uses a light off-white/slate SOC shell with white operational surfaces, restrained cyan/blue operational accents, professional cards/panels/tables/forms, deliberately dark technical evidence blocks, and distinct LOW/MEDIUM/HIGH/CRITICAL plus lifecycle treatments. The user explicitly selected the light theme after approving the prototype layout. CONTAINED and RESOLVED remain visually and semantically distinct.
+The final Lovable project commit `5514aa322c48e6c21cea1518a5b98e946fc4bc11` is imported verbatim under `frontend/design-reference/lovable/` as the visual source of truth. The served SentinelX pages use the same dark OKLCH design tokens, shell proportions, responsive navigation model, screen compositions, icon concepts, panels, tables, forms, status treatments, incident workspace and operational hierarchy.
 
-Task 35/36 security behavior remains authoritative and unchanged: permissioned navigation starts hidden, backend RBAC controls access, API values remain safely rendered, browser storage is not introduced, CSP remains restrictive, and the exact visible incident success call `message('Incident created.',false,true);` is preserved. No migration, Supabase, frontend framework, runtime dependency, backend feature, API change, authentication replacement, or Task 38 work was introduced.
+The Lovable React/Tailwind runtime is not introduced into production. The design is fitted to the existing secure static HTML/CSS/JavaScript frontend and its real API-driven data. Existing Node.js/PostgreSQL backend logic, routes, authentication, RBAC, CSP, safe rendering, deterministic detection, incident lifecycle and human-controlled response behavior are unchanged.
 
-Local Windows quality, Task 37 verifier, and Task 37 browser acceptance remain pending. See `docs/FRONTEND_VISUAL_DESIGN.md`.
+No backend file, migration, runtime dependency, Supabase integration, database change, API behavior change, authentication replacement, unsafe HTML sink, browser security-record storage, or Task 38 implementation is part of this final design port.
+
+Local Windows quality, verifier and browser acceptance must be rerun against this final Lovable-aligned implementation before Task 37 can be marked Complete. See `docs/FRONTEND_VISUAL_DESIGN.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into Task 38 or later work. Do not redesign SentinelX's security architecture. Do not trade security correctness or analyst usability for decorative effects.**

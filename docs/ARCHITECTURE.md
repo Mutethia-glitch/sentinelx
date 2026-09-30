@@ -453,6 +453,8 @@ Operational API values remain safely rendered through DOM/text APIs, and browser
 
 ## Task 37 presentation design layer
 
-Task 37 adds a shared native CSS presentation layer at `frontend/shared/sentinelx-theme.css` and a consistent semantic shell around the seven existing operational consoles. This is deliberately a presentation layer only: the Node.js API/application boundary, backend RBAC, HttpOnly session model, safe DOM rendering, PostgreSQL data-access boundary, deterministic detection foundation, and human-controlled response workflow are unchanged.
+Task 37 adds a shared native presentation layer and consistent semantic shell around the seven existing operational consoles. The final user-approved Lovable source is checked in under `frontend/design-reference/lovable/` as the visual reference, while the production runtime remains the existing static HTML/CSS/JavaScript presentation layer.
 
-A private Lovable prototype was used only to establish visual direction. No Lovable-generated React/Tailwind code, Supabase integration, frontend framework, database, authentication implementation, or external runtime dependency is part of SentinelX. See [FRONTEND_VISUAL_DESIGN.md](FRONTEND_VISUAL_DESIGN.md).
+The Node.js API/application boundary, backend RBAC, HttpOnly session model, safe DOM rendering, PostgreSQL data-access boundary, deterministic detection foundation, and human-controlled response workflow are unchanged. No Lovable React/Tailwind runtime, Supabase integration, frontend database, authentication implementation, or external runtime dependency is introduced.
+
+See [FRONTEND_VISUAL_DESIGN.md](FRONTEND_VISUAL_DESIGN.md).

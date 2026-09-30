@@ -8,25 +8,35 @@ function main(){
   for(const name of consoles){
     const html=fs.readFileSync(path.join(root,name,'index.html'),'utf8');
     assert.match(html,/\/ui\/sentinelx-theme\.css/);
-    assert.match(html,/class="app-shell"/);
-    assert.match(html,/class="sidebar"/);
-    assert.match(html,/class="page-header"/);
-    assert.match(html,/data-permission="[^"]+" hidden/);
+    assert.match(html,/class="sx-app"/);
+    assert.match(html,/class="sx-sidebar"/);
+    assert.match(html,/class="sx-topbar"/);
+    assert.match(html,/data-icon="layout-dashboard"/);
+    assert.match(html,/data-permission="[^"]+"[^>]*hidden/);
   }
   const css=fs.readFileSync(path.join(root,'shared/sentinelx-theme.css'),'utf8');
-  for(const token of ['--sx-bg','--sx-sidebar','--sx-primary','--sx-critical','--sx-success'])assert.ok(css.includes(token));
-  assert.ok(css.includes('color-scheme:light'));
-  assert.ok(!css.includes('color-scheme:dark'));
-  assert.ok(css.includes('--sx-bg:#f5f7fb'));
-  assert.ok(css.includes('--sx-surface:#ffffff'));
-  assert.ok(css.includes('@media(max-width:900px)'));
-  assert.ok(css.includes('.tone-contained'));
-  assert.ok(css.includes('.tone-resolved'));
+  for(const token of [
+    'color-scheme:dark',
+    '--background:oklch(.145 .025 255)',
+    '--primary:oklch(.72 .13 225)',
+    '--sidebar:oklch(.12 .026 258)',
+    '--severity-critical:oklch(.68 .2 25)'
+  ])assert.ok(css.includes(token),token);
+  assert.ok(css.includes('.sx-incident-layout'));
+  assert.ok(css.includes('.sx-notification-layout'));
+  assert.ok(css.includes('.sx-audit-layout'));
+  const reference=fs.readFileSync(path.join(root,'design-reference/lovable/sentinelx-console.tsx'),'utf8');
+  assert.ok(reference.includes('export function SentinelXConsole'));
+  assert.ok(reference.includes('PanelLeftClose'));
   const incident=fs.readFileSync(path.join(root,'incidents/incidents.js'),'utf8');
   assert.ok(incident.includes("message('Incident created.',false,true);"));
-  const combined=consoles.map(name=>fs.readFileSync(path.join(root,name,name+'.js'),'utf8')).join('\n')+'\n'+fs.readFileSync(path.join(root,'shared/sentinelx-ui.js'),'utf8');
+  const sourceFiles=[
+    path.join(root,'shared/sentinelx-ui.js'),
+    ...consoles.map(name=>path.join(root,name,name+'.js'))
+  ];
+  const combined=sourceFiles.map(file=>fs.readFileSync(file,'utf8')).join('\n');
   for(const pattern of [/\.innerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\beval\s*\(/,/localStorage\b/,/sessionStorage\b/])assert.doesNotMatch(combined,pattern);
-  console.log('Light SOC design system, seven-console shell, responsive styling, semantic state treatment and preserved frontend security verified.');
+  console.log('Imported Lovable dark SOC design, seven-console integration, icon shell, responsive layout and preserved frontend security verified.');
 }
 if(require.main===module){try{main();}catch{console.error('Task 37 frontend visual design verification failed.');process.exitCode=1;}}
 module.exports={main};

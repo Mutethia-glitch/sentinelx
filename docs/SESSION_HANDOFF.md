@@ -1,3 +1,24 @@
+# Task 37 final Lovable design port — 2026-10-01
+
+Task 37 remains **Implemented — awaiting local acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.
+
+The user rejected the earlier CSS approximation because of overlap and visual drift and explicitly required the production frontend to follow the Lovable prototype itself, using the dark theme and the same icon concepts without changing backend behavior.
+
+The final private Lovable source at commit `5514aa322c48e6c21cea1518a5b98e946fc4bc11` is now imported verbatim under `frontend/design-reference/lovable/`. The production static HTML/CSS/JavaScript consoles are fitted to that source: dark OKLCH tokens, 240px desktop sidebar, responsive mobile drawer, sticky top bar, icon-bearing navigation/actions, Lovable panel/table/form spacing, Dashboard metrics, Events inspector split, Alerts queue/evidence/status workspace, Incident queue/create + evidence/investigation/response tabs, Notifications inbox/send split, Audit table/context split, and Access identity/role-management presentation.
+
+The runtime still uses the existing SentinelX page scripts and real backend APIs. Task 37 does not alter PostgreSQL, migrations, backend routes/services, authentication, sessions, RBAC, deterministic detection, response semantics or API contracts. Protected navigation remains hidden until live access grants allow it. Safe text/DOM rendering and no-Web-Storage protections remain intact.
+
+Because the final design differs materially from the previously tested light revision, the Task 37 acceptance gates must be rerun:
+- `npm.cmd run quality`
+- `npm.cmd run verify:frontend-design`
+- `npm.cmd run test:frontend-design:ui`
+
+Do not mark Task 37 Complete until those final gates pass. Do not start Task 38.
+
+See `docs/FRONTEND_VISUAL_DESIGN.md` and `tasks/37-frontend-visual-design-and-polish.md`.
+
+---
+
 # Task 37 checkpoint — 2026-09-30
 
 Task 37 is **Implemented — awaiting local acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.

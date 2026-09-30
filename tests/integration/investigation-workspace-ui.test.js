@@ -35,6 +35,7 @@ test('incident console reconstructs investigation and keeps Viewer findings read
     await page.getByRole('button',{name:'Sign in',exact:true}).click();
     await page.locator('#incidents-panel').waitFor({state:'visible'});
     await page.getByRole('button',{name:`Inspect incident ${incident.id}`}).click();
+    await page.getByRole('tab',{name:'Investigation'}).click();
     await page.locator('#investigation-workspace').waitFor({state:'visible'});
   }
 
@@ -58,6 +59,7 @@ test('incident console reconstructs investigation and keeps Viewer findings read
   assert.ok((await analyst.locator('#investigation-timeline').textContent()).includes('INVESTIGATION_NOTE'));
 
   await viewer.getByRole('button',{name:`Inspect incident ${incident.id}`}).click();
+  await viewer.getByRole('tab',{name:'Investigation'}).click();
   await viewer.locator('#investigation-workspace').waitFor({state:'visible'});
   assert.ok((await viewer.locator('#investigation-notes').textContent()).includes('Evidence reviewed'));
   assert.equal(await viewer.locator('#investigation-note-form').isVisible(),false);
