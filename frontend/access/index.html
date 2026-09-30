@@ -15,20 +15,49 @@
   <div class="sx-sidebar-footer"><button class="sx-collapse" type="button" data-sx-sidebar-toggle data-icon="panel-left-close" aria-label="Collapse sidebar"><span class="sx-collapse-label">Collapse</span></button></div>
 </aside><div class="sx-main"><header class="sx-topbar">
   <button class="sx-icon-button sx-mobile-menu" type="button" data-sx-nav-toggle data-icon="menu" aria-label="Open navigation"></button>
-  <div class="sx-title"><h1>Access management</h1><p>Authenticate and manage approved SentinelX roles.</p></div>
-  <div class="sx-topbar-actions"></div>
-</header><main class="sx-content"><div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div><p id="message" role="status" aria-live="polite"></p>
-<div class="sx-notice sx-notice-warning"><span data-icon="alert-triangle"></span><div><p class="sx-notice-title">Backend authorization remains authoritative</p><p class="sx-notice-copy">Navigation visibility and role-management controls are presentation only. Server-side RBAC decides access.</p></div></div>
-<div class="sx-grid-3">
-  <section id="login-panel" class="sx-panel sx-auth-panel" aria-labelledby="login-heading">
-   <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Authenticate to access protected SentinelX operations.</p></div></div>
-   <form id="login-form" class="sx-panel-body">
-     <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label>
-     <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
-     <button type="submit" data-icon="key-round">Sign in</button>
-   </form>
- </section>
-  <section id="identity-panel" class="sx-panel" hidden aria-labelledby="identity-heading"><div class="sx-panel-head"><div><h2 id="identity-heading">Authenticated identity</h2><p>Current SentinelX session</p></div></div><div class="sx-panel-body"><p id="identity"></p><p id="assigned-roles"></p><div class="sx-stack"><button id="refresh" type="button" data-icon="refresh-cw">Refresh access</button><button id="logout" class="sx-button-outline" type="button" data-icon="signpost">Sign out</button></div></div></section>
-  <section class="sx-panel"><div class="sx-panel-head"><div><h2>Access posture</h2><p>Role assignments remain server controlled</p></div></div><div class="sx-panel-body"><div class="sx-notice sx-notice-info"><span data-icon="lock-keyhole"></span><div><p class="sx-notice-title">Session protection</p><p class="sx-notice-copy">Role changes sign the affected user out. Updated privileges apply only after live backend checks.</p></div></div></div></section>
-</div>
-<section id="users-panel" hidden class="sx-panel" aria-labelledby="users-heading"><div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Role changes require a reason. At least one active Administrator must remain.</p></div></div><div id="users" class="sx-panel-body"></div></section></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>
+  <div class="sx-title"><h1>Access management</h1><p>Secure authentication and administrator-controlled role access.</p></div>
+  <div class="sx-topbar-actions"><section id="identity-panel" class="sx-topbar-identity" hidden>
+    <div class="sx-user-copy"><p id="identity"></p><p class="sx-user-role">Authenticated session</p></div>
+    <button id="refresh" class="sx-icon-button" type="button" data-icon="refresh-cw" aria-label="Refresh access" title="Refresh access"></button>
+    <button id="logout" class="sx-button-ghost" type="button" data-icon="log-out"><span class="sx-action-label">Sign out</span></button>
+  </section></div>
+</header>
+<main class="sx-content">
+  <div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div>
+  <p id="message" role="status" aria-live="polite"></p>
+
+  <section id="login-panel" class="sx-auth-screen" aria-labelledby="login-heading">
+    <div class="sx-auth-intro">
+      <span class="sx-auth-intro-mark" data-icon="shield"></span>
+      <h2>Secure access to SentinelX</h2>
+      <p>Sign in with an administrator-provisioned account to access the security operations workspace. SentinelX does not expose public self-service registration.</p>
+      <ul class="sx-auth-points">
+        <li data-icon="shield-check">Backend role-based authorization remains authoritative.</li>
+        <li data-icon="lock-keyhole">Sessions use protected server-issued cookies.</li>
+        <li data-icon="check-circle">Credentials are never stored in browser storage.</li>
+      </ul>
+    </div>
+    <div class="sx-panel" aria-labelledby="login-heading">
+      <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Use your assigned SentinelX account.</p></div></div>
+      <form id="login-form" class="sx-panel-body">
+        <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" placeholder="name@example.com" required></label>
+        <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit" data-icon="key-round">Sign in</button>
+        <p class="hint">Need an account? Contact a SentinelX Administrator. Self-service sign-up is not enabled.</p>
+      </form>
+    </div>
+  </section>
+
+  <section id="access-overview" class="sx-panel" hidden aria-labelledby="access-overview-heading">
+    <div class="sx-panel-head"><div><h2 id="access-overview-heading">Your access</h2><p>Live roles and permissions are enforced by the backend.</p></div></div>
+    <div class="sx-panel-body">
+      <p id="assigned-roles"></p>
+      <div class="sx-notice sx-notice-info"><span data-icon="lock-keyhole"></span><div><p class="sx-notice-title">Session protection</p><p class="sx-notice-copy">Role changes invalidate the affected user's session. Updated privileges apply only after a fresh backend authorization check.</p></div></div>
+    </div>
+  </section>
+
+  <section id="users-panel" hidden class="sx-panel" aria-labelledby="users-heading">
+    <div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Administrator-only role assignment. Every change requires a reason, and at least one active Administrator must remain.</p></div></div>
+    <div id="users" class="sx-panel-body"></div>
+  </section>
+</main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

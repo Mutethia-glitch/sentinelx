@@ -31,7 +31,10 @@ The served frontend now follows the approved Lovable design:
 - exact Lovable background, card, sidebar, border, severity, lifecycle, success, warning and information OKLCH tokens;
 - metric cards, panels, filter areas, dense tables, evidence blocks, notices, pagination, entity/finding/action presentation and analyst controls;
 - distinct LOW/MEDIUM/HIGH/CRITICAL and NEW/INVESTIGATING/CONTAINED/RESOLVED/DISMISSED treatments;
-- contained horizontal scrolling for dense tables rather than page-level overflow.
+- contained horizontal scrolling for dense tables rather than page-level overflow;
+- one authoritative runtime stylesheet for layout/spacing, with page-only exceptions scoped by `body[data-page]` to prevent CSS collisions;
+- normalized panel/content spacing and a stable top-right session-action cluster for Refresh and Sign out;
+- the standard logout/exit icon for Sign out.
 
 The real backend data replaces Lovable mock values. No fabricated production records are introduced.
 
@@ -45,7 +48,7 @@ The existing SentinelX backend workflows are fitted into the approved design:
 - **Incidents:** incident queue + create panel, then the approved evidence/investigation/response tabbed workspace with separate incident control area.
 - **Notifications:** inbox/send split with severity-aware presentation.
 - **Audit:** protected entry table plus selected entry context panel.
-- **Access:** sign-in, authenticated identity/access posture, and role-management presentation.
+- **Access:** structured secure sign-in screen, authenticated access overview, and role-management presentation. There is no self-service sign-up control because the backend exposes no registration endpoint; accounts are administrator-provisioned.
 
 ## Backend and security boundary
 

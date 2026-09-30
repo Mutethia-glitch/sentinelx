@@ -1,1 +1,1 @@
-#detail-panel .sx-panel-body{padding-top:0}#detail-panel #detail-fields{padding-bottom:.25rem}#detail-panel h3{margin-top:1rem}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */

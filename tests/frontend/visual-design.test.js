@@ -17,6 +17,8 @@ test('all consoles use the imported Lovable shell and protected navigation',()=>
     assert.match(html,/data-icon="shield"/);
     assert.match(html,/data-icon="layout-dashboard"/);
     assert.match(html,/data-permission="[^"]+"[^>]*hidden/);
+    assert.match(html,/data-icon="refresh-cw"/);
+    assert.match(html,/data-icon="log-out"/);
   }
 });
 
@@ -33,6 +35,28 @@ test('runtime theme preserves final Lovable dark tokens',()=>{
   assert.match(css,/\.sx-incident-layout/);
   assert.match(css,/\.sx-notification-layout/);
   assert.match(css,/\.sx-audit-layout/);
+  assert.match(css,/body\[data-page="alerts"\] #status-form/);
+  assert.match(css,/body\[data-page="incidents"\] #status-form/);
+  assert.doesNotMatch(css,/(?:^|\n)#status-form\{/);
+  assert.match(css,/\.sx-topbar-actions\{[^}]*justify-content:flex-end/);
+});
+
+test('page styles do not compete with the shared stylesheet',()=>{
+  for(const name of consoles){
+    const css=fs.readFileSync(path.join(__dirname,'../../frontend',name,name+'.css'),'utf8');
+    assert.doesNotMatch(css,/\{/);
+    assert.match(css,/centralizes runtime layout and spacing/);
+  }
+});
+
+test('Access uses a structured sign-in flow without fabricated registration',()=>{
+  const html=fs.readFileSync(path.join(__dirname,'../../frontend/access/index.html'),'utf8');
+  assert.match(html,/id="login-panel" class="sx-auth-screen"/);
+  assert.match(html,/Secure access to SentinelX/);
+  assert.match(html,/Self-service sign-up is not enabled/);
+  assert.doesNotMatch(html,/>\s*Sign up\s*</i);
+  assert.match(html,/id="refresh"[^>]*aria-label="Refresh access"/);
+  assert.match(html,/id="logout"[^>]*data-icon="log-out"/);
 });
 
 test('approved Lovable source is imported verbatim as design reference',()=>{

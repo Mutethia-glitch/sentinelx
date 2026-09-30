@@ -32,6 +32,14 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeAllConnections();}));
   const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:{})});
   t.after(()=>browser.close());
+  const accessPage=await browser.newPage({viewport:{width:1365,height:900}});
+  assert.equal((await accessPage.goto(base+'/access')).status(),200);
+  assert.equal(await accessPage.locator('.sx-auth-screen').count(),1);
+  assert.equal(await accessPage.getByRole('button',{name:'Sign in',exact:true}).count(),1);
+  assert.equal(await accessPage.getByRole('button',{name:'Sign up',exact:true}).count(),0);
+  assert.equal(await accessPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await accessPage.close();
+
   const page=await browser.newPage({viewport:{width:1365,height:900}});
   const response=await page.goto(base+'/dashboard');
   assert.equal(response.status(),200);
@@ -52,6 +60,12 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   assert.equal(await page.getByRole('link',{name:'Events'}).isVisible(),true);
   assert.ok(await page.locator('#total-cards .sx-card-icon svg').count()>0);
   assert.ok(await page.locator('.semantic-value.tone-critical').count()>0);
+  assert.equal(await page.locator('.sx-topbar-actions #refresh').count(),1);
+  assert.equal(await page.locator('.sx-topbar-actions #logout').count(),1);
+  assert.equal(await page.locator('#logout').getAttribute('data-icon'),'log-out');
+  assert.equal(await page.locator('#logout svg').count(),1);
+  const actionsBox=await page.locator('.sx-topbar-actions').boundingBox();
+  assert.ok(actionsBox&&actionsBox.x>700,'session actions should remain in the top-right area');
 
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

@@ -1,1 +1,1 @@
-#detail-fields{padding:0 0 1rem}.sx-alert-main .sx-notice{margin:1rem 0}#event-detail h4{margin:.75rem 0 .35rem;color:var(--muted-foreground);font-size:.6875rem;text-transform:uppercase}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */

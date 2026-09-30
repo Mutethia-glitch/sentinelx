@@ -1,1 +1,1 @@
-.sx-panel-body>.cards{padding:0}.sx-grid-3 .bars{margin-top:.5rem}.sx-grid-3 .sx-section-title:not(:first-child){margin-top:1rem}.sx-grid-2 table{min-width:42rem}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */

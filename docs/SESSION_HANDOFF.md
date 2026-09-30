@@ -1,3 +1,31 @@
+# Task 37 polish revision — 2026-10-01
+
+Task 37 is **Implemented — awaiting polish re-acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.
+
+After Task 37 had passed 186/186 quality, the design verifier, and the 1/1 browser gate, the user requested one additional presentation-only pass before moving on:
+- eliminate CSS overlap/cascade conflicts;
+- normalize spacing;
+- keep Refresh and Sign out together at the top-right;
+- replace the previous sign-out symbol with the standard logout/exit icon;
+- restructure the authentication screen correctly.
+
+The revision keeps the accepted Lovable dark SOC design and does not change backend behavior. Runtime layout/spacing is now authoritative in `/ui/sentinelx-theme.css`; the seven page CSS files are intentionally non-competing placeholders. Reused page IDs such as `#status-form` are scoped by `body[data-page]` where semantics differ between consoles.
+
+Authenticated session controls are grouped in the sticky top-right header. Dashboard and Access retain their existing live refresh handlers; Events, Alerts, Incidents, Notifications and Audit use a frontend-only page refresh control. Sign out uses the standard logout/exit-door icon.
+
+Access now has a structured secure sign-in screen and an authenticated access overview. SentinelX has no self-service registration endpoint, so no fabricated sign-up action was added; the UI explicitly states that accounts are administrator-provisioned.
+
+No backend source, PostgreSQL migration, API contract, authentication/RBAC behavior, session model, or Task 38 work is changed.
+
+Fresh acceptance required:
+- `npm.cmd run quality`
+- `npm.cmd run verify:frontend-design`
+- `npm.cmd run test:frontend-design:ui`
+
+Do not mark Task 37 Complete again until those gates pass. Do not start Task 38.
+
+---
+
 # Task 37 accepted — 2026-10-01
 
 Task 37 is **Complete**. Tasks 01–37 are Complete; Task 38 has not started.

@@ -13,6 +13,10 @@ function main(){
     assert.match(html,/class="sx-topbar"/);
     assert.match(html,/data-icon="layout-dashboard"/);
     assert.match(html,/data-permission="[^"]+"[^>]*hidden/);
+    assert.match(html,/data-icon="refresh-cw"/);
+    assert.match(html,/data-icon="log-out"/);
+    const pageCss=fs.readFileSync(path.join(root,name,name+'.css'),'utf8');
+    assert.doesNotMatch(pageCss,/\{/);
   }
   const css=fs.readFileSync(path.join(root,'shared/sentinelx-theme.css'),'utf8');
   for(const token of [
@@ -25,9 +29,17 @@ function main(){
   assert.ok(css.includes('.sx-incident-layout'));
   assert.ok(css.includes('.sx-notification-layout'));
   assert.ok(css.includes('.sx-audit-layout'));
+  assert.ok(css.includes('body[data-page="alerts"] #status-form'));
+  assert.ok(css.includes('body[data-page="incidents"] #status-form'));
+  assert.ok(!/(?:^|\n)#status-form\{/.test(css));
+  assert.ok(css.includes('justify-content:flex-end'));
   const reference=fs.readFileSync(path.join(root,'design-reference/lovable/sentinelx-console.tsx'),'utf8');
   assert.ok(reference.includes('export function SentinelXConsole'));
   assert.ok(reference.includes('PanelLeftClose'));
+  const accessHtml=fs.readFileSync(path.join(root,'access/index.html'),'utf8');
+  assert.ok(accessHtml.includes('id="login-panel" class="sx-auth-screen"'));
+  assert.ok(accessHtml.includes('Self-service sign-up is not enabled.'));
+  assert.ok(!/>\s*Sign up\s*</i.test(accessHtml));
   const incident=fs.readFileSync(path.join(root,'incidents/incidents.js'),'utf8');
   assert.ok(incident.includes("message('Incident created.',false,true);"));
   const sourceFiles=[
@@ -36,7 +48,7 @@ function main(){
   ];
   const combined=sourceFiles.map(file=>fs.readFileSync(file,'utf8')).join('\n');
   for(const pattern of [/\.innerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\beval\s*\(/,/localStorage\b/,/sessionStorage\b/])assert.doesNotMatch(combined,pattern);
-  console.log('Imported Lovable dark SOC design, seven-console integration, icon shell, responsive layout and preserved frontend security verified.');
+  console.log('Lovable dark SOC design, centralized non-overlapping CSS, normalized spacing, top-right session actions, structured sign-in and preserved frontend security verified.');
 }
 if(require.main===module){try{main();}catch{console.error('Task 37 frontend visual design verification failed.');process.exitCode=1;}}
 module.exports={main};

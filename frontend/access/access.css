@@ -1,1 +1,1 @@
-.sx-grid-3>#login-panel{max-width:none}.sx-grid-3>#identity-panel{align-self:start}.sx-grid-3>.sx-panel{min-height:100%}#identity{margin:.25rem 0;color:var(--foreground);font-size:.875rem;font-weight:600}#users-panel{margin-top:1rem}.user-card button{margin-top:.25rem}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */

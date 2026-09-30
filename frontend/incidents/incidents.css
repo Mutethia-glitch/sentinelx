@@ -1,1 +1,1 @@
-#create-panel .sx-panel-body{display:grid;gap:0}#detail-fields{padding:0 0 1rem}.sx-pane .table-scroll{border:1px solid var(--border);border-radius:var(--radius)}#investigation-workspace .sx-pane-grid{margin-bottom:1rem}.sx-incident-control button{width:100%}#response-form,#investigation-note-form{padding:1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-subtle)}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */

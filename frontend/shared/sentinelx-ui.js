@@ -25,6 +25,7 @@
     'panel-left-open':[['rect',{x:'3',y:'3',width:'18',height:'18',rx:'2'}],['path',{d:'M9 3v18M13 9l3 3-3 3'}]],
     'refresh-cw':[['path',{d:'M20 11a8 8 0 1 0 2 5'}],['path',{d:'M20 4v7h-7'}]],
     signpost:[['path',{d:'M12 13v8'}],['path',{d:'M12 3v3'}],['path',{d:'M4 6h12l4 3-4 3H4l-2-3 2-3Z'}]],
+    'log-out':[['path',{d:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'}],['path',{d:'m16 17 5-5-5-5'}],['path',{d:'M21 12H9'}]],
     eye:[['path',{d:'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z'}],['circle',{cx:'12',cy:'12',r:'3'}]],
     filter:[['path',{d:'M4 5h16l-6 7v5l-4 2v-7L4 5Z'}]],
     'list-filter':[['path',{d:'M3 6h18M6 12h12M10 18h4'}]],
@@ -103,7 +104,7 @@
     if(value.startsWith('previous'))return 'chevron-left';
     if(value.startsWith('next'))return 'chevron-right';
     if(value.startsWith('sign in'))return 'key-round';
-    if(value.startsWith('sign out'))return 'signpost';
+    if(value.startsWith('sign out'))return 'log-out';
     if(value.startsWith('refresh'))return 'refresh-cw';
     if(value.startsWith('apply filter'))return 'filter';
     if(value.startsWith('clear filter'))return 'x-circle';
@@ -191,6 +192,7 @@
       collapse.dataset.icon=body.classList.contains('sx-sidebar-collapsed')?'panel-left-open':'panel-left-close';
       const old=collapse.querySelector('svg');if(old)old.remove();delete collapse.dataset.sxIconApplied;applyIcon(collapse,collapse.dataset.icon);
     });
+    for(const button of doc.querySelectorAll('[data-sx-refresh]'))button.addEventListener('click',()=>globalThis.location?.reload());
     for(const button of doc.querySelectorAll('[data-sx-tab]'))button.addEventListener('click',()=>selectIncidentTab(button.dataset.sxTab,doc));
     if(doc.querySelector('[data-sx-tab="evidence"]'))selectIncidentTab('evidence',doc);
     const clock=doc.querySelector('[data-sx-clock]');

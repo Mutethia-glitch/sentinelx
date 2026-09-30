@@ -21,6 +21,7 @@ function reset() {ui.clearAccess();
   element('login-panel').hidden = false;
   element('identity-panel').hidden = true;
   element('users-panel').hidden = true;
+  element('access-overview').hidden = true;
   element('users').replaceChildren();
   element('identity').textContent = '';
   element('assigned-roles').textContent = '';
@@ -82,6 +83,7 @@ async function refresh() {
   const access = await request('/api/access/me');ui.applyAccess(access);
   element('login-panel').hidden = true;
   element('identity-panel').hidden = false;
+  element('access-overview').hidden = false;
   element('identity').textContent = `${access.user.displayName} · ${access.user.email}`;
   element('assigned-roles').textContent = access.roles.length ? `Roles: ${access.roles.join(', ')}` : 'No role assigned. Ask an Administrator to configure your access.';
   if (access.permissions.includes('users.read') && access.permissions.includes('users.roles.manage')) {
