@@ -10,9 +10,10 @@ function incidentHandler(service, config) {
       const url=new URL(req.url,'http://localhost');
       const detail=/^\/api\/incidents\/([0-9a-f-]+)$/i.exec(url.pathname);
       const assignment=/^\/api\/incidents\/([0-9a-f-]+)\/assignment$/i.exec(url.pathname);
+      const assessment=/^\/api\/incidents\/([0-9a-f-]+)\/assessment$/i.exec(url.pathname);
       const status=/^\/api\/incidents\/([0-9a-f-]+)\/status$/i.exec(url.pathname);
       const base=url.pathname==='/api/incidents';
-      if(!base&&!detail&&!assignment&&!status){req.resume();return send(404,{error:'Not found.'});}
+      if(!base&&!detail&&!assignment&&!assessment&&!status){req.resume();return send(404,{error:'Not found.'});}
       const allowed=base?['GET','POST']:detail?['GET']:['PATCH'];
       if(!allowed.includes(req.method)){req.resume();res.setHeader('Allow',allowed.join(', '));return send(405,{error:'Method not allowed.'});}
       const token=cookieToken(req.headers.cookie,config.cookieName);
@@ -26,6 +27,7 @@ function incidentHandler(service, config) {
       const body=await readJson(req);
       if(base)return send(201,{incident:await service.create(token,body)});
       if(assignment)return send(200,{incident:await service.assign(token,assignment[1],body)});
+      if(assessment)return send(200,{incident:await service.assess(token,assessment[1],body)});
       return send(200,{incident:await service.updateStatus(token,status[1],body)});
     } catch(error) {
       req.resume();const expected=error instanceof AuthError;const code=expected?error.status:503;
