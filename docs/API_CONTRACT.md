@@ -95,3 +95,15 @@ internally after deterministic detection using the documented explainable
 relationships and persisted `alert_correlations` edges. Alert management APIs
 remain the Task 16 contract; Incident APIs remain future Task 18 work. See
 [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
+
+
+## Task 18 incident management
+
+Implemented endpoints:
+- `GET /api/incidents`: authorized bounded incident listing/filtering.
+- `POST /api/incidents`: Administrator/Security Analyst creation from 1–100 existing alert IDs.
+- `GET /api/incidents/{uuid}`: incident inspection with linked alert summaries.
+- `PATCH /api/incidents/{uuid}/assignment`: audited assignment/unassignment to active incident managers.
+- `PATCH /api/incidents/{uuid}/status`: audited Task 18 lifecycle transition.
+
+The authoritative incident states remain NEW, CONTAINED, INVESTIGATING, RESOLVED and DISMISSED. OPEN/CLOSED are unsupported. Direct CONTAINED mutation is not exposed in Task 18 because successful approved containment is reserved for Task 22. RESOLVED/DISMISSED require a terminal note. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
