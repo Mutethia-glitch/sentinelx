@@ -1,0 +1,6 @@
+const { requirePermission }=require('../access/policy');
+const { AuthError }=require('../auth/errors');
+const { incidentQuery }=require('./query');
+const { incidentId,createInput,assignmentInput,statusInput }=require('./model');
+function incidentService(repository,access){async function authorize(token,p){const identity=await access.me(token);requirePermission(identity.roles,p);return identity.user;}return{async authorizeWrite(token){return authorize(token,'incidents.manage');},async list(token,params){await authorize(token,'incidents.read');return repository.list(incidentQuery(params));},async inspect(token,id){await authorize(token,'incidents.read');const item=await repository.get(incidentId(id));if(!item)throw new AuthError(404,'Incident not found.');return item;},async create(token,body){const actor=await authorize(token,'incidents.manage');return repository.create(actor.id,createInput(body));},async assign(token,id,body){const actor=await authorize(token,'incidents.manage');return repository.updateAssignment(actor.id,incidentId(id),assignmentInput(body));},async updateStatus(token,id,body){const actor=await authorize(token,'incidents.manage');return repository.updateStatus(actor.id,incidentId(id),statusInput(body));}};}
+module.exports={incidentService};
