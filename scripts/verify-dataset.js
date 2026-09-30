@@ -7,7 +7,8 @@ function verifyDataset(){
  const dataPath=path.join(__dirname,'..','fixtures','ml','task29-synthetic-events.jsonl');
  const manifestPath=path.join(__dirname,'..','fixtures','ml','task29-manifest.json');
  const stored=fs.readFileSync(dataPath,'utf8'),storedManifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
- assert.equal(stored,jsonl(rows));assert.deepEqual(storedManifest,expectedManifest);
+ // Git for Windows may check out text fixtures with CRLF; compare canonical LF JSONL.
+ assert.equal(stored.replace(/\r\n/g,'\n'),jsonl(rows));assert.deepEqual(storedManifest,expectedManifest);
  assert.equal(rows.length,80);assert.equal(rows.filter(r=>r.label===0).length,60);assert.equal(rows.filter(r=>r.label===1).length,20);
  const ids=new Set(),allowed=['LOW','MEDIUM','HIGH','CRITICAL'];
  for(const row of rows){
