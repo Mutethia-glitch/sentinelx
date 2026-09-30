@@ -29,6 +29,8 @@ function summary(row) {
     assignmentUpdatedBy: row.assignment_updated_by ?? null,
     statusUpdatedAt: row.status_updated_at?.toISOString() ?? null,
     statusUpdatedBy: row.status_updated_by ?? null,
+    assessmentUpdatedAt: row.assessment_updated_at?.toISOString() ?? null,
+    assessmentUpdatedBy: row.assessment_updated_by ?? null,
     resolutionNote: row.resolution_note ?? null,
     resolutionAt: row.resolution_at?.toISOString() ?? null,
     resolutionBy: row.resolution_by ?? null,
@@ -145,6 +147,33 @@ function incidentRepository(pool) {
           await client.query(`INSERT INTO audit_logs(actor_id,actor_context,action,target_type,target_id,context)
             VALUES($1,'authenticated incident manager','INCIDENT_ASSIGNMENT_CHANGED','incident',$2,$3::jsonb)`,
           [actorId, id, JSON.stringify({ previousAssignedTo: current.assigned_to ?? null, assignedTo: input.assignedTo, reason: input.reason })]);
+          return { ...(await read(client, id)), changed: true };
+        });
+      } catch (error) { failure(error); }
+    },
+    async updateAssessment(actorId, id, input) {
+      try {
+        return await transaction(pool, async client => {
+          await actor(client, actorId);
+          const current = (await client.query(`${SELECT} WHERE i.id=$1 FOR UPDATE OF i`, [id])).rows[0];
+          if (!current) throw new AuthError(404, 'Incident not found.');
+          const previousCategoryCode = current.category_code ?? null;
+          if (input.categoryCode !== previousCategoryCode && input.categoryCode !== null) {
+            const selected = await client.query('SELECT code FROM threat_categories WHERE code=$1 AND enabled FOR SHARE', [input.categoryCode]);
+            if (!selected.rows[0]) throw new AuthError(400, 'Threat category is not selectable.');
+          }
+          if (previousCategoryCode === input.categoryCode && current.threat_level === input.severity) {
+            return { ...summary(current), changed: false };
+          }
+          await client.query(`UPDATE incidents SET category_code=$2,threat_level=$3,
+            assessment_updated_at=clock_timestamp(),assessment_updated_by=$4,updated_at=clock_timestamp()
+            WHERE id=$1`, [id, input.categoryCode, input.severity, actorId]);
+          await client.query(`INSERT INTO audit_logs(actor_id,actor_context,action,target_type,target_id,context)
+            VALUES($1,'authenticated incident manager','INCIDENT_ASSESSMENT_CHANGED','incident',$2,$3::jsonb)`,
+          [actorId, id, JSON.stringify({
+            previousCategoryCode, categoryCode: input.categoryCode,
+            previousSeverity: current.threat_level, severity: input.severity, reason: input.reason,
+          })]);
           return { ...(await read(client, id)), changed: true };
         });
       } catch (error) { failure(error); }
