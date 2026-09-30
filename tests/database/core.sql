@@ -24,9 +24,12 @@ BEGIN
     UPDATE alerts SET confidence = 1.1 WHERE id = a;
     RAISE EXCEPTION 'Invalid alert confidence accepted';
   EXCEPTION WHEN check_violation THEN NULL; END;
+  UPDATE alerts SET status = 'ACKNOWLEDGED' WHERE id = a;
+  IF (SELECT status FROM alerts WHERE id = a) <> 'ACKNOWLEDGED' THEN RAISE EXCEPTION 'Alert acknowledgement failed'; END IF;
+  UPDATE alerts SET status = 'NEW' WHERE id = a;
   BEGIN
-    UPDATE alerts SET status = 'ACKNOWLEDGED' WHERE id = a;
-    RAISE EXCEPTION 'Unsupported Task 15 alert status accepted';
+    UPDATE alerts SET status = 'RESOLVED' WHERE id = a;
+    RAISE EXCEPTION 'Incident-only status accepted for alert';
   EXCEPTION WHEN check_violation THEN NULL; END;
   INSERT INTO alert_events VALUES (a, e);
   BEGIN
