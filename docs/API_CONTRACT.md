@@ -75,3 +75,10 @@ GET/POST /api/rules, GET/PUT /api/rules/{uuid}, GET /api/rules/mitre-mappings an
 
 ## Task 13 deterministic detection
 Successful canonical or raw event ingestion evaluates enabled schema-v1 rules against the normalized event. Matching rules use their configured event-time window, threshold and group fields and persist an alert plus alert-event evidence links. The ingestion receipt includes `alertsGenerated`. Event persistence, ingestion audit and generated alerts share one PostgreSQL transaction, so detection-stage failure returns a sanitized 503 and rolls the event back. Unsupported/legacy rule definitions are skipped rather than interpreted. See [DETECTION_ENGINE.md](DETECTION_ENGINE.md).
+
+
+## Task 15 alert model
+
+Task 15 defines and persists the alert object produced by qualifying detections. It does not add alert-management endpoints. Alert listing, retrieval, filtering and approved status workflows remain Task 16.
+
+The persisted model contains the generating rule, trigger event, threat category, severity, event source, alert-generation timestamp, affected canonical entities, initial status, optional confidence, explainable match reason/evidence, and linked evidence events. Deterministic rule alerts currently use `status=NEW` and `confidence=null`. See [ALERT_MODEL.md](ALERT_MODEL.md).
