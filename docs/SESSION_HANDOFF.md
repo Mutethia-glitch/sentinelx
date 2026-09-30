@@ -1,46 +1,75 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–18 are Complete. Task 18 (Incident Management) passed its
-Windows/PostgreSQL acceptance gate on 2026-09-30. Task 19 (Incident Classification
-and Severity) remains Not Started and must not begin until the user requests it.
+Tasks 01–18 are Complete. Task 19 (Incident Classification and Severity) is
+implemented and is Verification Pending. Do not begin Task 20 until Task 19's
+Windows/PostgreSQL gate passes and Task 19 is explicitly marked Complete.
 
-Task 18 follows the authoritative Task 02 baseline lifecycle:
-NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. OPEN and CLOSED remain
-unsupported by the database and API.
+Task 19 adds controlled incident assessment without changing the Task 18 lifecycle.
 
-Incident managers can:
-- create incidents from 1–100 existing alerts;
-- inspect linked alert summaries;
-- assign/unassign incidents to active Administrator/Security Analyst users;
-- move incidents to INVESTIGATING;
-- RESOLVE or DISMISS with a required terminal note.
+Approved classification:
+- any of the fifteen Task 11 taxonomy codes; or
+- null / unclassified when evidence does not justify one category.
 
-Every incident starts in NEW. Initial incident severity is the highest linked-alert
-severity; Task 19 owns later controlled classification/severity adjustment. A common
-currently selectable alert category is copied when unambiguous; otherwise category
-remains unset for Task 19.
+Approved severity:
+- LOW
+- MEDIUM
+- HIGH
+- CRITICAL
 
-CONTAINED is a valid baseline state but Task 18 does not expose a direct mutation
-to it. FR-017 requires a successful approved containment action to be recorded
-first, and Task 22 owns that response workflow.
+The Task 19 objective mentions priority, but the repository defines no separate
+priority vocabulary or field. To comply with the guardrail against undocumented
+scores/labels, Task 19 uses severity as the visible triage-priority dimension.
+No P1/P2/P3/P4 labels or numeric priority score were introduced. Task 20 remains
+the separate deterministic Risk Scoring task.
 
-Migration `011_incident_management.sql` adds update/assignment/status attribution
-and terminal resolution metadata. Creation, assignment and status mutations recheck
-live RBAC inside PostgreSQL transactions and write audit records atomically.
+Task 18's automatic creation behavior remains the initial default: highest linked
+alert severity and a common selectable linked-alert category when unambiguous.
+Task 19 lets an Administrator/Security Analyst correct that assessment with:
 
-Focused Task 18 model/service/repository tests passed 10/10. Windows/PostgreSQL
-acceptance verification passed on 2026-09-30 with:
+`PATCH /api/incidents/{uuid}/assessment`
 
-`Incident creation, alert linking, severity inheritance, assignment, lifecycle, terminal notes, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
+Exact body: `{categoryCode, severity, reason}`.
 
-Migration 011 is now part of the applied append-only/checksum-tracked chain. Do not
-edit migrations 001–011 or bypass migration checksum verification.
+New non-null category selections must currently be enabled/selectable. An existing
+historical category that is later disabled can remain unchanged while severity is
+adjusted. Assessment changes are permitted on active or terminal incidents because
+classification/severity and lifecycle status are independent; reassessment does not
+reopen an incident or erase its terminal note.
 
-PostgreSQL remains hosted on the user's Windows computer. Task 18 requires no
+Material changes are audited as `INCIDENT_ASSESSMENT_CHANGED` with old/new
+category and severity plus the required reason. Actor permission is rechecked inside
+the transaction, and audit failure rolls back the assessment update.
+
+Migration `012_incident_classification_severity.sql` adds assessment_updated_at
+and assessment_updated_by. Migrations 001–012 remain append-only/checksum tracked
+after migration 012 is applied.
+
+Focused Task 19 local tests passed 5/5 before repository update. PostgreSQL and
+browser verification entry points are implemented.
+
+Run the Windows/PostgreSQL acceptance gate:
+
+```powershell
+git pull origin main
+npm.cmd run quality
+node scripts/migrate.js
+npm.cmd run verify:incident-classification
+```
+
+Expected output:
+
+`Incident taxonomy classification, severity adjustment, lifecycle independence, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
+
+Optional explicit disposable-database checks:
+
+```powershell
+$env:SENTINELX_TEST_DATABASE='1'
+npm.cmd run test:incident-classification:integration
+npm.cmd run test:incident-classification:ui
+```
+
+PostgreSQL remains hosted on the user's Windows computer. Task 19 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-When work resumes, read repository instructions, this handoff,
-`docs/DEVELOPMENT_STATUS.md`, and
-`tasks/19-incident-classification-and-severity.md` before beginning. Proceed
-numerically from Task 19 only when requested.
+Task 20 (Risk Scoring) remains Not Started.
