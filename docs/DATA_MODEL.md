@@ -150,3 +150,10 @@ The table does not create or replace incidents; Task 18 remains responsible for
 incident lifecycle behavior.
 
 See [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
+
+
+## Task 18 incident management
+
+Migration 011 extends the existing `incidents` table without changing the approved incident_status enum. It adds `updated_at`, assignment/status attribution timestamps and actors, plus terminal resolution/dismissal note metadata. Existing incidents receive `updated_at=created_at`; other new fields remain nullable until an authorized workflow populates them.
+
+Incident creation links existing alerts through `incident_alerts`; initial severity is the highest linked-alert severity. Status changes do not alter threat level. OPEN and CLOSED remain unsupported. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
