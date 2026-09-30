@@ -68,8 +68,10 @@ was changed.
 Automated validation: quality suite 142/142; all 36 PostgreSQL/browser integration
 checks passed across the full run and targeted rerun after the mobile correction;
 migration replay/integrity and protected audit verification passed. Runs used a
-disposable PostgreSQL instance and synthetic data. Windows acceptance of these
-review corrections is pending; original task acceptance records remain intact.
+disposable PostgreSQL instance and synthetic data. The user supplied Windows output confirming 142/142 quality tests, migration
+verification, correlation, concurrency and reporting verification, and subsequently
+confirmed manual incident creation. Narrow-screen manual acceptance remains pending.
+Original task acceptance records remain intact.
 
 On Windows, pull main, run quality, verify migrations, and run:
 - npm.cmd run verify:correlation
@@ -79,3 +81,7 @@ On Windows, pull main, run quality, verify migrations, and run:
 Restart the app and create an incident once: expect the success message, cleared
 creation form, and refreshed incident list. Check incident investigation/response
 layout on a narrow screen. No new migration, external API, or credentials are needed.
+
+Incident creation feedback now uses a bold green success banner and scrolls into
+view. Errors retain their red banner; ordinary load messages retain their current
+style. Pull main and refresh the browser to receive this presentation change.
