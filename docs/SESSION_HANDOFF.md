@@ -1,57 +1,46 @@
-# SentinelX continuation checkpoint
+# SentinelX continuation checkpoint — 2026-09-30
 
-Tasks 01–25 are Complete. Tasks 26–29 are implemented and **Verification Pending**.
-The user requested Tasks 26–29 as one implementation batch. Do not begin Task 30
-until these four verification gates pass and the user requests continuation.
+Tasks 01–27 are **Complete**. The user ran the Windows quality suite (137/137
+passing), successfully applied/verified migration 015, and reported that both
+Task 26 Reporting and Task 27 Audit Trail PostgreSQL acceptance verifiers passed.
 
-Task 26 Reporting:
-- persisted security-summary and incident reports;
-- inclusive date ranges and JSON/CSV export;
-- repeatable-read/read-only PostgreSQL generation;
-- verify with `npm.cmd run verify:reports`.
+Task 28 MITRE ATT&CK Mapping is **Verification Pending**. The initial verifier
+failed because the shared `incidentManagementFixture` omitted the Rules service
+from `createServer(...)`. The fixture now mounts
+`ruleService(ruleRepository(pool),access)`; the verifier's rule catalog/detail
+checks can reach the actual authenticated API. Migration 015 was successfully
+applied on Windows and must **not** be edited or reapplied as a rewritten file.
+Partial mappings intentionally cover seven core rules; eight remain unmapped.
 
-Task 27 Audit Trail:
-- protected read-only `GET /api/audit`;
-- Administrator/Security Analyst allowed, Viewer/Management denied;
-- actor/action/target/date/page filters;
-- no audit mutation endpoint;
-- verify with `npm.cmd run verify:audit`.
+Task 29 Advanced Detection Dataset is **Verification Pending**. The checked-in
+80-record deterministic JSONL/manifest pair was previously confirmed equivalent
+to the pure generator. The initial Windows verification failed likely because
+Git for Windows checked out the text JSONL using CRLF while the generator emits
+canonical LF. The verifier now normalizes CRLF→LF before comparing, retaining
+all schema, provenance, privacy and label assertions. A checked-in fixture
+verification regression is included in the normal `quality` suite.
 
-Task 28 MITRE ATT&CK Mapping:
-- migration `015_mitre_tactics_and_core_mappings.sql`;
-- partial documented rule mappings with tactic metadata (seven core rules mapped; eight intentionally unmapped);
-- rule catalog/detail plus incident investigation/report propagation;
-- broad rules without precise technique semantics remain intentionally unmapped;
-- verify with `npm.cmd run verify:mitre`.
-
-Task 29 Advanced Detection Dataset:
-- pure deterministic synthetic generator in `src/ml/dataset.js`;
-- checked-in JSONL fixture + manifest;
-- 80 artificial records: 60 baseline, 20 injected anomaly examples;
-- only documentation IP ranges and artificial research-user/synthetic-host IDs;
-- no production/personal data and no real-world prevalence/accuracy claim;
-- no Task 30 feature engineering;
-- verify with `npm.cmd run verify:dataset`.
-
-Task 28 introduces new migration 015. Migrations 001–014 were not edited.
-Tasks 26, 27 and 29 add no migrations.
-
-Recommended Windows batch gate:
+Only rerun these gates after pulling the latest `main`:
 
 ```powershell
 git pull origin main
 npm.cmd run quality
 node scripts/migrate.js
-npm.cmd run verify:reports
-npm.cmd run verify:audit
 npm.cmd run verify:mitre
 npm.cmd run verify:dataset
 ```
 
-Expected final lines:
-- `Stored-data security summaries, incident reports, date ranges, JSON/CSV export, RBAC and read-only reporting verified. Synthetic changes cleaned up.`
-- `Protected actor/action/resource/time/context audit retrieval, filtering, RBAC and read-only API behavior verified. Synthetic changes cleaned up.`
+Expected acceptance results:
 - `Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
 - `Controlled synthetic dataset schema, provenance, labels, privacy constraints and deterministic reproduction verified.`
 
-Task 30 ML Feature Engineering remains Not Started.
+No further Task 26/27 rerun is necessary unless the updated quality suite exposes
+a regression. Do not mark Tasks 28–29 Complete until the user provides their
+successful Windows acceptance outputs. If either still fails, expose a safe
+stage-specific verification error without printing secrets/SQL/credentials,
+fix only the affected task, and rerun.
+
+Migrations 001–015 are checksum-protected and immutable after Windows
+application. No Supabase or external API is involved. Tasks 30–43 remain
+**Not Started**; do not begin Task 30 until Tasks 28–29 have passed and the
+user explicitly asks to proceed.
