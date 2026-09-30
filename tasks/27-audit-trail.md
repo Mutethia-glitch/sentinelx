@@ -1,7 +1,7 @@
 # Task 27: Audit Trail
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Record security-sensitive actions with actor, action, resource, timestamp, and relevant before/after data.
@@ -58,6 +58,13 @@ Do not mark this task complete until:
 - Existing transactional audit writers remain authoritative; no audit mutation endpoint is added.
 - Focused tests and a Windows/PostgreSQL verifier are implemented.
 - Task 28 remains separately scoped.
+
+## Accepted Windows/PostgreSQL gate — 2026-09-30
+
+The user ran the full quality suite (137/137 passing), verified migration 015,
+and reported successful acceptance:
+
+`Protected actor/action/resource/time/context audit retrieval, filtering, RBAC and read-only API behavior verified. Synthetic changes cleaned up.`
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
