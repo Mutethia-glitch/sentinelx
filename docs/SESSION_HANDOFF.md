@@ -1,3 +1,22 @@
+# Task 37 accepted — 2026-10-01
+
+Task 37 is **Complete**. Tasks 01–37 are Complete; Task 38 has not started.
+
+The final production frontend follows the user-approved Lovable dark SOC design source at commit `5514aa322c48e6c21cea1518a5b98e946fc4bc11`, imported under `frontend/design-reference/lovable/`. The real SentinelX static HTML/CSS/JavaScript consoles use that visual system while continuing to bind to the existing backend APIs and security model.
+
+Final Windows acceptance on 2026-10-01 passed:
+- full quality suite: **186/186**
+- `npm.cmd run verify:frontend-design`: passed
+- `npm.cmd run test:frontend-design:ui`: **1/1 passed**
+
+The accepted implementation preserves backend RBAC, HttpOnly sessions, restrictive CSP, safe DOM rendering, no-Web-Storage controls, PostgreSQL boundaries, deterministic detection, incident lifecycle semantics, and human-controlled response. No backend file, migration, Supabase integration, runtime frontend framework, database change, API contract change, authentication replacement, or Task 38 implementation was introduced by the final design port.
+
+Task 38 — Automated Testing — is the next contract. Do not start it without explicit instruction.
+
+See `docs/FRONTEND_VISUAL_DESIGN.md` and `tasks/37-frontend-visual-design-and-polish.md`.
+
+---
+
 # Task 37 final Lovable design port — 2026-10-01
 
 Task 37 remains **Implemented — awaiting local acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.
