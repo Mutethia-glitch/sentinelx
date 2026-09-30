@@ -15,8 +15,19 @@ BEGIN
     INSERT INTO security_events(source, event_type, occurred_at, raw_data) VALUES ('synthetic', 'test', now(), '[]');
     RAISE EXCEPTION 'Invalid event payload accepted';
   EXCEPTION WHEN check_violation THEN NULL; END;
-  INSERT INTO detection_rules(name, definition, threat_level, created_by) VALUES ('synthetic rule', '{}', 'HIGH', u) RETURNING id INTO r;
-  INSERT INTO alerts(rule_id, threat_level, match_reason, match_evidence) VALUES (r, 'HIGH', 'synthetic match', '{}') RETURNING id INTO a;
+  INSERT INTO detection_rules(name, definition, threat_level, category_code, created_by) VALUES ('synthetic rule', '{}', 'HIGH', 'BRUTE_FORCE', u) RETURNING id INTO r;
+  INSERT INTO alerts(rule_id, trigger_event_id, category_code, threat_level, source, affected_entities, match_reason, match_evidence)
+    VALUES (r, e, 'BRUTE_FORCE', 'HIGH', 'synthetic', '{}', 'synthetic match', '{}') RETURNING id INTO a;
+  IF (SELECT status FROM alerts WHERE id = a) <> 'NEW' THEN RAISE EXCEPTION 'Invalid alert default status'; END IF;
+  IF (SELECT confidence FROM alerts WHERE id = a) IS NOT NULL THEN RAISE EXCEPTION 'Unexpected alert confidence'; END IF;
+  BEGIN
+    UPDATE alerts SET confidence = 1.1 WHERE id = a;
+    RAISE EXCEPTION 'Invalid alert confidence accepted';
+  EXCEPTION WHEN check_violation THEN NULL; END;
+  BEGIN
+    UPDATE alerts SET status = 'ACKNOWLEDGED' WHERE id = a;
+    RAISE EXCEPTION 'Unsupported Task 15 alert status accepted';
+  EXCEPTION WHEN check_violation THEN NULL; END;
   INSERT INTO alert_events VALUES (a, e);
   BEGIN
     INSERT INTO alert_events VALUES (a, gen_random_uuid());
