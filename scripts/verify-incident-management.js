@@ -18,7 +18,7 @@ async function incidentManagementFixture(pool) {
   const users=[],eventIds=[],alertIds=[],incidentIds=[];let ruleId,server;
   async function cleanup(){
     if(server)await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});
-    if(incidentIds.length){await pool.query('DELETE FROM audit_logs WHERE target_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incident_alerts WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incidents WHERE id=ANY($1::uuid[])',[incidentIds]);}
+    if(incidentIds.length){await pool.query('DELETE FROM audit_logs WHERE target_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM investigation_notes WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incident_alerts WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incidents WHERE id=ANY($1::uuid[])',[incidentIds]);}
     if(alertIds.length){await pool.query('DELETE FROM alert_correlations WHERE alert_id=ANY($1::uuid[]) OR related_alert_id=ANY($1::uuid[])',[alertIds]);await pool.query('DELETE FROM alert_events WHERE alert_id=ANY($1::uuid[])',[alertIds]);await pool.query('DELETE FROM alerts WHERE id=ANY($1::uuid[])',[alertIds]);}
     if(eventIds.length)await pool.query('DELETE FROM security_events WHERE id=ANY($1::uuid[])',[eventIds]);
     if(ruleId)await pool.query('DELETE FROM detection_rules WHERE id=$1',[ruleId]);
