@@ -1,10 +1,10 @@
-# Task 38: Security Testing
+# Task 41: Deployment
 
 ## Status
 Not Started
 
 ## Objective
-Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
+Deploy the stable application with secure environment variables, migrations, HTTPS, and documented configuration.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
+Deploy the stable application with secure environment variables, migrations, HTTPS, and documented configuration.
 
 ## Explicitly Out of Scope
-Do not conduct destructive attacks against real systems.
+Do not commit secrets or depend on developer-local files.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Findings are documented, remediated where in scope, and regression-tested.
+Clean deployment setup works and smoke tests pass.
 
 ## Required Deliverables
-Security validation.
+Deployment.
 
 ## Completion Gate
 Do not mark this task complete until:

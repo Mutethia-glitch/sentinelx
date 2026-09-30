@@ -1,6 +1,23 @@
+# Roadmap insertion — 2026-09-30
+
+After Task 36 acceptance, the user explicitly requested a dedicated frontend visual-design task before automated validation. Review of the remaining contracts confirmed that none of the existing Tasks 37–43 owned visual design/polish.
+
+A new **Task 37: Frontend Visual Design and Polish** is therefore inserted. It is Not Started. The previously unstarted contracts are renumbered without scope changes:
+- old 37 Automated Testing → Task 38
+- old 38 Security Testing → Task 39
+- old 39 End-to-End Detection Scenarios → Task 40
+- old 40 Deployment → Task 41
+- old 41 Observability and Recovery → Task 42
+- old 42 Final System Validation → Task 43
+- old 43 Academic and Technical Handoff → Task 44
+
+Tasks 01–36 remain Complete and unchanged. Implement Task 37 next only on explicit instruction. Do not start Task 38 until Task 37 is accepted.
+
+---
+
 # Task 36 checkpoint — 2026-09-30
 
-Task 36 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–35 remain Complete; Task 37 has not started.
+Task 36 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–35 remain Complete. The next contract is the newly inserted Task 37 Frontend Visual Design and Polish.
 
 All seven existing SentinelX consoles now load a shared frontend helper. Dashboard, Events, Alerts, Incidents, Notifications and Audit navigation links are hidden by default and shown only after live `/api/access/me` permission grants; sign-out/authentication reset hides them again. Access remains the sign-in/access entry point. This navigation is convenience only: backend session/RBAC enforcement remains authoritative.
 
@@ -8,7 +25,7 @@ Primary console loads now publish explicit loading status. The Audit console was
 
 The shared helper is served as a GET-only no-store/no-sniff/no-referrer same-origin resource. Existing restrictive page CSP remains unchanged. No migration, new runtime dependency, client-side token storage, backend authorization change, fabricated security capability or Task 37 work was introduced.
 
-Windows acceptance completed on 2026-09-30. `verify:frontend-security` passed, the database-free Playwright browser check passed 1/1, and the full quality suite passed 181/181. The trailing PowerShell `\` typo reported after the quality output was a shell command error after the successful test run, not a SentinelX failure. Task 36 is Complete. Do not start Task 37 without explicit instruction.
+Windows acceptance completed on 2026-09-30. `verify:frontend-security` passed, the database-free Playwright browser check passed 1/1, and the full quality suite passed 181/181. The trailing PowerShell `\` typo reported after the quality output was a shell command error after the successful test run, not a SentinelX failure. Task 36 is Complete. Do not start the newly inserted Task 37 Frontend Visual Design and Polish without explicit instruction.
 
 See `docs/FRONTEND_SECURITY_UX.md` and `tasks/36-frontend-security-and-ux.md`.
 

@@ -6,7 +6,7 @@ This document maps the approved requirements baseline to the numbered implementa
 
 | Requirement IDs | Requirement Area | Primary Tasks |
 |---|---|---:|
-| NFR-002 | Project foundation and secret handling | 01, 35, 40 |
+| NFR-002 | Project foundation and secret handling | 01, 35, 41 |
 | FR-026 | Authentication | 05 |
 | FR-027, FR-028, NFR-003 | Role-based access control and protected operations | 05–06, 35 |
 | FR-001–FR-004, FR-029–FR-030 | Security events, authorized sources, ingestion, normalization, persistence | 07–10 |
@@ -21,19 +21,19 @@ This document maps the approved requirements baseline to the numbered implementa
 | FR-034 | Notifications | 23 |
 | FR-032 | Dashboard | 24, 36 |
 | FR-008, FR-031 | Search and filtering | 25 |
-| FR-033, FR-036 | Reporting | 26, 39, 42 |
-| FR-024–FR-025, FR-036 | Audit trail | 27, 39, 42 |
+| FR-033, FR-036 | Reporting | 26, 40, 43 |
+| FR-024–FR-025, FR-036 | Audit trail | 27, 40, 43 |
 | FR-035 | MITRE ATT&CK mapping | 28 |
 | NFR-012–NFR-013 | Optional machine-learning supporting layer | 29–33 |
 | NFR-014 | Optional external integration boundary | 34 |
 | NFR-003, NFR-004, NFR-005, NFR-010 | API security | 35 |
-| NFR-011, NFR-017 | Frontend security and truthful UX | 24–28, 36 |
-| NFR-007 | Automated verification | 37–39, 42 |
-| NFR-008–NFR-009 | Authorized/synthetic security testing | 38–39 |
-| FR-036 | End-to-end core workflow validation | 39, 42 |
-| NFR-001, NFR-002 | Deployment/configuration constraints | 04, 40 |
-| NFR-007 | Observability/recovery verification where defined | 41–42 |
-| NFR-016 | One-semester core-first scope | 01–43 |
+| NFR-011, NFR-017 | Frontend security, truthful UX, and visual presentation | 24–28, 36–37 |
+| NFR-007 | Automated verification | 38–40, 43 |
+| NFR-008–NFR-009 | Authorized/synthetic security testing | 39–40 |
+| FR-036 | End-to-end core workflow validation | 40, 43 |
+| NFR-001, NFR-002 | Deployment/configuration constraints | 04, 41 |
+| NFR-007 | Observability/recovery verification where defined | 42–43 |
+| NFR-016 | One-semester core-first scope | 01–44 |
 | NFR-015, NFR-018 | Data-access boundary and separation of security domain concepts | 03–04, 07, 15, 18–22, 27 |
 
 ## Task Area Index
@@ -65,13 +65,14 @@ This document maps the approved requirements baseline to the numbered implementa
 | External integration boundary | 34 |
 | API security | 35 |
 | Frontend security and UX | 36 |
-| Automated testing | 37 |
-| Security testing | 38 |
-| End-to-end validation | 39 |
-| Deployment | 40 |
-| Observability and recovery | 41 |
-| Final validation | 42 |
-| Technical handoff | 43 |
+| Frontend visual design and polish | 37 |
+| Automated testing | 38 |
+| Security testing | 39 |
+| End-to-end validation | 40 |
+| Deployment | 41 |
+| Observability and recovery | 42 |
+| Final validation | 43 |
+| Technical handoff | 44 |
 
 ## Traceability Rule
 

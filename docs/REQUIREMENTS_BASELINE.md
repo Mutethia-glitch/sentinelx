@@ -59,29 +59,29 @@ Important security and administrative actions are additionally recorded in the a
 | FR-033 | SentinelX shall produce supported incident/security reports from persisted system data. | Reporting tests against known test data. | 26 |
 | FR-034 | SentinelX shall support notifications defined by the approved notification task without making notification delivery a substitute for incident handling. | Notification behavior tests. | 23 |
 | FR-035 | SentinelX shall support MITRE ATT&CK mapping as contextual information for supported detections where implemented. | Mapping association/retrieval tests. | 28 |
-| FR-036 | The final demonstrable system shall support the end-to-end core path from event ingestion through reporting, with important actions represented in the audit trail. | Controlled end-to-end scenario. | 39, 42 |
+| FR-036 | The final demonstrable system shall support the end-to-end core path from event ingestion through reporting, with important actions represented in the audit trail. | Controlled end-to-end scenario. | 40, 43 |
 
 ## 4. Non-Functional and Security Requirements
 
 | ID | Requirement | Verification | Primary Task(s) |
 |---|---|---|---|
 | NFR-001 | PostgreSQL shall be the SentinelX database. Supabase shall not be introduced. | Configuration/dependency review. | 04 |
-| NFR-002 | Secrets and credentials shall be supplied through environment/configuration mechanisms and shall not be committed to source control. | Repository/secret scan and configuration review. | 01, 35, 40 |
+| NFR-002 | Secrets and credentials shall be supplied through environment/configuration mechanisms and shall not be committed to source control. | Repository/secret scan and configuration review. | 01, 35, 41 |
 | NFR-003 | Protected API operations shall authenticate and authorize requests on the backend rather than trusting frontend state. | API security tests. | 05–06, 35 |
 | NFR-004 | API inputs shall be validated before use. | Negative validation tests. | 08, 35 |
-| NFR-005 | Protected responses shall not expose passwords, authentication tokens, secrets, stack traces, or records the requester is not authorized to access. | Security tests. | 35–36, 38 |
-| NFR-006 | Detection logic shall be independently testable and deterministic for identical rule/input conditions. | Repeatable unit tests. | 13–14, 37 |
-| NFR-007 | Important security behavior shall have automated or documented verification; rendering alone shall not constitute completion. | Test-suite and completion-gate review. | 37–39, 42 |
-| NFR-008 | Security testing shall use synthetic data or explicitly authorized systems/environments. | Test-plan review and controlled test evidence. | 38–39 |
-| NFR-009 | SentinelX shall not include offensive-security tooling or destructive response actions in the core project. | Scope/code review. | 22, 38, 42 |
+| NFR-005 | Protected responses shall not expose passwords, authentication tokens, secrets, stack traces, or records the requester is not authorized to access. | Security tests. | 35–36, 39 |
+| NFR-006 | Detection logic shall be independently testable and deterministic for identical rule/input conditions. | Repeatable unit tests. | 13–14, 38 |
+| NFR-007 | Important security behavior shall have automated or documented verification; rendering alone shall not constitute completion. | Test-suite and completion-gate review. | 38–40, 43 |
+| NFR-008 | Security testing shall use synthetic data or explicitly authorized systems/environments. | Test-plan review and controlled test evidence. | 39–40 |
+| NFR-009 | SentinelX shall not include offensive-security tooling or destructive response actions in the core project. | Scope/code review. | 22, 39, 43 |
 | NFR-010 | Response actions shall be controlled, authorized, and auditable. | Authorization, response, and audit tests. | 22, 27, 35 |
-| NFR-011 | The frontend shall represent implemented backend capabilities and shall not define or fabricate security capabilities. | Architecture/API/UI traceability review. | 03, 24–28, 36 |
-| NFR-012 | The core system shall remain usable without machine-learning features. | Core end-to-end test with ML disabled/absent. | 29–33, 39 |
+| NFR-011 | The frontend shall represent implemented backend capabilities and shall not define or fabricate security capabilities. | Architecture/API/UI traceability review. | 03, 24–28, 36–37 |
+| NFR-012 | The core system shall remain usable without machine-learning features. | Core end-to-end test with ML disabled/absent. | 29–33, 40 |
 | NFR-013 | Any ML capability shall support rather than replace deterministic detection. | Architecture and integration tests/review. | 29–33 |
 | NFR-014 | External SIEM/log integrations shall remain optional and isolated from the standalone SentinelX core. | Architecture/integration-boundary review. | 34 |
 | NFR-015 | Database access shall remain behind the application's data-access boundary rather than being driven directly by the frontend. | Architecture/code review. | 03–04, 35–36 |
-| NFR-016 | The implementation shall prioritize a complete core workflow within the working one-semester scope before advanced capabilities. | Roadmap/scope review. | 01–43 |
-| NFR-017 | The operational security console shall prioritize practical security information and workflows; optional 3D presentation shall not control the security architecture. | UI/architecture review. | 24–28, 36 |
+| NFR-016 | The implementation shall prioritize a complete core workflow within the working one-semester scope before advanced capabilities. | Roadmap/scope review. | 01–44 |
+| NFR-017 | The operational security console shall prioritize practical security information and workflows; optional 3D presentation shall not control the security architecture. | UI/architecture review. | 24–28, 36–37 |
 | NFR-018 | The system shall preserve separation between SecurityEvent, Alert, Incident, threat level/risk, investigation history, response history, and audit records. | Architecture/data-model review and integration tests. | 03–04, 07, 15, 18–22, 27 |
 
 ## 5. Lifecycle Invariants

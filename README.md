@@ -21,7 +21,7 @@ This repository is the implementation control center and technical source of tru
 
 ### Task system
 
-Implement `tasks/01` through `tasks/43` in numerical order.
+Implement `tasks/01` through `tasks/44` in numerical order.
 
 Every task defines objective, dependencies, scope, exclusions, implementation rules, acceptance criteria, deliverables, and a completion gate.
 

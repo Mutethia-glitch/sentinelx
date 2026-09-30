@@ -1,10 +1,10 @@
-# Task 40: Deployment
+# Task 42: Observability and Recovery
 
 ## Status
 Not Started
 
 ## Objective
-Deploy the stable application with secure environment variables, migrations, HTTPS, and documented configuration.
+Implement application/error logging, health checks, safe failure handling, and appropriate backup/recovery considerations.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Deploy the stable application with secure environment variables, migrations, HTTPS, and documented configuration.
+Implement application/error logging, health checks, safe failure handling, and appropriate backup/recovery considerations.
 
 ## Explicitly Out of Scope
-Do not commit secrets or depend on developer-local files.
+Do not log passwords, tokens, or unnecessary sensitive data.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Clean deployment setup works and smoke tests pass.
+Failures are diagnosable and core services fail safely.
 
 ## Required Deliverables
-Deployment.
+Observability.
 
 ## Completion Gate
 Do not mark this task complete until:

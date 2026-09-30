@@ -10,7 +10,8 @@
 | SOC interface | 24–28 | Dashboard, search, reports, audit, MITRE |
 | Intelligence | 29–33 | ML dataset, features, model, evaluation, integration |
 | Security/integration | 34–36 | External boundary, API security, frontend security |
-| Validation | 37–39 | Testing and controlled scenarios |
-| Delivery | 40–43 | Deployment, observability, final validation, handoff |
+| Interface polish | 37 | Shared visual design system, responsive analyst UX, presentation polish |
+| Validation | 38–40 | Automated testing, security testing, controlled end-to-end scenarios |
+| Delivery | 41–44 | Deployment, observability/recovery, final validation, handoff |
 
-Do not jump to ML, external SIEM integration, or visual polish while the core event-to-incident pipeline is incomplete.
+The core event-to-incident pipeline is complete through Task 36. Task 37 is the approved visual-design pass; do not proceed to validation Tasks 38–40 until its acceptance gate is complete.

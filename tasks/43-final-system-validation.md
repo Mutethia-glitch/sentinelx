@@ -1,10 +1,10 @@
-# Task 41: Observability and Recovery
+# Task 43: Final System Validation
 
 ## Status
 Not Started
 
 ## Objective
-Implement application/error logging, health checks, safe failure handling, and appropriate backup/recovery considerations.
+Validate the entire system against the approved requirements and implementation specification.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Implement application/error logging, health checks, safe failure handling, and appropriate backup/recovery considerations.
+Validate the entire system against the approved requirements and implementation specification.
 
 ## Explicitly Out of Scope
-Do not log passwords, tokens, or unnecessary sensitive data.
+Do not add new features during final validation except critical defect fixes.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Failures are diagnosable and core services fail safely.
+Every core requirement has implementation/test evidence and limitations are documented.
 
 ## Required Deliverables
-Observability.
+Final validation report.
 
 ## Completion Gate
 Do not mark this task complete until:

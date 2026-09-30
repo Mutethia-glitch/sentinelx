@@ -1,10 +1,10 @@
-# Task 39: End-to-End Detection Scenarios
+# Task 39: Security Testing
 
 ## Status
 Not Started
 
 ## Objective
-Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
+Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
+Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
 
 ## Explicitly Out of Scope
-Do not test against real external targets.
+Do not conduct destructive attacks against real systems.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Each scenario has input, expected detection, expected incident behavior, response, and result.
+Findings are documented, remediated where in scope, and regression-tested.
 
 ## Required Deliverables
-Detection evaluation.
+Security validation.
 
 ## Completion Gate
 Do not mark this task complete until:

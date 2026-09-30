@@ -1,10 +1,10 @@
-# Task 42: Final System Validation
+# Task 40: End-to-End Detection Scenarios
 
 ## Status
 Not Started
 
 ## Objective
-Validate the entire system against the approved requirements and implementation specification.
+Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
 
 ## Project Context
 SentinelX is **IPHYN's Intelligent Cybersecurity Incident Detection and Response System**. IPHYN is the case-study organization; SentinelX is the system name.
@@ -14,10 +14,10 @@ The core workflow is:
 **Security Event → Normalization → Detection → Alert → Correlation → Incident → Investigation → Response → Resolution → Reporting**
 
 ## Scope
-Validate the entire system against the approved requirements and implementation specification.
+Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
 
 ## Explicitly Out of Scope
-Do not add new features during final validation except critical defect fixes.
+Do not test against real external targets.
 
 ## Dependencies
 Complete the preceding tasks required by the sequence before implementing this task. Do not bypass dependencies merely to make the interface appear complete.
@@ -37,10 +37,10 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Every core requirement has implementation/test evidence and limitations are documented.
+Each scenario has input, expected detection, expected incident behavior, response, and result.
 
 ## Required Deliverables
-Final validation report.
+Detection evaluation.
 
 ## Completion Gate
 Do not mark this task complete until:
