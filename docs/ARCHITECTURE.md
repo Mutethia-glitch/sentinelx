@@ -315,3 +315,16 @@ The normalization service maps two explicit simulated formats into the canonical
 
 ## Task 12 rule configuration boundary
 The rules service validates a finite declarative schema and uses transactionally audited PostgreSQL repositories for creation, version-protected edits and optional MITRE associations. Protected rule management APIs do not execute event streams. The deterministic execution engine remains Task 13; no enabling action currently creates alerts or responses. See [DETECTION_RULES.md](DETECTION_RULES.md).
+
+
+## Task 17 runtime mapping
+
+The correlation service now runs after a new alert is persisted and before any
+incident workflow. It evaluates the new alert against prior alerts within the
+documented 900-second window, persists only explainable pairwise relationships,
+and derives groups as connected components. Production ingestion passes the same
+database transaction client through detection and correlation so correlation-stage
+failure is not silently ignored.
+
+Correlation preserves SecurityEvent, Alert and Incident as separate concepts and
+does not create incidents in Task 17. See [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
