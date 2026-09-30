@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js tests/integrations/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -67,7 +67,8 @@
     "verify:correlation:concurrency": "node scripts/verify-correlation-concurrency.js",
     "verify:ml:model": "node scripts/verify-ml-model.js",
     "verify:ml:evaluation": "node scripts/verify-ml-evaluation.js",
-    "verify:ml:integration": "node scripts/verify-ml-integration.js"
+    "verify:ml:integration": "node scripts/verify-ml-integration.js",
+    "verify:external-integration": "node scripts/verify-external-integration.js"
   },
   "engines": {
     "node": ">=20"

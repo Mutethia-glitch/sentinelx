@@ -428,3 +428,10 @@ Task 29 is an offline research fixture, not a production data path. A pure
 deterministic generator creates normalized-style synthetic records plus explicit
 research labels. It does not read PostgreSQL, ingest into SentinelX, or replace
 the canonical event model. Task 30 owns later feature engineering.
+
+
+## Task 34 optional external integration boundary
+
+`src/integrations/webhook.js` is the isolated outbound adapter for the optional external log/SIEM boundary. The standalone SentinelX event pipeline remains authoritative and commits before any webhook attempt. The adapter exports only a versioned normalized event snapshot over configured HTTPS and treats disabled, invalid, timeout, network, redirect, and non-2xx conditions as optional integration states rather than core-pipeline failures.
+
+No vendor-specific SDK or database dependency is introduced. External delivery cannot create, replace, or authorize SentinelX alerts, incidents, response actions, or state transitions. See [EXTERNAL_INTEGRATION.md](EXTERNAL_INTEGRATION.md).

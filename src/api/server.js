@@ -1,3 +1,4 @@
+const { externalWebhook } = require('../integrations/webhook');
 const { auditRepository }=require('../data/audit-repository');
 const { auditService }=require('../audit/service');
 const { auditHandler }=require('./audit-handler');
@@ -105,8 +106,9 @@ async function main() {
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
     const service = authService(authRepository(pool), config);
     const access = accessService(accessRepository(pool), service);
+    const integration = externalWebhook();
     const server = createServer(service, config, access,
-      ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool)))),
+      ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))), integration),
       eventViewService(eventRepository(pool), access),
       categoryService(categoryRepository(pool), access),
       ruleService(ruleRepository(pool), access),

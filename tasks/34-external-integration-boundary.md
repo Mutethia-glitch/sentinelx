@@ -1,7 +1,7 @@
 # Task 34: External Integration Boundary
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Define and implement only the approved API/webhook boundary for optional external log or SIEM integration.
@@ -50,6 +50,11 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-09-30
+Implemented one optional vendor-neutral outbound HTTPS webhook adapter for persisted normalized security events. The adapter is disabled by default, uses environment-only URL/token configuration, a bounded timeout, a versioned minimal payload, and no raw evidence export. Delivery occurs after the core event/detection transaction commits; unavailable/invalid/failed external delivery cannot roll back or replace SentinelX core processing.
+
+No external vendor SDK, inbound external-auth scheme, migration, new dependency, retry queue, response automation, or frontend feature was introduced. Focused reconstruction tests passed 4/4 and the standalone Task 34 verifier passed before publication. Windows local quality/verifier acceptance remains pending. See `docs/EXTERNAL_INTEGRATION.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

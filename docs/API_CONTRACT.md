@@ -225,3 +225,12 @@ objects for mapped techniques. Rule representations include `mitreMappings`
 alongside the existing technique ID list. Incident investigation/report linked
 alerts include their detection rule's structured ATT&CK mappings.
 See [MITRE_MAPPING.md](MITRE_MAPPING.md).
+
+
+## Task 34 optional external integration webhook
+
+Task 34 adds no new public SentinelX HTTP endpoint. It defines one optional outbound webhook contract after successful event persistence/detection processing.
+
+When configured, SentinelX sends an HTTPS POST containing payload schema version 1 and a minimal normalized `sentinelx.security_event` snapshot. The request uses an environment-supplied bearer token, rejects redirects, and applies a bounded timeout. Raw event evidence and metadata are not exported.
+
+The integration is disabled by default. Missing/invalid configuration, timeout, network failure, redirect, or non-2xx responses degrade to an unavailable optional adapter state and do not change the normal event-ingestion response or roll back SentinelX core records. See [EXTERNAL_INTEGRATION.md](EXTERNAL_INTEGRATION.md).

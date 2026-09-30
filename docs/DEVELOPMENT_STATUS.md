@@ -48,10 +48,11 @@
 - Task 31: Complete — Windows acceptance passed on 2026-09-30; learned baseline anomaly service and safe failure behavior.
 - Task 32: Complete — Windows acceptance passed on 2026-09-30; reproducible held-out synthetic evaluation.
 - Task 33: Complete — optional ML supporting evidence accepted on Windows/PostgreSQL/browser on 2026-09-30; deterministic controls and existing alert/incident behavior verified
-- Tasks 34–43: Not Started
+- Task 34: Implemented — awaiting local acceptance; optional vendor-neutral outbound HTTPS webhook boundary with safe failure isolation
+- Tasks 35–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–29 are Complete. Review fixes subsequently passed 142 quality tests and 36 PostgreSQL/browser integration checks; Windows correlation/concurrency/reporting checks and manual incident creation were accepted. The visible green incident success banner is retained. Task 30 is Complete following user-reported Windows dataset and feature verification; Tasks 31–32 are Complete following Windows model/evaluation acceptance; Task 33 is Complete following Windows/PostgreSQL/browser acceptance. Tasks 34–43 remain Not Started. Migrations 001–015 remain immutable/checksum protected. See SESSION_HANDOFF.md and ML_FEATURE_ENGINEERING.md.
+Tasks 01–29 are Complete. Review fixes subsequently passed 142 quality tests and 36 PostgreSQL/browser integration checks; Windows correlation/concurrency/reporting checks and manual incident creation were accepted. The visible green incident success banner is retained. Task 30 is Complete following user-reported Windows dataset and feature verification; Tasks 31–32 are Complete following Windows model/evaluation acceptance; Task 33 is Complete following Windows/PostgreSQL/browser acceptance. Task 34 is Implemented — awaiting local acceptance; Tasks 35–43 remain Not Started. Migrations 001–015 remain immutable/checksum protected. See SESSION_HANDOFF.md and ML_FEATURE_ENGINEERING.md.
 
 Tasks 31–32 validation: full quality suite 161/161 passed; model and evaluation
 verifiers passed. See ML_ANOMALY_DETECTION.md and ML_EVALUATION.md.
@@ -63,4 +64,4 @@ output. Evaluation reproduced TP 12, TN 10, FP 0, FN 8 on 30 synthetic held-out
 records (accuracy 0.7333333333333333, precision 1, recall 0.6, F1 0.75).
 Together with the recorded automated quality suite of 161/161, these results
 satisfy local acceptance for Tasks 31 and 32. No separate Windows quality-suite
-output was supplied in this acceptance message. Task 33 is Complete. Windows `verify:ml:integration`, deterministic detection/alert/incident regressions, and alert/investigation browser checks passed on 2026-09-30. Task 34 has not started.
+output was supplied in this acceptance message. Task 33 is Complete. Windows `verify:ml:integration`, deterministic detection/alert/incident regressions, and alert/investigation browser checks passed on 2026-09-30. Task 34 is Implemented — awaiting local acceptance; Task 35 has not started.
