@@ -33,8 +33,8 @@
 - Task 16: Complete — alert UI/API implemented; 62 unit/API, 13 PostgreSQL and 3 browser checks passed; migration integrity passed; Windows/PostgreSQL acceptance passed on 2026-09-30
 - Task 17: Complete — explainable 15-minute alert correlation, canonical pair deduplication, connected grouping and migration 010 implemented; focused Task 13/17 tests passed 14/14 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 18: Complete — incident creation from linked alerts, assignment, authoritative lifecycle, terminal notes and migration 011 implemented; focused Task 18 tests passed 10/10 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Task 19: Verification Pending — controlled fifteen-taxonomy incident classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment, assessment attribution, UI/API and PostgreSQL/browser verifiers implemented; focused local tests pass 5/5; Windows/PostgreSQL gate pending
+- Task 19: Complete — controlled fifteen-taxonomy incident classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment implemented with assessment attribution; focused Task 19 tests passed 5/5 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Tasks 20–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–18 are Complete. Task 19 is implemented with controlled approved-taxonomy classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment, independent of lifecycle state and transactionally audited. Focused Task 19 tests passed 5/5. Task 19 remains Verification Pending until migration 012 and `verify:incident-classification` pass on the user's Windows/PostgreSQL database. Tasks 20–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–19 are Complete. Task 19 provides controlled approved-taxonomy classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment, independent of lifecycle state and transactionally audited; focused Task 19 tests passed 5/5 and the Windows/PostgreSQL acceptance verifier passed on 2026-09-30. Tasks 20–43 remain Not Started. See SESSION_HANDOFF.md.
