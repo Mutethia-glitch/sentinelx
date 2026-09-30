@@ -1,7 +1,7 @@
 # Task 35: API Hardening
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Apply validation, authorization, safe errors, and appropriate rate limiting across APIs.
@@ -54,7 +54,7 @@ Do not mark this task complete until:
 ## Implementation Note — 2026-09-30
 Implemented a shared API security boundary ahead of all `/api` routing. It applies bounded per-socket-IP request and mutation rate limits, rejects oversized/ambiguous API request targets and body-bearing GET/HEAD requests, and sets uniform no-store/no-sniff/referrer/resource-policy headers. Existing route-level JSON validation, exact-origin mutation checks, live session/RBAC authorization, parameterized persistence, safe errors, and human-controlled response auditing remain authoritative.
 
-The existing login limiter remains stricter. Caller-supplied forwarding headers are not trusted for identity. No migration, external security service, new runtime dependency, frontend change, trusted-proxy model, or automated response path was introduced. Focused reconstruction checks passed 5/5 before publication. Windows local quality and Task 35 verifier acceptance remain pending. See `docs/API_HARDENING.md`.
+The existing login limiter remains stricter. Caller-supplied forwarding headers are not trusted for identity. No migration, external security service, new runtime dependency, frontend change, trusted-proxy model, or automated response path was introduced. Focused reconstruction checks passed 5/5 before publication. Windows local acceptance completed on 2026-09-30: `verify:api-hardening` passed and the full quality suite passed 176/176. See `docs/API_HARDENING.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

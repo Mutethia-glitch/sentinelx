@@ -42,3 +42,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Task 35 API hardening verification failed' }
 ```
 
 The Task 35 verifier requires no PostgreSQL credentials and uses only synthetic/stubbed request state.
+
+
+## Acceptance — 2026-09-30
+
+Windows local acceptance passed. `npm.cmd run verify:api-hardening` verified shared API rate limits, request-target/body guards, safe headers, authorization rejection, and sanitized failures. The full quality suite passed 176/176. Task 35 is Complete.

@@ -1,12 +1,12 @@
 # Task 35 checkpoint — 2026-09-30
 
-Task 35 is **Implemented — awaiting local acceptance**. Tasks 01–34 remain Complete; Task 36 has not started.
+Task 35 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–34 remain Complete; Task 36 has not started.
 
 A shared API security boundary now runs before every `/api` route. It enforces a 4096-byte request-target bound, rejects fragments/backslashes and body-bearing GET/HEAD requests, applies uniform safe API response headers, and rate-limits by the actual socket peer. Default shared limits are 600 requests/minute and 120 mutations/minute per peer, with bounded in-memory state. The existing login limiter remains stricter at 20 attempts per socket IP and 10 per normalized account per 15 minutes.
 
 Forwarding headers are deliberately not trusted; Task 35 does not invent a trusted-proxy deployment model. Existing endpoint handlers/services remain authoritative for JSON schema validation, exact-origin mutation checks, live PostgreSQL-backed authentication/RBAC, record scoping, parameterized persistence, safe errors, and response auditing. No migration, package, external security service, frontend change, or automated/destructive response path was added.
 
-Available-runtime validation before publication: focused API hardening checks passed 5/5, covering shared rate limits, socket-IP identity, malformed/oversized targets, read-body rejection, uniform safe headers, missing-auth rejection, cross-origin mutation rejection, and sanitized internal failures. Run `npm.cmd run quality` and `npm.cmd run verify:api-hardening` on Windows before marking Task 35 Complete. Do not start Task 36 until Task 35 local acceptance is supplied.
+Available-runtime validation before publication: focused API hardening checks passed 5/5, covering shared rate limits, socket-IP identity, malformed/oversized targets, read-body rejection, uniform safe headers, missing-auth rejection, cross-origin mutation rejection, and sanitized internal failures. Windows acceptance then passed: `verify:api-hardening` succeeded and the full quality suite passed 176/176. Task 35 is Complete. Do not start Task 36 without explicit instruction.
 
 See `docs/API_HARDENING.md` and `tasks/35-api-hardening.md`.
 
