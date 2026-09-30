@@ -98,6 +98,8 @@ function alertRepository(pool) {
     async updateStatus(actorId, id, input) {
       try {
         return await transaction(pool, async client => {
+          const actor = await client.query('SELECT id FROM users WHERE id=$1 AND active FOR SHARE', [actorId]);
+          if (!actor.rows[0]) throw new AuthError(403, 'Permission denied.');
           requirePermission(await rolesFor(client, actorId), 'alerts.manage');
           const current = (await client.query(`SELECT a.*, r.name AS rule_name FROM alerts a
             JOIN detection_rules r ON r.id=a.rule_id WHERE a.id=$1 FOR UPDATE OF a`, [id])).rows[0];

@@ -23,6 +23,9 @@ required. `git pull origin main` keeps the code and this guide on your computer.
 | GET / POST | /api/rules | Administrator/Analyst; list/create rule configurations. |
 | GET / PUT | /api/rules/{uuid} | Administrator/Analyst; inspect/version-protected edit, including enabled state. |
 | GET | /api/rules/mitre-mappings | Administrator/Analyst; local technique reference catalog. |
+| GET | /api/alerts | Approved role with alerts.read; bounded filters and pagination. |
+| GET | /api/alerts/{uuid} | Approved role with alerts.read; details and linked source events. |
+| PATCH | /api/alerts/{uuid}/status | Administrator/Analyst; NEW or ACKNOWLEDGED plus reason. |
 | POST | /api/rules/validate | Administrator/Analyst; structural/reference validation without execution. |
 
 Mutation requests need exact `Origin: http://localhost:3000` (or your configured
@@ -31,7 +34,7 @@ bearer token or API key. A PowerShell caller should log in with `-SessionVariabl
 and reuse `-WebSession`; the repository ingestion verifier demonstrates this
 without printing your credentials.
 
-User pages: `/access` for access management and `/events` for event viewing.
+User pages: `/access` for access management, `/events` for event viewing and `/alerts` for alert management.
 Detailed payloads, limits and examples are in [AUTHENTICATION.md](AUTHENTICATION.md),
 [ACCESS_CONTROL.md](ACCESS_CONTROL.md), [EVENT_INGESTION.md](EVENT_INGESTION.md),
 [LOG_NORMALIZATION.md](LOG_NORMALIZATION.md) and [EVENT_MANAGEMENT.md](EVENT_MANAGEMENT.md).
@@ -41,3 +44,5 @@ the current implementation.
 Threat catalog details: [THREAT_CATEGORIES.md](THREAT_CATEGORIES.md). Category availability does not imply implemented detection coverage.
 
 Rule configuration details: [DETECTION_RULES.md](DETECTION_RULES.md). Runtime deterministic execution is documented in [DETECTION_ENGINE.md](DETECTION_ENGINE.md). These local endpoints and Task 13 detection require no external API key.
+
+Alert workflow and Windows verification: [ALERT_MANAGEMENT.md](ALERT_MANAGEMENT.md).

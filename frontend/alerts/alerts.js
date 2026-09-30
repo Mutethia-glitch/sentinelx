@@ -2,12 +2,24 @@
 const el=id=>document.getElementById(id);
 let generation=0,page=1,activeFilters=new URLSearchParams(),canManage=false,currentAlertId=null;
 function message(text,error=false){el('message').textContent=error?`Error: ${text}`:text;el('message').classList.toggle('error',error);if(error)el('message').scrollIntoView({block:'center'});}
-function clearDetail(){currentAlertId=null;el('detail-panel').hidden=true;el('detail-fields').replaceChildren();el('entities').textContent='';el('match-evidence').textContent='';el('event-rows').replaceChildren();el('status-form').hidden=true;el('status-reason').value='';}
+function clearDetail(){currentAlertId=null;el('detail-panel').hidden=true;el('detail-fields').replaceChildren();el('entities').textContent='';el('match-evidence').textContent='';el('event-rows').replaceChildren();el('status-form').hidden=true;el('status-reason').value='';clearEvent();}
 function clearData(){el('rows').replaceChildren();el('results').textContent='';el('page').textContent='';el('previous').disabled=true;el('next').disabled=true;clearDetail();}
 function reset(){generation++;clearData();el('login-panel').hidden=false;el('identity-panel').hidden=true;el('alerts-panel').hidden=true;el('identity').textContent='';canManage=false;}
 async function request(path,options={}){const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});const body=response.status===204?null:await response.json();if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}return body;}
 function handleError(error){if(error.status===401||error.status===403)reset();message(error.status?error.message:'Unable to reach SentinelX. Try again.',true);}
 function addField(label,value){const term=document.createElement('dt'),description=document.createElement('dd');term.textContent=label;description.textContent=value??'Unknown';el('detail-fields').append(term,description);}
+function clearEvent(){el('event-detail').hidden=true;el('event-identity').textContent='';el('normalized-event').textContent='';el('raw-event').textContent='';}
+async function inspectEvent(id){
+  const current=++generation;clearEvent();
+  try{
+    const {event}=await request(`/api/events/${encodeURIComponent(id)}`);
+    if(current!==generation)return;
+    el('event-identity').textContent=`${event.id} · ${event.timestamp} · ${event.source} / ${event.type}`;
+    el('normalized-event').textContent=event.event?JSON.stringify(Object.fromEntries(Object.entries(event.event).filter(([key])=>key!=='rawData')),null,2):'Not yet normalized.';
+    el('raw-event').textContent=JSON.stringify(event.rawData,null,2);
+    el('event-detail').hidden=false;el('event-detail').focus();message('Source event loaded.');
+  }catch(error){if(current===generation)handleError(error);}
+}
 async function inspect(id){
   const current=++generation;clearDetail();
   try{
@@ -22,6 +34,7 @@ async function inspect(id){
       for(const value of [event.id,event.timestamp,`${event.source} / ${event.type}`,`${event.user||'Unknown'} / ${event.host||'Unknown'}`,event.status||'Unknown',event.trigger?'Yes':'No']){
         const cell=document.createElement('td');cell.textContent=value;row.append(cell);
       }
+      const cell=document.createElement('td'),button=document.createElement('button');button.type='button';button.textContent='Inspect event';button.setAttribute('aria-label',`Inspect source event ${event.id}`);button.addEventListener('click',()=>inspectEvent(event.id));cell.append(button);row.append(cell);
       el('event-rows').append(row);
     }
     el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
@@ -52,7 +65,18 @@ el('filters').addEventListener('submit',event=>{event.preventDefault();const par
 el('clear').addEventListener('click',()=>{el('filters').reset();activeFilters=new URLSearchParams();page=1;load();});
 el('previous').addEventListener('click',()=>{if(page>1){page--;load();}});
 el('next').addEventListener('click',()=>{if(page<2000){page++;load();}});
-el('status-form').addEventListener('submit',async event=>{event.preventDefault();if(!currentAlertId)return;const button=event.currentTarget.querySelector('button');button.disabled=true;try{await request(`/api/alerts/${encodeURIComponent(currentAlertId)}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:el('alert-status').value,reason:el('status-reason').value})});const id=currentAlertId;await load();await inspect(id);}catch(error){handleError(error);}finally{button.disabled=false;}});
+el('status-form').addEventListener('submit',async event=>{
+  event.preventDefault();if(!currentAlertId)return;
+  const id=currentAlertId,current=++generation,button=event.currentTarget.querySelector('button');
+  const body=JSON.stringify({status:el('alert-status').value,reason:el('status-reason').value});button.disabled=true;
+  try{
+    await request(`/api/alerts/${encodeURIComponent(id)}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body});
+    if(current!==generation)return;
+    await load();
+    if(current+1!==generation)return;
+    await inspect(id);
+  }catch(error){if(current===generation)handleError(error);}finally{button.disabled=false;}
+});
 el('login-form').addEventListener('submit',async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;try{await request('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:el('email').value,password:el('password').value})});await load();}catch(error){handleError(error);}finally{el('password').value='';button.disabled=false;}});
 el('logout').addEventListener('click',async()=>{reset();try{await request('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});message('Signed out.');}catch(error){handleError(error);}});
 load();

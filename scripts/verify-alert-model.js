@@ -92,7 +92,7 @@ async function verifyAlertModel(pool) {
     await client.query('SAVEPOINT invalid_status');
     try {
       await client.query("UPDATE alerts SET status='RESOLVED' WHERE id=$1", [alert.id]);
-      assert.fail('Incident-only status accepted as alert status.');
+      assert.fail('Incident status accepted as an alert status.');
     } catch (error) {
       assert.equal(error.code, '23514');
       await client.query('ROLLBACK TO SAVEPOINT invalid_status');

@@ -83,9 +83,6 @@ Task 15 defines and persists the alert object produced by qualifying detections.
 
 The persisted model contains the generating rule, trigger event, threat category, severity, event source, alert-generation timestamp, affected canonical entities, initial status, optional confidence, explainable match reason/evidence, and linked evidence events. Deterministic rule alerts currently use `status=NEW` and `confidence=null`. See [ALERT_MODEL.md](ALERT_MODEL.md).
 
-
 ## Task 16 alert management
 
-`GET /api/alerts` provides bounded authorized alert listing/filtering. `GET /api/alerts/{uuid}` returns alert details plus linked source-event summaries. `PATCH /api/alerts/{uuid}/status` allows Administrator/Security Analyst users to move alerts between NEW and ACKNOWLEDGED with a required reason, exact Origin protection, live backend authorization, status attribution, and audit logging. Viewer/Management is read-only.
-
-The operational console is served at `/alerts`. Alert and incident concepts remain separate. See [ALERT_MANAGEMENT.md](ALERT_MANAGEMENT.md).
+GET /api/alerts and GET /api/alerts/{uuid} require alerts.read; PATCH /api/alerts/{uuid}/status requires alerts.manage, exact Origin and a status/reason body. NEW and ACKNOWLEDGED are separate alert states. Status changes and audit records commit atomically. The /alerts console traces source events through the existing events.read API. See [ALERT_MANAGEMENT.md](ALERT_MANAGEMENT.md).

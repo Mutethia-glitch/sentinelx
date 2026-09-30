@@ -24,7 +24,8 @@
 <section id="detail-panel" hidden tabindex="-1"><h2>Alert inspection</h2><dl id="detail-fields"></dl>
 <h3>Affected entities</h3><pre id="entities"></pre>
 <h3>Detection evidence</h3><pre id="match-evidence"></pre>
-<h3>Source events</h3><div class="table-scroll"><table><thead><tr><th>Event ID</th><th>Occurred</th><th>Source / type</th><th>User / host</th><th>Status</th><th>Trigger</th></tr></thead><tbody id="event-rows"></tbody></table></div>
+<h3>Source events</h3><div class="table-scroll"><table><thead><tr><th>Event ID</th><th>Occurred</th><th>Source / type</th><th>User / host</th><th>Status</th><th>Trigger</th><th>Evidence</th></tr></thead><tbody id="event-rows"></tbody></table></div>
+<section id="event-detail" hidden tabindex="-1"><h3>Source-event inspection</h3><p id="event-identity"></p><h4>Normalized event</h4><pre id="normalized-event"></pre><h4>Raw evidence</h4><pre id="raw-event"></pre></section>
 <form id="status-form" hidden><h3>Analyst status</h3><label>Status<select id="alert-status"><option>NEW</option><option>ACKNOWLEDGED</option></select></label><label>Reason<textarea id="status-reason" maxlength="500" required></textarea></label><button type="submit">Update alert status</button></form>
 </section>
 </main></body></html>

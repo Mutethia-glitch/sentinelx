@@ -1,62 +1,82 @@
 # Alert management — Task 16
 
-Task 16 adds the operational alert workflow on top of the Task 15 alert model without merging alerts into incidents.
+The `/alerts` console lists and filters persisted detection alerts, shows their
+rule identity and snapshot fields, and traces linked source events to normalized
+and raw evidence through the existing authorized event API. Alerts remain
+separate from incidents. Deterministic confidence remains null (displayed as
+“Not calibrated”). Rule names are current catalog labels; threat, severity,
+source and affected entities retain their alert snapshots.
 
-## Supported workflow
+## Access and API
 
-Alert readers can list and inspect persisted alerts and trace the linked source events that formed the detection evidence.
+Administrator, Security Analyst and Viewer/Management can list and inspect alerts
+with `alerts.read`. Source-event inspection independently requires `events.read`.
+Only Administrator and Security Analyst can change status with `alerts.manage`.
+All grants are checked on the backend against the current session and roles.
 
-Task 16 supports two alert states:
+| Method | Path | Behavior |
+|---|---|---|
+| GET | `/api/alerts` | 50-row pages, newest generation time/id first; `hasMore` indicates another page. |
+| GET | `/api/alerts/{uuid}` | Alert fields, match evidence and ordered source-event summaries; trigger flagged. |
+| PATCH | `/api/alerts/{uuid}/status` | Exact JSON `{status, reason}`; authenticated manager and exact Origin required. |
+| GET | `/api/events/{uuid}` | Existing normalized event/raw evidence inspection used by source-event buttons. |
 
-- `NEW`
-- `ACKNOWLEDGED`
+Filters: `q` (literal case-insensitive substring of rule name, source, category,
+reason or entity), `status`, `severity`, `categoryCode`, `source`, `ruleId`, `from`,
+`to`, and `page`. Exact filters and inclusive ISO timestamps apply; local browser
+dates convert to UTC. All fifteen catalog category codes are accepted. Pages are
+1–2000; search is at most 200 characters, text filters at most 500, and encoded
+queries at most 4096. Duplicate, unknown and malformed filters return 400.
+List responses omit raw and match evidence; details retain evidence-event links.
 
-Authorized alert managers (Administrator and Security Analyst) can acknowledge a NEW alert or return an acknowledged alert to NEW when renewed attention is required. Every actual status transition requires a reason, re-checks live `alerts.manage` permission inside the PostgreSQL transaction, records the acting user/time, and writes an `ALERT_STATUS_CHANGED` audit entry.
+## Minimal analyst workflow
 
-Viewer/Management has `alerts.read` but not `alerts.manage`: it can inspect alerts and source evidence but cannot mutate status.
+Append-only migration `009_alert_management.sql` adds `ACKNOWLEDGED` alongside
+`NEW`, status timestamp/actor fields and indexes. An analyst can acknowledge after
+reviewing evidence or return an alert to NEW for renewed review. No incident
+resolution/containment states are introduced.
 
-Task 16 deliberately does not introduce `CONTAINED`, `INVESTIGATING`, `RESOLVED`, or `DISMISSED` alert states. Those meanings belong to the later incident lifecycle.
+Status requests require a nonblank reason of at most 500 characters. The active
+actor is locked and roles rechecked within the transaction; the alert is locked
+before mutation. An `ALERT_STATUS_CHANGED` audit records previous/new status,
+actor, alert id and reason in the same transaction. Audit failure rolls back the
+status change. Repeating the current state returns `changed:false` and creates
+no additional audit record. Concurrent writes serialize; the last committed
+request determines the status. This endpoint has no optimistic version contract.
 
-## API
+Missing alerts return 404; missing authentication 401; forbidden access/origin
+403; invalid input 400; method mismatch 405; persistence failure a sanitized 503.
+Mutation JSON uses the existing 8 KiB limit and application/json requirement.
+The browser renders data with textContent, clears evidence on logout/filtering
+or lost permission, ignores stale responses and presents errors in red.
 
-- `GET /api/alerts?page=1` — bounded 50-record pages.
-- `GET /api/alerts/{uuid}` — alert detail plus linked source-event summaries.
-- `PATCH /api/alerts/{uuid}/status` — Administrator/Security Analyst only, exact Origin and JSON body `{status, reason}`.
+## Validation and Windows acceptance
 
-Supported list filters are `q`, `status`, `severity`, `categoryCode`, `source`, `ruleId`, `from`, `to`, and `page`. Free-text search is parameterized and covers safe summary fields such as rule name, source, threat category, match reason, and affected entities.
+Automated checks cover real PostgreSQL pagination, filters, role boundaries,
+source-event evidence, audited transitions, repeat-state behavior, revoked roles
+and rollback. Chromium checks cover list/detail navigation, evidence rendering
+without HTML execution, status updates, Viewer read-only behavior, empty results,
+mobile layout and logout cleanup.
 
-Alert detail includes the rule reference, trigger event, threat, severity, source, timestamp, affected entities, status/confidence, match evidence, and linked event summaries. Raw event evidence remains available through the existing protected event inspection API rather than being duplicated into the alert summary.
+In the PowerShell window with your PostgreSQL connection environment:
 
-## UI
-
-`/alerts` serves the Task 16 analyst console. Authorized users can filter alerts, inspect an alert, review affected entities and evidence, trace linked source-event identifiers, and—when they have `alerts.manage`—acknowledge or reopen the alert with a reason.
-
-Browser output uses text content rather than HTML injection and is served with the same restrictive security headers used by the existing operational pages.
-
-## Persistence
-
-Append-only migration `009_alert_management.sql` expands the Task 15 status constraint to `NEW` and `ACKNOWLEDGED`, and adds `status_updated_at` plus `status_updated_by`. Existing alerts remain NEW and no incident is created automatically.
-
-## Verification
-
-Focused Task 15–16 management/API/UI regressions pass 7/7 before repository completion updates.
-
-PostgreSQL integration coverage:
-```powershell
-$env:SENTINELX_TEST_DATABASE='1'
-npm.cmd run test:alert-management:integration
-```
-
-Windows/PostgreSQL acceptance gate:
 ```powershell
 git pull origin main
-npm.cmd run quality
 node scripts/migrate.js
-npm.cmd run verify:alerts
+node scripts/verify-alert-management.js
 ```
 
-Expected verifier output:
+The verifier creates only uniquely identified synthetic users/rule/events/alerts,
+starts an ephemeral loopback HTTP server, and removes its synthetic records in
+finally. It requires permission to provision local synthetic users and an enabled
+category. Existing application data and configuration are not altered. It uses
+an internal synthetic passphrase, never asks for your application password and
+never prints database credentials. A hard process interruption can leave synthetic
+records; normal success/failure performs cleanup.
 
-`Alert listing, filtering, detail inspection, source-event tracing, Analyst status workflow, Viewer denial and audit attribution verified.`
+Expected result:
+`Alert listing, filtering, source-event inspection, audited status changes, Viewer rejection and atomic rollback verified. Synthetic changes cleaned up.`
 
-No external API or API key is required.
+Then restart `npm start`, visit `http://localhost:3000/alerts`, and confirm the
+browser workflow using an Administrator/Analyst and Viewer account. Task 16
+completion remains pending local Windows acceptance. No external API key is needed.

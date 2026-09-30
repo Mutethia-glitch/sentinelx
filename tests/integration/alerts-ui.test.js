@@ -1,0 +1,41 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+const {createPool}=require('../../src/data/pool');
+const {executeSql}=require('../../src/data/postgres');
+const {migrationSql}=require('../../scripts/migrate');
+const {alertManagementFixture}=require('../../scripts/verify-alert-management');
+test('alert browser workflow traces raw evidence, audits acknowledgement and keeps Viewer read-only',async t=>{
+  assert.equal(process.env.SENTINELX_TEST_DATABASE,'1','Use a disposable database.');executeSql(migrationSql());
+  const pool=createPool();let f,browser;
+  t.after(async()=>{if(browser)await browser.close();if(f)await f.cleanup();await pool.end();});
+  f=await alertManagementFixture(pool);
+  browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:{})});
+  const errors=[],pages=[];
+  for(const user of f.users){
+    const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();pages.push(page);
+    page.on('pageerror',error=>errors.push(error.message));page.on('dialog',dialog=>{errors.push('unexpected dialog');dialog.dismiss();});
+    await page.goto(f.base+'/alerts');await page.getByLabel('Email',{exact:true}).fill(user.email);await page.getByLabel('Application passphrase').fill(f.password);await page.getByRole('button',{name:'Sign in',exact:true}).click();
+    await page.locator('#alerts-panel').waitFor({state:'visible'});await page.getByLabel('Source',{exact:true}).fill(f.source);await page.getByRole('button',{name:'Apply filters'}).click();await page.waitForFunction(()=>document.querySelectorAll('#rows tr').length===50);
+  }
+  const analyst=pages[1],viewer=pages[2];
+  await analyst.getByRole('button',{name:'Next',exact:true}).click();await analyst.waitForFunction(()=>document.getElementById('page').textContent==='Page 2');assert.equal(await analyst.locator('#rows tr').count(),1);
+  await analyst.locator('#rows button').first().click();await analyst.locator('#detail-panel').waitFor({state:'visible'});
+  assert.ok((await analyst.locator('#detail-fields').textContent()).includes('Not calibrated'));assert.equal(await analyst.locator('#detail-panel img').count(),0);
+  await analyst.getByRole('button',{name:`Inspect source event ${f.event.id}`}).click();await analyst.locator('#event-detail').waitFor({state:'visible'});
+  assert.equal(JSON.parse(await analyst.locator('#raw-event').textContent()).html,f.malicious);assert.equal(await analyst.locator('#raw-event img').count(),0);
+  await analyst.locator('#alert-status').selectOption('ACKNOWLEDGED');await analyst.locator('#status-reason').fill('Browser source evidence reviewed');await analyst.getByRole('button',{name:'Update alert status'}).click();
+  await analyst.waitForFunction(()=>document.getElementById('detail-fields').textContent.includes('ACKNOWLEDGED'));
+  await analyst.screenshot({path:'/tmp/sentinelx-alerts-detail.png',fullPage:true});
+  await viewer.locator('#rows button').first().click();await viewer.locator('#detail-panel').waitFor({state:'visible'});assert.equal(await viewer.locator('#status-form').isVisible(),false);
+  assert.equal(await viewer.evaluate(async id=>(await fetch(`/api/alerts/${id}/status`,{method:'PATCH',headers:{'Content-Type':'application/json','X-Role':'Administrator'},body:JSON.stringify({status:'ACKNOWLEDGED',reason:'forged role'})})).status,f.alertIds[0]),403);
+  await analyst.locator('#filters select[name=status]').selectOption('ACKNOWLEDGED');await analyst.getByRole('button',{name:'Apply filters'}).click();await analyst.waitForFunction(()=>document.querySelectorAll('#rows tr').length===1);
+  await analyst.getByLabel('Search',{exact:true}).fill('no-such-synthetic-alert');await analyst.getByRole('button',{name:'Apply filters'}).click();await analyst.waitForFunction(()=>document.getElementById('results').textContent==='No alerts match these filters.');assert.equal(await analyst.locator('#event-detail').isVisible(),false);
+  await viewer.setViewportSize({width:390,height:844});assert.equal(await viewer.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await viewer.screenshot({path:'/tmp/sentinelx-alerts-mobile.png',fullPage:true});
+  await pool.query('DELETE FROM user_roles WHERE user_id=$1',[f.users[2].id]);
+  await viewer.getByRole('button',{name:`Inspect source event ${f.event.id}`}).click();await viewer.waitForFunction(()=>document.getElementById('message').classList.contains('error'));
+  assert.equal(await viewer.locator('#rows tr').count(),0);assert.equal(await viewer.locator('#raw-event').textContent(),'');
+  await analyst.getByRole('button',{name:'Sign out',exact:true}).click();await analyst.locator('#login-panel').waitFor({state:'visible'});assert.equal(await analyst.locator('#rows tr').count(),0);assert.equal(await analyst.locator('#raw-event').textContent(),'');
+  await analyst.waitForFunction(async()=> (await fetch('/api/alerts')).status===401);
+  assert.deepEqual(errors,[]);
+});

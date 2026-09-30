@@ -27,8 +27,10 @@
     "verify:initial-rules": "node scripts/verify-initial-rules.js",
     "test:alert-model:integration": "node --test tests/integration/alert-model.test.js",
     "verify:alert-model": "node scripts/verify-alert-model.js",
-    "test:alert-management:integration": "node --test tests/integration/alert-management.test.js",
-    "verify:alerts": "node scripts/verify-alert-management.js"
+    "test:alerts:integration": "node --test tests/integration/alert-management.test.js",
+    "test:alerts:ui": "node --test tests/integration/alerts-ui.test.js",
+    "verify:alerts": "node scripts/verify-alert-management.js",
+    "test:alert-management:integration": "node --test tests/integration/alert-management.test.js"
   },
   "engines": {
     "node": ">=20"

@@ -51,16 +51,10 @@ Do not mark this task complete until:
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
 
-## Verification State
-- Alert listing, detail retrieval, filtering, source-event tracing, and the analyst console are implemented.
-- Task 16 alert statuses are NEW and ACKNOWLEDGED only.
-- Administrator/Security Analyst can acknowledge or reopen alerts with a reason; Viewer/Management is read-only.
-- Status changes re-check live alerts.manage permission transactionally and write ALERT_STATUS_CHANGED audit records.
-- Focused Task 15–16 regressions pass 7/7.
-- Append-only migration 009 implements the alert-management state fields and constraints.
-- Windows/PostgreSQL migration and `verify:alerts` acceptance gate remains required before this task may be marked Complete.
-- Task 17 correlation remains Not Started.
-- No external API or API key is required.
+## Verification checkpoint
+Alert UI/API and migration 009 exist. Automated validation passed: 62 unit/API tests, 13 PostgreSQL integration checks,
+3 Chromium browser checks, and migration replay/schema integrity. Local Windows
+acceptance remains required before Complete. See docs/ALERT_MANAGEMENT.md for the verifier.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

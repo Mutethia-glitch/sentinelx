@@ -52,6 +52,7 @@ test('status mutation rechecks live analyst role and audits the transition',asyn
     query:async(sql,params)=>{
       queries.push({sql,params});
       if(['BEGIN','COMMIT','ROLLBACK'].includes(sql))return{rows:[]};
+      if(sql.includes('FROM users WHERE'))return{rows:[{id:'actor'}]};
       if(sql.includes('FROM user_roles'))return{rows:[{name:'Security Analyst'}]};
       if(sql.includes('FOR UPDATE'))return{rows:[row]};
       if(sql.startsWith('UPDATE alerts'))return{rows:[{...row,status:'ACKNOWLEDGED',status_updated_at:new Date('2026-09-30T01:00:00Z'),status_updated_by:'actor'}]};
