@@ -50,7 +50,7 @@ function eventMatches(event, definition) {
 function groupValues(event, fields) { return fields.map(field => event[field] ?? null); }
 function detectionEngine(repository) {
   return {
-    async evaluate(saved, db = null) {
+    async evaluate(saved, db = undefined) {
       if (!saved?.id || !saved.event) return [];
       const event = securityEvent(saved.event);
       const rules = await repository.enabledRules(db);
