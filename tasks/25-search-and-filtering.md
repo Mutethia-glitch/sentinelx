@@ -1,7 +1,7 @@
 # Task 25: Search and Filtering
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement consistent filters across events, alerts, and incidents.
@@ -64,7 +64,9 @@ Do not mark this task complete until:
 - The three existing console filter forms expose applicable fields.
 - Focused unit tests, PostgreSQL verifier and optional browser regression are implemented.
 - No migration needed; preserve 001–014.
-- Windows/PostgreSQL `quality` and `verify:search` are required before completion.
+- The Windows/PostgreSQL `verify:search` acceptance verifier passed on 2026-09-30.
+- Reported result: `Consistent event/alert/incident date, severity, status, category, IP, user, host, rule and MITRE filters, evidence-chain matching, RBAC and safe pagination verified. Synthetic changes cleaned up.`.
+- Synthetic changes were cleaned up. No migration was added; preserve applied migrations 001–014.
 - Task 26 Reporting remains Not Started.
 
 ## AI Guardrail
