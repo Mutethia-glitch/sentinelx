@@ -1,7 +1,7 @@
 # Task 30: ML Feature Engineering
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Extract behavioral features such as login frequency, failed-login frequency, source frequency, timing, and event frequency.
@@ -62,9 +62,21 @@ Do not mark this task complete until:
   `docs/ML_FEATURE_ENGINEERING.md`.
 - Automated validation: full quality suite 149/149 passed, dataset and feature
   verifiers passed, and simulated Windows CRLF fixture verification passed.
-  Local Windows acceptance remains pending.
+  User-reported Windows dataset and feature verifiers passed on 2026-09-30.
 - No model training, production integration, schema change or external API.
-- Task 31 remains Not Started. Do not mark Task 30 Complete before user acceptance.
+- Task 31 remains Not Started; do not start it without instruction.
+
+
+## Local acceptance — 2026-09-30
+
+The user supplied successful Windows output from `verify:dataset` and
+`verify:features`, including:
+
+`Reproducible behavioral features, prior-only windows, numeric schema and synthetic dataset compatibility verified.`
+
+Combined with the recorded 149/149 automated quality checks, this satisfies the
+Task 30 acceptance gate. No separate Windows quality-suite output was supplied
+in this acceptance message.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

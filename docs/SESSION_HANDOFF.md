@@ -2,7 +2,7 @@
 
 ## Current Task 30 checkpoint
 
-Task 30 is **Implemented — awaiting local acceptance**. Tasks 01–29 remain
+Task 30 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–29 remain
 Complete; Tasks 31–43 remain Not Started. The historical acceptance records below
 describe the state before this implementation.
 
@@ -17,9 +17,15 @@ verifiers passed, including a simulated Windows CRLF checkout of the fixture.
 Task 30 has no PostgreSQL/API/UI integration surface; prior integration acceptance
 records remain unchanged.
 
-Read `docs/ML_FEATURE_ENGINEERING.md` and the Task 30 contract. On Windows run
-`npm.cmd run quality`, `npm.cmd run verify:dataset` and `npm.cmd run verify:features`.
-Await user-reported local acceptance before marking Task 30 Complete. Do not
+The user supplied successful Windows `verify:dataset` and `verify:features`
+output, including:
+`Reproducible behavioral features, prior-only windows, numeric schema and synthetic dataset compatibility verified.`
+No separate Windows quality output was supplied in that acceptance message;
+the recorded automated quality suite passed 149/149 before publication.
+
+Next contract: `tasks/31-ml-anomaly-detection.md`.
+Read working rules, this handoff, development status, Task 29/30 research code and
+documentation, and the full Task 31 contract before implementation. Do not
 start Task 31 without instruction. The database remains on the user's Windows
 computer; never read, reveal or commit `.env` or credentials.
 

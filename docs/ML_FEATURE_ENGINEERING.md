@@ -80,4 +80,7 @@ Expected feature verifier output:
 
 `Reproducible behavioral features, prior-only windows, numeric schema and synthetic dataset compatibility verified.`
 
-Task 30 remains **Implemented — awaiting local acceptance**. Task 31 is Not Started.
+Task 30 is **Complete**. The user reported successful Windows dataset and feature
+verifiers on 2026-09-30. Together with the recorded 149/149 automated quality
+checks and simulated CRLF verification, this satisfies Task 30 acceptance.
+Task 31 is Not Started.
