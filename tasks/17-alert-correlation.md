@@ -1,7 +1,7 @@
 # Task 17: Alert Correlation
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement explainable correlation and deduplication using approved relationships such as user, source IP, host, category, and time window.
@@ -60,7 +60,8 @@ Do not mark this task complete until:
 - Connected components provide alert groups without creating incidents.
 - Newly generated production alerts invoke correlation in the existing ingestion transaction.
 - Focused Task 13/17 local tests passed 14/14 before repository update.
-- Windows/PostgreSQL migration plus `verify:correlation` remains required before completion.
+- Windows/PostgreSQL migration plus `verify:correlation` passed on 2026-09-30.
+- Windows/PostgreSQL result: `Explainable alert correlation, connected grouping, time-window rejection and pair deduplication verified. Synthetic changes rolled back.`
 - Task 18 incident management remains Not Started.
 - No external API or API key is required.
 
