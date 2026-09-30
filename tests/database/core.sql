@@ -42,6 +42,8 @@ BEGIN
   EXCEPTION WHEN unique_violation THEN NULL; END;
   INSERT INTO incidents(title, threat_level, assigned_to) VALUES ('Synthetic incident', 'CRITICAL', u) RETURNING id INTO i;
   IF (SELECT status FROM incidents WHERE id = i) <> 'NEW' THEN RAISE EXCEPTION 'Invalid default status'; END IF;
+  IF (SELECT risk_score FROM incidents WHERE id = i) <> 80 THEN RAISE EXCEPTION 'Invalid base incident risk'; END IF;
+  IF (SELECT risk_formula_version FROM incidents WHERE id = i) <> 1 THEN RAISE EXCEPTION 'Invalid risk formula version'; END IF;
   INSERT INTO incident_alerts VALUES (i, a);
   INSERT INTO investigation_notes(incident_id, author_id, content) VALUES (i, u, 'Synthetic evidence');
   INSERT INTO response_actions(incident_id, authorized_by, action, reason, result, succeeded, performed_at) VALUES (i, u, 'synthetic recorded action', 'test only', '{}', false, now());
