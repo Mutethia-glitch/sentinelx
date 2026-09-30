@@ -1,8 +1,8 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–19 are Complete. Task 20 (Risk Scoring) is implemented and is
-Verification Pending. Do not begin Task 21 until Task 20's Windows/PostgreSQL gate
-passes and Task 20 is explicitly marked Complete.
+Tasks 01–20 are Complete. Task 20 (Risk Scoring) passed its Windows/PostgreSQL
+acceptance gate on 2026-09-30. Task 21 (Investigation Workspace) remains Not
+Started and must not begin until the user requests it.
 
 Task 20 implements deterministic incident risk formula version 1 on a 0–100 scale:
 
@@ -48,37 +48,18 @@ Incident status changes do not alter risk. The incident API/UI exposes a read-on
 risk object with score, evidence-event count, formula version and calculation time;
 there is no manual risk override endpoint/control.
 
-Pure Task 20 formula tests passed 4/4 before repository update. The Task 18 incident
-creation regression was updated for the evidence-count refresh. PostgreSQL and
-browser verification entry points are implemented.
-
-Run the Windows/PostgreSQL acceptance gate:
-
-```powershell
-git pull origin main
-npm.cmd run quality
-node scripts/migrate.js
-npm.cmd run verify:risk
-```
-
-Expected final output:
+Pure Task 20 formula tests passed 4/4. Windows/PostgreSQL acceptance verification
+passed on 2026-09-30 with:
 
 `Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
 
-Optional explicit disposable-database checks:
-
-```powershell
-$env:SENTINELX_TEST_DATABASE='1'
-npm.cmd run test:risk:integration
-npm.cmd run test:risk:ui
-```
+Migration 013 is now part of the applied append-only/checksum-tracked migration
+chain. Do not edit migrations 001–013 or bypass migration checksum verification.
 
 PostgreSQL remains hosted on the user's Windows computer. Task 20 requires no
 external API or API key. Never expose or commit actual `.env` values or database
 credentials.
 
-Migrations remain append-only/checksum tracked. Migration 013 has not yet been
-confirmed applied in the Windows database; after it applies successfully, do not
-edit migrations 001–013.
-
-Task 21 (Investigation Workspace) remains Not Started.
+When work resumes, read repository instructions, this handoff,
+`docs/DEVELOPMENT_STATUS.md`, and `tasks/21-investigation-workspace.md` before
+beginning. Proceed numerically from Task 21 only when requested.
