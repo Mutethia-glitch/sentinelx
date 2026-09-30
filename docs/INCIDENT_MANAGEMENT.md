@@ -155,3 +155,10 @@ Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
 
 Task 19 incident classification/severity adjustment remains separate and Not Started.
 No external API or API key is required.
+
+
+## Task 19 assessment extension
+
+Task 19 now provides the controlled correction path anticipated by Task 18. Authorized incident managers may update the incident taxonomy category and LOW/MEDIUM/HIGH/CRITICAL severity with a required reason. These adjustments are independent of incident lifecycle, so a terminal incident can be reclassified without reopening it or losing its resolution/dismissal note.
+
+The Task 18 highest-linked-alert severity and common-category behavior remain creation defaults, not immutable conclusions. See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
