@@ -1,7 +1,7 @@
 # Task 14: Initial Detection Rules
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement approved core rules for brute force, credential attacks, privilege escalation, suspicious account activity, unauthorized access, reconnaissance, suspicious network activity, and selected scenarios.
@@ -58,7 +58,8 @@ Do not mark this task complete until:
 - Rules are seeded disabled by append-only migration 007 so installation does not silently activate detection policy.
 - Positive, below-threshold and non-match test data exists for every rule.
 - Task-specific local automated checks pass 16/16.
-- Windows/PostgreSQL migration and `verify:initial-rules` acceptance gate remains required before this task may be marked Complete.
+- Windows/PostgreSQL migration and `verify:initial-rules` acceptance gate passed on 2026-09-30.
+- Windows/PostgreSQL result: `15 initial detection rules, all taxonomy categories, severities, logic, thresholds and expected outputs verified.`
 - No external API or API key is required.
 
 ## AI Guardrail
