@@ -22,7 +22,9 @@
     "test:categories:integration": "node --test tests/integration/categories.test.js",
     "test:rules:integration": "node --test tests/integration/rules.test.js",
     "test:detection:integration": "node --test tests/integration/detection.test.js",
-    "verify:detection": "node scripts/verify-detection.js"
+    "verify:detection": "node scripts/verify-detection.js",
+    "test:initial-rules:integration": "node --test tests/integration/initial-rules.test.js",
+    "verify:initial-rules": "node scripts/verify-initial-rules.js"
   },
   "engines": {
     "node": ">=20"
