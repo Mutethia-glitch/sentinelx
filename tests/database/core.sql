@@ -57,6 +57,14 @@ BEGIN
     RAISE EXCEPTION 'Unsupported status accepted';
   EXCEPTION WHEN invalid_text_representation THEN NULL; END;
   BEGIN
+    UPDATE incidents SET status = 'OPEN' WHERE id = i;
+    RAISE EXCEPTION 'Unsupported status accepted';
+  EXCEPTION WHEN invalid_text_representation THEN NULL; END;
+  BEGIN
+    UPDATE incidents SET resolution_note = 'incomplete metadata' WHERE id = i;
+    RAISE EXCEPTION 'Incomplete resolution metadata accepted';
+  EXCEPTION WHEN check_violation THEN NULL; END;
+  BEGIN
     UPDATE incidents SET threat_level = 'EXTREME' WHERE id = i;
     RAISE EXCEPTION 'Unsupported threat level accepted';
   EXCEPTION WHEN invalid_text_representation THEN NULL; END;
