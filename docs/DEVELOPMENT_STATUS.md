@@ -37,8 +37,8 @@
 - Task 20: Complete — deterministic 0–100 severity/evidence-event risk formula, generated PostgreSQL score and migration 013 implemented; pure formula tests passed 4/4 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 21: Complete — investigation workspace with linked evidence, affected entities, chronological timeline and append-only findings implemented; focused logic checks passed 4/4; Windows/PostgreSQL acceptance and migration verification passed on 2026-09-30
 - Task 22: Complete — controlled manual response history, failed/successful containment, live RBAC and atomic auditing implemented; focused staged tests passed 12/12 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Task 23: Verification Pending — explicit severity-aware in-app dispatch, private inbox/read state, deduplication, transactional auditing, migration 014, UI/API and PostgreSQL/browser verification implemented; Windows/PostgreSQL gate pending
+- Task 23: Complete — severity-aware in-app dispatch, private recipient inbox/read state, deduplication, atomic auditing and migration 014 implemented; isolated checks passed 18/18 and Windows/PostgreSQL acceptance verifier passed on 2026-09-30
 - Tasks 24–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–22 are Complete. Task 23 is implemented with explicit severity-aware in-app delivery from one existing incident or alert to a selected active recipient, private inbox/read-state, unread deduplication and atomic audit. No automatic incident/response change or external email is introduced. Task 23 remains Verification Pending until migration 014 and `verify:notifications` pass on the user's Windows/PostgreSQL database. Tasks 24–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–23 are Complete. Task 23 provides explicit severity-aware in-app delivery from an incident or alert to an active recipient, private inbox/read-state, unread deduplication and atomic audit, without automatic incident/response changes or external email. Isolated checks passed 18/18 and the Windows/PostgreSQL `verify:notifications` acceptance verifier passed on 2026-09-30. Tasks 24–43 remain Not Started. See SESSION_HANDOFF.md.
