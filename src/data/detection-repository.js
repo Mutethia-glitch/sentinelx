@@ -1,4 +1,5 @@
 const { createHash } = require('node:crypto');
+const { ALERT_STATUS } = require('../alerts/model');
 
 class DetectionPersistenceError extends Error {
   constructor() { super('Detection persistence unavailable.'); this.name = 'DetectionPersistenceError'; }
@@ -56,13 +57,30 @@ function detectionRepository(pool) {
   async function insertAlert(client, rule, events, evidence) {
     const id = deterministicAlertId(rule.id, evidence.triggerEventId);
     const reason = `${rule.name} matched ${events.length} event(s) within ${evidence.windowSeconds} seconds.`;
-    const created = await client.query(`INSERT INTO alerts(id, rule_id, threat_level, match_reason, match_evidence)
-      VALUES ($1,$2,$3,$4,$5::jsonb) ON CONFLICT (id) DO NOTHING RETURNING id, created_at`,
-    [id, rule.id, rule.severity, reason, JSON.stringify({ categoryCode: rule.categoryCode, ...evidence, eventIds: events.map(item => item.id) })]);
+    const matchEvidence = {
+      categoryCode: rule.categoryCode,
+      triggerEventId: evidence.triggerEventId,
+      threshold: evidence.threshold,
+      windowSeconds: evidence.windowSeconds,
+      groupBy: evidence.groupBy,
+      groupValues: evidence.groupValues,
+      eventIds: events.map(item => item.id),
+    };
+    const created = await client.query(`INSERT INTO alerts
+      (id, rule_id, trigger_event_id, category_code, threat_level, source, affected_entities, status, confidence, match_reason, match_evidence)
+      VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10,$11::jsonb)
+      ON CONFLICT (id) DO NOTHING RETURNING id, created_at`,
+    [id, rule.id, evidence.triggerEventId, rule.categoryCode, rule.severity, evidence.source,
+      JSON.stringify(evidence.affectedEntities), ALERT_STATUS, evidence.confidence, reason, JSON.stringify(matchEvidence)]);
     const alert = created.rows[0];
     if (!alert) return null;
     for (const item of events) await client.query('INSERT INTO alert_events(alert_id,event_id) VALUES ($1,$2)', [alert.id, item.id]);
-    return { id: alert.id, ruleId: rule.id, severity: rule.severity, eventIds: events.map(item => item.id), createdAt: alert.created_at.toISOString() };
+    return {
+      id: alert.id, ruleId: rule.id, triggerEventId: evidence.triggerEventId,
+      threat: rule.categoryCode, severity: rule.severity, source: evidence.source,
+      timestamp: alert.created_at.toISOString(), affectedEntities: evidence.affectedEntities,
+      status: ALERT_STATUS, confidence: evidence.confidence, eventIds: events.map(item => item.id),
+    };
   }
   async function createAlert(rule, events, evidence, transactionClient = null) {
     if (transactionClient) {
