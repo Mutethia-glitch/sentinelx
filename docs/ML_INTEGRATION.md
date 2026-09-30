@@ -39,4 +39,4 @@ npm.cmd run test:investigations:ui
 if ($LASTEXITCODE -ne 0) { throw 'Incident evidence UI verification failed' }
 ```
 
-Windows/PostgreSQL `verify:ml:integration` passed on 2026-09-30. Task 33 remains **Implemented — awaiting final local regression acceptance** until the remaining deterministic alert/incident and browser checks pass.
+Windows acceptance completed on 2026-09-30. `verify:ml:integration`, `verify:detection`, `verify:alerts`, and `verify:incidents` passed; `test:alerts:ui` and `test:investigations:ui` each passed 1/1 against a disposable PostgreSQL database. Task 33 is **Complete**.
