@@ -1,7 +1,7 @@
 # Task 29: Advanced Detection Dataset
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Prepare a controlled, documented dataset for anomaly-detection research.
@@ -50,6 +50,15 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Deterministic synthetic JSONL dataset and manifest are implemented.
+- Dataset contains artificial normalized-style fields and research labels only.
+- No production/personal data, emails, credentials, raw payloads or connected-app records are used.
+- Documentation address ranges and artificial user/host identifiers are enforced by verification.
+- Class balance and labels are explicitly synthetic and not claimed to represent real-world prevalence or model accuracy.
+- No Task 30 feature engineering is included.
+- Task 30 remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -61,7 +61,8 @@
     "test:reports:integration": "node --test tests/integration/reporting.test.js",
     "verify:audit": "node scripts/verify-audit.js",
     "verify:mitre": "node scripts/verify-mitre-mapping.js",
-    "test:mitre:integration": "node --test tests/integration/mitre-mapping.test.js"
+    "test:mitre:integration": "node --test tests/integration/mitre-mapping.test.js",
+    "verify:dataset": "node scripts/verify-dataset.js"
   },
   "engines": {
     "node": ">=20"

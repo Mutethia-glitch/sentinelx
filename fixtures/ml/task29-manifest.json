@@ -1,0 +1,33 @@
+{
+  "datasetId": "sentinelx-task29-synthetic-v1",
+  "generatorVersion": "1.0.0",
+  "recordCount": 80,
+  "normalCount": 60,
+  "anomalyCount": 20,
+  "labelMeaning": {
+    "0": "synthetic baseline behavior",
+    "1": "synthetically injected anomaly scenario"
+  },
+  "schema": [
+    "recordId",
+    "timestamp",
+    "source",
+    "type",
+    "sourceIp",
+    "destinationIp",
+    "user",
+    "host",
+    "action",
+    "status",
+    "severity",
+    "label",
+    "scenario"
+  ],
+  "provenance": "Generated entirely from deterministic SentinelX research code using artificial identifiers and documentation address ranges; no production or personal data.",
+  "assumptions": [
+    "Labels are synthetic ground truth for controlled experiments only.",
+    "Class balance is intentionally constructed and is not an estimate of real-world prevalence.",
+    "Rows resemble normalized SentinelX event fields but are not production events.",
+    "Task 29 provides raw research records only; behavioral feature engineering belongs to Task 30."
+  ]
+}

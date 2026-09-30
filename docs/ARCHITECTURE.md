@@ -421,3 +421,10 @@ ATT&CK remains contextual metadata attached to detection rules. Migration 015
 adds tactic metadata and documented partial mappings for implemented core rules.
 Incident views inherit this context only through linked alert/rule evidence; the
 incident model is not replaced by ATT&CK. See [MITRE_MAPPING.md](MITRE_MAPPING.md).
+
+## Task 29 research dataset boundary
+
+Task 29 is an offline research fixture, not a production data path. A pure
+deterministic generator creates normalized-style synthetic records plus explicit
+research labels. It does not read PostgreSQL, ingest into SentinelX, or replace
+the canonical event model. Task 30 owns later feature engineering.

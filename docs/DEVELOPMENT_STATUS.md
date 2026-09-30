@@ -43,7 +43,8 @@
 - Task 26: Verification Pending — stored-data security summary and incident reports with JSON/CSV export, date-range validation and read-only PostgreSQL verification implemented
 - Task 27: Verification Pending — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC verifier implemented
 - Task 28: Verification Pending — migration 015 tactic metadata, documented partial core-rule ATT&CK mappings, enriched rule catalog and incident-context propagation implemented
-- Tasks 29–43: Not Started
+- Task 29: Verification Pending — deterministic privacy-safe synthetic anomaly research dataset, manifest, provenance/limitations documentation and reproducibility verifier implemented
+- Tasks 30–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–25 are Complete. Tasks 26–28 are implemented and Verification Pending. Task 28 introduces migration 015; Tasks 29–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–25 are Complete. Tasks 26–29 are implemented and Verification Pending. Task 28 introduces migration 015; Tasks 26, 27 and 29 add no migrations. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.

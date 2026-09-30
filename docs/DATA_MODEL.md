@@ -248,3 +248,10 @@ Task 27 adds no schema migration. It reads the existing append-only application 
 Migration 015 adds `mitre_tactics` and `mitre_mapping_tactics` while retaining
 the existing `mitre_mappings` and `rule_mitre_mappings` technique model.
 Mappings are many-to-many and partial by design.
+
+## Task 29 offline dataset schema
+
+The Task 29 JSONL fixture mirrors selected normalized event fields and adds only
+`label` and `scenario` research metadata. It contains no production keys or
+foreign-key relationships and creates no database tables. Provenance and class
+counts are stored in the accompanying manifest.
