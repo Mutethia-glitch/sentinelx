@@ -118,3 +118,13 @@ npm.cmd run test:search:ui
 
 Task 25 adds no migration; applied migrations 001–014 remain immutable.
 Task 26 Reporting is Not Started.
+
+## Completion
+
+Task 25 is **Complete**. Isolated parser/repository checks passed 15/15.
+The Windows/PostgreSQL `verify:search` acceptance verifier passed on 2026-09-30:
+
+`Consistent event/alert/incident date, severity, status, category, IP, user, host, rule and MITRE filters, evidence-chain matching, RBAC and safe pagination verified. Synthetic changes cleaned up.`
+
+No migration was added. Preserve the applied 001–014 checksum-protected
+migration chain. Task 26 Reporting is separately scoped and Not Started.
