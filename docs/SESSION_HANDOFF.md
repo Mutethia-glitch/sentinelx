@@ -1,6 +1,6 @@
 # Task 33 checkpoint — 2026-09-30
 
-Task 33 is **Implemented — awaiting local acceptance**. Tasks 01–32 remain Complete; Task 34 has not started.
+Task 33 is **Implemented — awaiting final local regression acceptance**. Windows/PostgreSQL `verify:ml:integration` passed on 2026-09-30. Tasks 01–32 remain Complete; Task 34 has not started.
 
 The production detection engine now attaches optional anomaly evidence only after a deterministic rule qualifies. ML remains disabled by default; explicit `SENTINELX_ML_MODE=synthetic-demo` fits the accepted synthetic Task 31/32 baseline. A trigger-event snapshot is stored in existing alert `match_evidence`, using prior-only 15-minute history with equal-timestamp exclusion. Alerts created before Task 33 render as historical and are never rescored. Linked incident alerts display the stored state/score.
 
@@ -8,7 +8,7 @@ Optional ML SQL is isolated inside a PostgreSQL savepoint with a 2-second local 
 
 Validation in the available tool runtime before publication: 10/10 focused Task 33 tests passed; then 20/20 combined focused Task 33 plus existing deterministic detection/duplicate-suppression/Task 15 alert-persistence regressions passed. JavaScript syntax checks for the reconstructed integration/detection/persistence/verifier files passed. These are not Windows/PostgreSQL/browser acceptance and the earlier lost-workspace results are not counted.
 
-Windows acceptance: run `npm.cmd run quality`, `npm.cmd run verify:ml:model`, `npm.cmd run verify:ml:evaluation`, `npm.cmd run verify:ml:integration`, `npm.cmd run test:alerts:ui`, and `npm.cmd run test:investigations:ui`. Keep Task 33 awaiting acceptance until successful local results are supplied. Do not start Task 34.
+Windows acceptance: `quality`, `verify:ml:model`, `verify:ml:evaluation`, and `verify:ml:integration` have reached the Task 33 acceptance sequence, with the ML integration verifier now passing. Because the earlier sequence stopped at that verifier failure, still run `verify:detection`, `verify:alerts`, `verify:incidents`, `test:alerts:ui`, and `test:investigations:ui`. Keep Task 33 awaiting final acceptance until those remaining regressions pass. Do not start Task 34.
 
 See `docs/ML_INTEGRATION.md` and `tasks/33-ml-integration.md`.
 

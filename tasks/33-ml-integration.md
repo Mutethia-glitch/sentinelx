@@ -56,7 +56,7 @@ Implemented as an optional evidence-only layer after deterministic rule qualific
 
 `SENTINELX_ML_MODE=synthetic-demo` is the only scoring mode and reuses Tasks 29–32. Default is disabled. Optional PostgreSQL history failures are isolated with a savepoint and local statement timeout. Alert/incident reads expose ready, disabled, unavailable, and historical states without rescoring historical records.
 
-Tool-runtime targeted tests passed before publication. Windows/PostgreSQL/browser acceptance remains pending. See `docs/ML_INTEGRATION.md`.
+Tool-runtime targeted tests passed before publication. Windows/PostgreSQL `verify:ml:integration` acceptance passed on 2026-09-30. Final deterministic alert/incident and browser regression checks remain pending before completion. See `docs/ML_INTEGRATION.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
