@@ -29,7 +29,7 @@ function reportRepository(pool){
     const aWhere=where(bounds(query,'created_at',al));
     const iWhere=where(bounds(query,'created_at',inc));
     const rWhere=where(bounds(query,'performed_at',resp));
-    const events=await client.query(`SELECT count(*)::integer total,coalesce(jsonb_object_agg(severity,n) FILTER (WHERE severity IS NOT NULL),'{}'::jsonb) severity FROM (SELECT normalized_data->>'severity' severity,count(*)::integer n FROM security_events${eWhere} GROUP BY 1) x`,ev);
+    const events=await client.query(`SELECT coalesce(sum(n),0)::integer total,coalesce(jsonb_object_agg(severity,n) FILTER (WHERE severity IS NOT NULL),'{}'::jsonb) severity FROM (SELECT normalized_data->>'severity' severity,count(*)::integer n FROM security_events${eWhere} GROUP BY 1) x`,ev);
     const alerts=await client.query(`SELECT count(*)::integer total FROM alerts${aWhere}`,al);
     const alertSeverity=await client.query(`SELECT threat_level::text severity,count(*)::integer count FROM alerts${aWhere} GROUP BY threat_level ORDER BY threat_level`,al);
     const incidents=await client.query(`SELECT count(*)::integer total,count(*) FILTER (WHERE status IN ('NEW','INVESTIGATING','CONTAINED'))::integer active,round(avg(risk_score)::numeric,1) average_risk FROM incidents${iWhere}`,inc);
