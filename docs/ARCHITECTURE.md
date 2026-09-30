@@ -335,3 +335,8 @@ does not create incidents in Task 17. See [CORRELATION_ENGINE.md](CORRELATION_EN
 The Incident service now sits after correlation as a distinct application/domain layer. Authorized incident managers create incidents from one or more existing alerts, preserving the alert records and links rather than merging them. Creation derives only an initial severity from linked alert severity; Task 19 owns later controlled classification/severity adjustment.
 
 The service enforces the Task 02 baseline lifecycle: NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. Direct CONTAINED mutation is intentionally unavailable until Task 22 can prove a successful approved response action. Creation, assignment and allowed status transitions are audit-recorded transactionally. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
+
+
+## Task 19 runtime mapping
+
+Incident classification/severity remains inside the Incident service and uses the shared Task 11 taxonomy. The service exposes an authorized assessment operation that updates category/severity independently from lifecycle state and records old/new values in the audit trail. No independent priority taxonomy is introduced. The Risk service remains unimplemented until Task 20.
