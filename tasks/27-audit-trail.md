@@ -1,7 +1,7 @@
 # Task 27: Audit Trail
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Record security-sensitive actions with actor, action, resource, timestamp, and relevant before/after data.
@@ -50,6 +50,14 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Protected read-only audit API and console are implemented.
+- Administrator/Security Analyst may retrieve; Viewer/Management is denied.
+- Actor, action, resource, timestamp and stored JSON context are exposed with bounded filters.
+- Existing transactional audit writers remain authoritative; no audit mutation endpoint is added.
+- Focused tests and a Windows/PostgreSQL verifier are implemented.
+- Task 28 remains separately scoped.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

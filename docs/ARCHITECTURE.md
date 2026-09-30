@@ -410,3 +410,7 @@ Reporting is a read-only application layer over persisted SentinelX records.
 Security summaries and incident reports share existing report-read authorization
 and do not introduce a report cache, external analytics vendor, or mutation path.
 See [REPORTING.md](REPORTING.md).
+
+## Task 27 protected audit retrieval
+
+Existing transactional audit writes remain distributed with the security-sensitive workflows that own them. Task 27 adds a centralized read-only Audit repository/service/API and console over `audit_logs`, authorized by `audit.read`. It does not duplicate or rewrite audit events.

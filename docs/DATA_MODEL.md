@@ -238,3 +238,7 @@ See [SEARCH_FILTERING.md](SEARCH_FILTERING.md).
 Task 26 adds no tables. Reports read existing event, alert, incident,
 investigation-note and response-action records under one read-only consistent
 snapshot. JSON is canonical; CSV is a flattened export representation.
+
+## Task 27 audit retrieval
+
+Task 27 adds no schema migration. It reads the existing append-only application audit records in `audit_logs`, including actor, actor context, action, target resource, JSON context and occurred_at. No audit mutation endpoint is introduced.

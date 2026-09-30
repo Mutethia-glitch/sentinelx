@@ -1,3 +1,7 @@
+const { auditRepository }=require('../data/audit-repository');
+const { auditService }=require('../audit/service');
+const { auditHandler }=require('./audit-handler');
+const { auditPage }=require('./audit-page');
 const { reportRepository }=require('../data/report-repository');
 const { reportService }=require('../reports/service');
 const { reportHandler }=require('./report-handler');
@@ -49,7 +53,8 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null) {
+  const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
   const dashboardMetrics = dashboard ? dashboardHandler(dashboard, config) : null;
   const notificationInbox = notifications ? notificationHandler(notifications, config) : null;
@@ -64,6 +69,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if (auditing && req.url.startsWith('/api/audit')) return auditing(req, res);
     if (reporting && req.url.startsWith('/api/reports')) return reporting(req, res);
     if (dashboardMetrics && req.url.startsWith('/api/dashboard')) return dashboardMetrics(req, res);
     if (notificationInbox && req.url.startsWith('/api/notifications')) return notificationInbox(req, res);
@@ -73,6 +79,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
     if (alertManagement && req.url.startsWith('/api/alerts')) return alertManagement(req, res);
     if (ruleManagement && req.url.startsWith('/api/rules')) return ruleManagement(req, res);
     if (taxonomy && req.url.startsWith('/api/threat-categories')) return taxonomy(req, res);
+    if (auditPage(req, res)) return;
     if (dashboardPage(req, res)) return;
     if (notificationPage(req, res)) return;
     if (incidentPage(req, res)) return;
@@ -109,7 +116,8 @@ async function main() {
       responseService(responseRepository(pool), access),
       notificationService(notificationRepository(pool), access),
       dashboardService(dashboardRepository(pool), access),
-      reportService(reportRepository(pool), access));
+      reportService(reportRepository(pool), access),
+      auditService(auditRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {

@@ -214,3 +214,7 @@ Invalid, unknown or duplicated filters return 400. See
 require `reports.read`. Optional inclusive `from`/`to` ISO timestamps and
 `format=json|csv` are validated. Reports are generated from persisted data in
 repeatable-read, read-only PostgreSQL transactions. See [REPORTING.md](REPORTING.md).
+
+## Task 27 audit trail
+
+`GET /api/audit` requires `audit.read` and supports bounded actor/action/target/date/page filters. It is read-only; no POST, PUT, PATCH or DELETE audit endpoint exists. See [AUDIT_TRAIL.md](AUDIT_TRAIL.md).
