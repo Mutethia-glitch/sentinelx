@@ -79,4 +79,4 @@ Expected result:
 
 Then restart `npm start`, visit `http://localhost:3000/alerts`, and confirm the
 browser workflow using an Administrator/Analyst and Viewer account. Task 16
-completion remains pending local Windows acceptance. No external API key is needed.
+is Complete. Windows/PostgreSQL acceptance passed on 2026-09-30. No external API key is needed.

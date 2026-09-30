@@ -1,7 +1,7 @@
 # Task 16: Alert Management
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Build alert listing, details, filtering, status handling, and analyst workflows.
@@ -54,7 +54,10 @@ Do not mark this task complete until:
 ## Verification checkpoint
 Alert UI/API and migration 009 exist. Automated validation passed: 62 unit/API tests, 13 PostgreSQL integration checks,
 3 Chromium browser checks, and migration replay/schema integrity. Local Windows
-acceptance remains required before Complete. See docs/ALERT_MANAGEMENT.md for the verifier.
+acceptance passed on 2026-09-30. See docs/ALERT_MANAGEMENT.md for the verifier.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
+
+## Windows acceptance
+Passed on 2026-09-30: alert listing, filtering, source-event inspection, audited status changes, Viewer rejection and atomic rollback. Synthetic changes cleaned up.
