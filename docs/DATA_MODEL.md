@@ -126,3 +126,12 @@ Migration 005 expands the approved threat catalog from seven to fifteen with eig
 
 ## Task 12 rule configuration
 Migration 006 adds updated_at/version to detection_rules and seeds three known MITRE references without replacing existing rows. Declarative schemaVersion 1 definitions, category and MITRE references, version-protected edits and atomic audit are described in [DETECTION_RULES.md](DETECTION_RULES.md). Existing definitions are retained and must be explicitly validated for future execution. Table count remains 18.
+
+
+## Task 15 alert model
+
+Migration 008 extends `alerts` into the explicit Task 15 signal snapshot without changing applied migrations 001–007. Generated alerts now persist a direct trigger-event reference, threat/category snapshot, source, affected canonical entities, initial `NEW` status, and optional confidence alongside the existing rule reference, severity, reason/evidence, timestamp and `alert_events` evidence links.
+
+Deterministic Task 15 rules leave confidence null because no calibrated probability model is implemented. The 0–1 database constraint applies only when confidence is present. Task 16 owns later alert-management states/workflows and must explicitly revise the Task 15 status constraint if additional states are approved.
+
+See [ALERT_MODEL.md](ALERT_MODEL.md).
