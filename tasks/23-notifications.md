@@ -1,7 +1,7 @@
 # Task 23: Notifications
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement in-app notifications with severity-aware behavior and optional approved email support.
@@ -67,7 +67,9 @@ Do not mark this task complete until:
 - `NOTIFICATION_DELIVERED` and `NOTIFICATION_READ` are audited atomically; failures roll back and return no success claim.
 - Generic server-generated messages omit raw evidence and credentials. No email or background delivery is claimed.
 - Unit, PostgreSQL and browser verification entry points are implemented.
-- Windows/PostgreSQL quality, migration 014 and `verify:notifications` remain the completion gate.
+- The Windows/PostgreSQL `verify:notifications` acceptance verifier passed on 2026-09-30.
+- Reported verification result: `Severity-aware in-app delivery, recipient isolation, duplicate suppression, read state, RBAC, auditing and atomic failure rollback verified. Synthetic changes cleaned up.`
+- Migration 014 is now part of the verified local schema; do not edit applied migrations 001–014.
 - Task 24 Dashboard remains Not Started.
 
 ## AI Guardrail
