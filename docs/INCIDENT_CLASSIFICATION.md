@@ -191,3 +191,13 @@ Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
 
 Task 20 Risk Scoring remains separate and Not Started. No external API or API key
 is required.
+
+
+## Task 20 risk relationship
+
+Task 20 now derives a separate read-only 0–100 risk score from incident severity and
+distinct linked evidence-event count. Changing Task 19 severity therefore
+recalculates risk automatically, but risk does not alter or replace the authoritative
+LOW/MEDIUM/HIGH/CRITICAL severity.
+
+See [RISK_SCORING.md](RISK_SCORING.md).
