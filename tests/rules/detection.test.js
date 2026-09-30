@@ -13,3 +13,22 @@ test('malformed persisted definitions are rejected instead of guessed',()=>{
   assert.equal(validDefinition({...definition,groupBy:['user','user']}),false);
   assert.equal(validDefinition({...definition,extra:true}),false);
 });
+
+
+test('no-transaction evaluation lets repositories use their default pool', async () => {
+  const repo = {
+    enabledRules: async db => {
+      assert.equal(db, undefined);
+      return [{ id: 'rule', name: 'Failures', severity: 'HIGH', categoryCode: 'BRUTE_FORCE', definition }];
+    },
+    matchingEvents: async (ruleDefinition, normalizedEvent, group, db) => {
+      assert.equal(db, undefined);
+      return [{ id: '1' }, { id: '2' }, { id: '3' }];
+    },
+    createAlert: async (rule, events, evidence, db) => {
+      assert.equal(db, undefined);
+      return null;
+    },
+  };
+  assert.deepEqual(await detectionEngine(repo).evaluate({ id: '3', event: event() }), []);
+});
