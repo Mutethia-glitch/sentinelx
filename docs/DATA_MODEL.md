@@ -196,3 +196,15 @@ See [INVESTIGATION_WORKSPACE.md](INVESTIGATION_WORKSPACE.md).
 Task 22 reuses `response_actions` from migration 001, with incident FK, authorized-by user FK, action, reason, JSON result, success flag and performed_at (SentinelX recording time). No migration 014 is introduced.
 
 Result JSON stores `summary`, `mode: "MANUAL_ATTESTATION"` and `containmentPerformed`. Response records are append-only through the API, and both response and controlled CONTAINED state changes are audited atomically. Incident status, severity, risk, assignment and resolution remain distinct fields. See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).
+
+## Task 23 notification snapshot and read state
+
+Append-only migration `014_notifications.sql` adds nullable `notifications.severity` (`threat_level`) and a recipient/read-state/severity index to the existing Task 01
+notifications table. Historical rows are best-effort backfilled. The nullable
+choice preserves direct legacy inserts in the core schema tests.
+
+Task 23 requires exactly one incident_id or alert_id through API validation.
+Created_at is committed in-app delivery time, read_at is recipient acknowledgment
+time; no speculative external delivery status exists. Concurrent sends are
+serialized by locking the active recipient row, then deduplicating any unread
+record for the same recipient and source. See [NOTIFICATIONS.md](NOTIFICATIONS.md).

@@ -37,7 +37,8 @@
 - Task 20: Complete — deterministic 0–100 severity/evidence-event risk formula, generated PostgreSQL score and migration 013 implemented; pure formula tests passed 4/4 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 21: Complete — investigation workspace with linked evidence, affected entities, chronological timeline and append-only findings implemented; focused logic checks passed 4/4; Windows/PostgreSQL acceptance and migration verification passed on 2026-09-30
 - Task 22: Complete — controlled manual response history, failed/successful containment, live RBAC and atomic auditing implemented; focused staged tests passed 12/12 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 23–43: Not Started
+- Task 23: Verification Pending — explicit severity-aware in-app dispatch, private inbox/read state, deduplication, transactional auditing, migration 014, UI/API and PostgreSQL/browser verification implemented; Windows/PostgreSQL gate pending
+- Tasks 24–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–22 are Complete. Task 22 provides non-destructive manual response records using the existing response_actions table: failed containment preserves incident status, while expressly attested successful manual containment atomically records an action, transitions NEW/INVESTIGATING to CONTAINED and audits both operations. Focused staged checks passed 12/12 and the Windows/PostgreSQL `verify:responses` verifier passed on 2026-09-30. Tasks 23–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–22 are Complete. Task 23 is implemented with explicit severity-aware in-app delivery from one existing incident or alert to a selected active recipient, private inbox/read-state, unread deduplication and atomic audit. No automatic incident/response change or external email is introduced. Task 23 remains Verification Pending until migration 014 and `verify:notifications` pass on the user's Windows/PostgreSQL database. Tasks 24–43 remain Not Started. See SESSION_HANDOFF.md.

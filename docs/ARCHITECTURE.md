@@ -367,3 +367,13 @@ Task 21 does not execute containment or other response actions; that remains Tas
 Response stage is implemented as a separate service/repository/HTTP handler. It reuses approved response_actions and the incident status audit trail, with existing permission names responses.read and responses.execute. Response history is shown in the incident inspection UI and as incident-targeted history in the investigation timeline.
 
 This stage records explicit human-reported actions only: containment, escalation, follow-up tasks and communication. A successful human-confirmed manual containment transaction may change NEW/INVESTIGATING to CONTAINED. It never automatically disables an account, deletes data, blocks a host, or delivers a notification. Task 23 owns notification delivery. See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).
+
+## Task 23 in-app notification boundary
+
+A dedicated Notification service/repository/API supplies explicit severity-aware
+dispatch, private recipient inbox, read acknowledgment and atomic delivery/read
+audits. It operates on Task 01's notifications table extended by migration 014,
+not on the manual response_actions table. Notification delivery commits in
+PostgreSQL; no SMTP/email, background queues, speculative delivery status,
+automatic containment or external endpoint action is claimed. Critical/high
+unread messages appear first in the web inbox. See [NOTIFICATIONS.md](NOTIFICATIONS.md).

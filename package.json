@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -47,7 +47,10 @@
     "verify:investigations": "node scripts/verify-investigation-workspace.js",
     "test:responses:integration": "node --test tests/integration/response-workflow.test.js",
     "test:responses:ui": "node --test tests/integration/response-workflow-ui.test.js",
-    "verify:responses": "node scripts/verify-response-workflow.js"
+    "verify:responses": "node scripts/verify-response-workflow.js",
+    "verify:notifications": "node scripts/verify-notifications.js",
+    "test:notifications:integration": "node --test tests/integration/notifications.test.js",
+    "test:notifications:ui": "node --test tests/integration/notifications-ui.test.js"
   },
   "engines": {
     "node": ">=20"

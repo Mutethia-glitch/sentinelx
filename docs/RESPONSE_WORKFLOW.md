@@ -14,7 +14,7 @@ that table. No migration 014 is necessary. Migrations 001–013 are unchanged.
 - Task 21 already provides append-only investigation notes and findings.
 - Task 22 records response activity and gives the approved CONTAINED state a
   controlled entry path.
-- Task 23 will handle real in-app notifications and optional approved delivery.
+- Task 23 implements real in-app notifications through a separate authenticated API.
   A Task 22 COMMUNICATION entry is **only a record of something reported as
   communicated externally**, not a message sent by SentinelX.
 
@@ -143,7 +143,7 @@ npm.cmd run test:responses:ui
 ```
 
 No additional migration, integration credential, or external API key is required.
-Task 23 Notifications remains Not Started.
+Task 23 Notifications is separately implemented and awaiting its Windows/PostgreSQL acceptance gate.
 
 ## Completion
 

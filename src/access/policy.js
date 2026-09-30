@@ -1,9 +1,9 @@
 const { AuthError } = require('../auth/errors');
 const ROLE_NAMES = Object.freeze(['Administrator', 'Security Analyst', 'Viewer/Management']);
 const READ = ['access.read', 'categories.read', 'dashboard.read', 'events.read', 'alerts.read', 'incidents.read',
-  'investigations.read', 'responses.read', 'reports.read'];
+  'investigations.read', 'responses.read', 'notifications.read', 'reports.read'];
 const ANALYST = [...READ, 'events.ingest', 'rules.read', 'rules.manage', 'alerts.manage', 'incidents.manage',
-  'investigations.write', 'responses.execute', 'audit.read'];
+  'investigations.write', 'responses.execute', 'notifications.send', 'audit.read'];
 const ROLE_PERMISSIONS = Object.freeze({
   Administrator: Object.freeze([...ANALYST, 'users.read', 'users.roles.manage', 'categories.manage']),
   'Security Analyst': Object.freeze(ANALYST),

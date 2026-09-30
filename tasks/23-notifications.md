@@ -1,7 +1,7 @@
 # Task 23: Notifications
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement in-app notifications with severity-aware behavior and optional approved email support.
@@ -39,6 +39,13 @@ Complete the preceding tasks required by the sequence before implementing this t
 ## Acceptance Criteria
 Notification state, delivery, and failures are handled safely.
 
+Explicit authorized in-app dispatch creates a committed recipient-only notification.
+Severity is derived from the selected incident/alert, snapshotted, and used to
+prioritize the unread inbox. At most one unread item per recipient and source is
+delivered. Recipient-only read updates, live RBAC, audit atomicity and rollback
+are tested. Optional email is excluded because no approved SMTP integration or
+credentials exist; do not pretend external delivery succeeded.
+
 ## Required Deliverables
 Notification module.
 
@@ -50,6 +57,18 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- In-app notification service, private inbox, validated explicit dispatch and mark-read API implemented.
+- Added Administrator/Security Analyst `notifications.send`; all three roles have `notifications.read` but each user sees only their own inbox.
+- Migration 014 adds an optional severity snapshot and recipient/state/severity index without altering migrations 001–013.
+- Severity-aware messages use LOW/MEDIUM/HIGH/CRITICAL; urgent unread HIGH/CRITICAL items display first.
+- Duplicate unread recipient/source dispatch returns the existing record rather than spamming. Delivery occurs only after transactional persistence.
+- `NOTIFICATION_DELIVERED` and `NOTIFICATION_READ` are audited atomically; failures roll back and return no success claim.
+- Generic server-generated messages omit raw evidence and credentials. No email or background delivery is claimed.
+- Unit, PostgreSQL and browser verification entry points are implemented.
+- Windows/PostgreSQL quality, migration 014 and `verify:notifications` remain the completion gate.
+- Task 24 Dashboard remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

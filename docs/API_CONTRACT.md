@@ -154,3 +154,21 @@ Approved types: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK, COMMUNICATION. Strict s
 Only successful confirmed containment can move NEW/INVESTIGATING to CONTAINED; response record, status change and audits share one PostgreSQL transaction. Failed containment never changes status. Terminal incidents reject new response actions. Existing direct incident status endpoint continues to reject CONTAINED.
 
 No actual notification is delivered here (Task 23). See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).
+
+## Task 23 in-app notifications
+
+- `GET /api/notifications?status=ALL&page=1`: only authenticated recipient's
+  private inbox, unread count and paginated results. Filters ALL/UNREAD/READ.
+- `POST /api/notifications`: explicit authorized delivery, exact body
+  `{recipientId,incidentId,alertId,reason}`. Exactly one source UUID is non-null,
+  and the recipient must be active with notification-read permission.
+- `PATCH /api/notifications/{notificationId}/read`: exact empty object body,
+  recipient-only read-state update, idempotent on repeats.
+
+Notifications derive a bounded server-generated message and snapshot the source's
+LOW/MEDIUM/HIGH/CRITICAL severity. CRITICAL/HIGH unread items are prioritized.
+A duplicate unread recipient/source returns HTTP 200/deduplicated=true, while a
+new committed in-app delivery returns HTTP 201/delivered=true. All mutations
+enforce exact Origin, JSON input, live roles and atomic audit; no other user's
+inbox is accessible. No SMTP/email or Task 22 response execution is implemented.
+See [NOTIFICATIONS.md](NOTIFICATIONS.md).

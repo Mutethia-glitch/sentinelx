@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SentinelX · Notifications</title><link rel="stylesheet" href="/notifications/notifications.css"><script src="/notifications/notifications.js" defer></script></head><body><main>
+<header><p class="brand">SentinelX / IPHYN</p><h1>Notifications</h1><p>Authenticated in-app delivery; notification does not replace incident handling.</p><nav><a href="/incidents">Incidents</a> · <a href="/alerts">Alerts</a> · <a href="/events">Events</a></nav></header>
+<p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel"><h2>Sign in</h2><form id="login-form"><label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label><label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button></form></section>
+<section id="identity-panel" hidden><h2>Your access</h2><p id="identity"></p><button id="logout" type="button">Sign out</button></section>
+<section id="inbox-panel" hidden><h2>Your inbox</h2><p id="unread-count" aria-live="polite"></p>
+<form id="filters"><label>State<select id="filter-status"><option value="ALL">All notifications</option><option value="UNREAD">Unread</option><option value="READ">Read</option></select></label><button type="submit">Apply filter</button></form>
+<div id="notification-rows"></div><div class="pagination"><button id="previous" type="button" disabled>Previous</button><span id="page"></span><button id="next" type="button" disabled>Next</button></div></section>
+<section id="send-panel" hidden><h2>Send an in-app notification</h2><p>Explicit dispatch only. Use a recipient UUID or send to yourself. At most one unread notification per recipient and source; no email is sent.</p>
+<form id="send-form">
+<label><input id="send-self" type="checkbox" checked> Send to me</label>
+<label>Recipient UUID<input id="recipient-id" maxlength="36" placeholder="Active SentinelX user UUID" disabled></label>
+<label>Source<select id="target-kind"><option value="INCIDENT">Incident</option><option value="ALERT">Alert</option></select></label>
+<label>Incident or alert UUID<input id="target-id" maxlength="36" required></label>
+<label>Dispatch reason (audit-only; not sent to recipient)<textarea id="send-reason" maxlength="500" required></textarea></label>
+<button type="submit">Deliver in-app notification</button></form></section>
+</main></body></html>
