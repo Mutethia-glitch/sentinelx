@@ -50,3 +50,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Task 36 frontend browser verification failed' 
 ```
 
 The verifier requires no PostgreSQL. The browser check uses stubbed SentinelX services, synthetic identity/data, and Playwright Chromium; it does not require a database or real credentials.
+
+
+## Acceptance — 2026-09-30
+
+Windows local acceptance passed. `npm.cmd run verify:frontend-security` verified permission-aware navigation, loading/error handling, safe DOM rendering and browser credential-storage protections. `npm.cmd run test:frontend-security:ui` passed 1/1 in Playwright, and the full quality suite passed 181/181. Task 36 is Complete.

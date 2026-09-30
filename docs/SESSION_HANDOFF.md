@@ -1,6 +1,6 @@
 # Task 36 checkpoint — 2026-09-30
 
-Task 36 is **Implemented — awaiting local acceptance**. Tasks 01–35 remain Complete; Task 37 has not started.
+Task 36 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–35 remain Complete; Task 37 has not started.
 
 All seven existing SentinelX consoles now load a shared frontend helper. Dashboard, Events, Alerts, Incidents, Notifications and Audit navigation links are hidden by default and shown only after live `/api/access/me` permission grants; sign-out/authentication reset hides them again. Access remains the sign-in/access entry point. This navigation is convenience only: backend session/RBAC enforcement remains authoritative.
 
@@ -8,7 +8,7 @@ Primary console loads now publish explicit loading status. The Audit console was
 
 The shared helper is served as a GET-only no-store/no-sniff/no-referrer same-origin resource. Existing restrictive page CSP remains unchanged. No migration, new runtime dependency, client-side token storage, backend authorization change, fabricated security capability or Task 37 work was introduced.
 
-Local acceptance: run `npm.cmd run quality`, `npm.cmd run verify:frontend-security`, and `npm.cmd run test:frontend-security:ui`. The verifier needs no database. The Playwright check uses stubbed services and synthetic data, so it also needs no PostgreSQL, but Chromium must be installed. Do not start Task 37 until Task 36 acceptance is supplied.
+Windows acceptance completed on 2026-09-30. `verify:frontend-security` passed, the database-free Playwright browser check passed 1/1, and the full quality suite passed 181/181. The trailing PowerShell `\` typo reported after the quality output was a shell command error after the successful test run, not a SentinelX failure. Task 36 is Complete. Do not start Task 37 without explicit instruction.
 
 See `docs/FRONTEND_SECURITY_UX.md` and `tasks/36-frontend-security-and-ux.md`.
 
