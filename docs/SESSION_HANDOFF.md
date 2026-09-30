@@ -50,3 +50,32 @@ generator/manifest/tests, and the full Task 30 contract. Keep ML research
 separate from the deterministic production detection engine unless an explicit
 future task requires otherwise. Await local acceptance before marking Task 30
 Complete and do not advance to Task 31 without instruction.
+
+## Tasks 17–29 review corrections (2026-09-30)
+
+Corrected incident creation retaining a transient browser event after an await,
+spreadsheet formula injection in CSV text, and concurrent correlation missing
+uncommitted alerts. Correlation now holds a transaction advisory lock and uses an
+absolute 900-second window, including reversed timestamp/commit order. The lock
+serializes correlation and can add latency under heavy ingestion; historical missed
+links are not automatically backfilled. JSON report values remain unchanged.
+
+Browser regressions also exposed narrow-screen incident evidence/response overflow,
+now corrected with wrapping. Synthetic incident fixtures mount the category service,
+and the initial-rule verifier respects migration 015 mappings. No applied migration
+was changed.
+
+Automated validation: quality suite 142/142; all 36 PostgreSQL/browser integration
+checks passed across the full run and targeted rerun after the mobile correction;
+migration replay/integrity and protected audit verification passed. Runs used a
+disposable PostgreSQL instance and synthetic data. Windows acceptance of these
+review corrections is pending; original task acceptance records remain intact.
+
+On Windows, pull main, run quality, verify migrations, and run:
+- npm.cmd run verify:correlation
+- npm.cmd run verify:correlation:concurrency
+- npm.cmd run verify:reports
+
+Restart the app and create an incident once: expect the success message, cleared
+creation form, and refreshed incident list. Check incident investigation/response
+layout on a narrow screen. No new migration, external API, or credentials are needed.

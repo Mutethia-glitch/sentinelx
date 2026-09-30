@@ -19,7 +19,10 @@ The security summary includes event/alert/incident counts, severity distribution
 
 The incident report includes authoritative incident state, assignment, risk, linked alerts, investigation notes, and recorded response actions.
 
-CSV export is intentionally simple and portable: nested report fields are flattened into `section,key,value` rows. JSON remains the canonical structured format.
+CSV export is intentionally simple and portable: nested report fields are flattened into `section,key,value` rows. Formula-like text cells beginning with `=`, `+`, `-` or `@` (including after
+leading whitespace/control characters) receive an apostrophe prefix so spreadsheet
+software treats them as text. Real numeric values retain their numeric form.
+JSON remains the canonical structured format and preserves original values.
 
 Task 26 adds no schema migration and no external report vendor.
 

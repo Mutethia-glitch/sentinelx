@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const { createPool } = require('../src/data/pool');
+const { EXPECTED: TASK28_MAPPINGS } = require('./verify-mitre-mapping');
 const { INITIAL_RULES } = require('../src/rules/initial-rules');
 const { detectionEngine } = require('../src/detection/engine');
 const fixture = require('../fixtures/events/initial-rule-scenarios.json');
@@ -8,6 +9,7 @@ function event(patch) { return { ...fixture.baseEvent, ...patch }; }
 function evidence(count) { return Array.from({ length: count }, (_, index) => ({ id: `task14-evidence-${index + 1}` })); }
 
 async function verifyInitialRules(pool) {
+  const task28Applied=(await pool.query("SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE name='015_mitre_tactics_and_core_mappings.sql') AS applied")).rows[0].applied;
   const names = INITIAL_RULES.map(rule => rule.name);
   const result = await pool.query(`SELECT r.name, r.description, r.enabled, r.threat_level, r.category_code, r.definition,
     ARRAY(SELECT m.technique_id FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id
@@ -24,7 +26,7 @@ async function verifyInitialRules(pool) {
     assert.equal(row.threat_level, expected.severity);
     assert.equal(row.category_code, expected.categoryCode);
     assert.deepEqual(row.definition, expected.definition);
-    assert.deepEqual(row.mitre_ids, expected.mitreTechniqueIds);
+    assert.deepEqual(row.mitre_ids, task28Applied ? (TASK28_MAPPINGS.get(expected.name) ?? expected.mitreTechniqueIds) : expected.mitreTechniqueIds);
 
     const scenario = fixture.scenarios.find(item => item.categoryCode === expected.categoryCode);
     assert.ok(scenario, `missing ${expected.categoryCode} test data`);

@@ -1,3 +1,5 @@
+const { transaction } = require('./auth-repository');
+const CORRELATION_LOCK = 73482117;
 class CorrelationPersistenceError extends Error {
   constructor() { super('Alert correlation persistence unavailable.'); this.name = 'CorrelationPersistenceError'; }
 }
@@ -13,7 +15,7 @@ function correlationRepository(pool) {
       const entities = alert.affectedEntities || {};
       const result = await db.query(`SELECT id,category_code,created_at,affected_entities FROM alerts
         WHERE id<>$1::uuid
-          AND (created_at<$2::timestamptz OR (created_at=$2::timestamptz AND id::text<$1::text))
+          AND created_at <= $2::timestamptz + ($3::text || ' seconds')::interval
           AND created_at >= $2::timestamptz - ($3::text || ' seconds')::interval
           AND (category_code=$4
             OR ($5::text IS NOT NULL AND affected_entities->>'user'=$5)
@@ -45,6 +47,18 @@ function correlationRepository(pool) {
       return result.rows.map(row => row.id);
     } catch { throw new CorrelationPersistenceError(); }
   }
-  return { candidates, link, group };
+  async function withLock(work, db = undefined) {
+    const run = async client => {
+      // Held until the enclosing ingestion transaction commits or rolls back.
+      await client.query('SELECT pg_advisory_xact_lock($1)', [CORRELATION_LOCK]);
+      return work(client);
+    };
+    try { return db ? await run(db) : await transaction(pool, run); }
+    catch (error) {
+      if (error instanceof CorrelationPersistenceError) throw error;
+      throw new CorrelationPersistenceError();
+    }
+  }
+  return { candidates, link, group, withLock };
 }
-module.exports = { correlationRepository, CorrelationPersistenceError, pair };
+module.exports = { correlationRepository, CorrelationPersistenceError, pair, CORRELATION_LOCK };

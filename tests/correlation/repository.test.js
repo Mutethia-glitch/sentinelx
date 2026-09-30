@@ -33,3 +33,18 @@ test('repository sanitizes persistence failures', async () => {
   const repo=correlationRepository({query:async()=>{throw new Error('private database detail');}});
   await assert.rejects(repo.group('a'),{name:'CorrelationPersistenceError',message:'Alert correlation persistence unavailable.'});
 });
+
+test('correlation transaction lock is acquired before work and retained by caller transaction',async()=>{
+  const calls=[],client={query:async(sql,values)=>{calls.push({sql,values});return{rows:[]};}};
+  const repo=correlationRepository({});
+  const result=await repo.withLock(async db=>{assert.equal(db,client);calls.push({sql:'work'});return 'done';},client);
+  assert.equal(result,'done');assert.match(calls[0].sql,/pg_advisory_xact_lock/);assert.equal(calls[1].sql,'work');
+  assert.equal(calls.some(call=>call.sql==='COMMIT'),false);
+});
+
+test('standalone evaluation owns a transaction and rolls back a failed evaluation',async()=>{
+  const calls=[],client={query:async sql=>{calls.push(sql);return{rows:[]};},release:()=>calls.push('release')};
+  const repo=correlationRepository({connect:async()=>client});
+  await assert.rejects(repo.withLock(async()=>{throw new Error('private details');}),{name:'CorrelationPersistenceError'});
+  assert.equal(calls[0],'BEGIN');assert.match(calls[1],/pg_advisory_xact_lock/);assert.deepEqual(calls.slice(-2),['ROLLBACK','release']);
+});

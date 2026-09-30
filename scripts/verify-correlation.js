@@ -26,22 +26,21 @@ async function verifyCorrelation(pool) {
     }
 
     const a = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:00:00Z', { user: 'alice', sourceIp: '192.0.2.1', host: 'host-a' }, 'A');
-    const b = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:05:00Z', { user: 'alice', sourceIp: '192.0.2.2', host: 'host-b' }, 'B');
-    const c = await createAlert(malwareRule, 'MALWARE', '2026-09-30T00:10:00Z', { user: 'alice', sourceIp: '192.0.2.3', host: 'host-a' }, 'C');
-    const d = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:11:00Z', { user: 'bob', sourceIp: '192.0.2.9', host: 'host-z' }, 'D');
-    const e = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:20:01Z', { user: 'alice', sourceIp: '192.0.2.1', host: 'host-x' }, 'E');
-
     const repository = correlationRepository(pool);
     const engine = correlationEngine(repository);
     assert.deepEqual((await engine.evaluate(a, client)).groupAlertIds, [a.id]);
+    const b = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:05:00Z', { user: 'alice', sourceIp: '192.0.2.2', host: 'host-b' }, 'B');
     const bResult = await engine.evaluate(b, client);
     assert.equal(bResult.correlations.length, 1);
     assert.deepEqual(bResult.correlations[0].matchedFields, ['user', 'category']);
+    const c = await createAlert(malwareRule, 'MALWARE', '2026-09-30T00:10:00Z', { user: 'alice', sourceIp: '192.0.2.3', host: 'host-a' }, 'C');
     const cResult = await engine.evaluate(c, client);
     assert.equal(cResult.correlations.length, 1);
     assert.deepEqual(cResult.correlations[0].matchedFields, ['user', 'host']);
     assert.deepEqual([...cResult.groupAlertIds].sort(), [a.id, b.id, c.id].sort());
+    const d = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:11:00Z', { user: 'bob', sourceIp: '192.0.2.9', host: 'host-z' }, 'D');
     assert.deepEqual((await engine.evaluate(d, client)).groupAlertIds, [d.id]);
+    const e = await createAlert(bruteRule, 'BRUTE_FORCE', '2026-09-30T00:20:01Z', { user: 'alice', sourceIp: '192.0.2.1', host: 'host-x' }, 'E');
     assert.deepEqual((await engine.evaluate(e, client)).groupAlertIds, [e.id]);
 
     const rows = (await client.query(`SELECT alert_id,related_alert_id,relationship FROM alert_correlations

@@ -13,7 +13,13 @@ function reportQuery(params,{allowDates=true}={}){
  return out;
 }
 function incidentId(id){if(typeof id!=='string'||!UUID.test(id))throw new AuthError(400,'Invalid incident identifier.');return id;}
-function csvEscape(value){const text=value==null?'':typeof value==='object'?JSON.stringify(value):String(value);return /[",\n\r]/.test(text)?'"'+text.replaceAll('"','""')+'"':text;}
+function csvEscape(value){
+ const text=value==null?'':typeof value==='object'?JSON.stringify(value):String(value);
+ // Spreadsheet parsers may interpret formulas after leading whitespace/control characters.
+ // Prefix only text; preserve genuine numeric report values (including negatives).
+ const safe=typeof value==='string'&&/^[\s\u0000-\u001f]*[=+@-]/.test(text)?"'"+text:text;
+ return /[",\n\r]/.test(safe)?'"'+safe.replaceAll('"','""')+'"':safe;
+}
 function reportCsv(report){
  const rows=[['section','key','value']];
  function add(section,key,value){rows.push([section,key,value]);}

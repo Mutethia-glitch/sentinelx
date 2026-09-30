@@ -6,13 +6,14 @@ or merge underlying alerts/events.
 
 ## Correlation rule
 
-SentinelX evaluates a newly generated alert against earlier alerts in a fixed
-15-minute (900-second) window.
+SentinelX evaluates a newly generated alert against visible alerts whose generation
+timestamps differ by at most 15 minutes (900 seconds), in either direction. This
+also covers concurrent transactions that commit in a different timestamp order.
 
 Two alerts correlate only when all of the following are true:
 
-1. the candidate alert is not later than the current alert;
-2. the time delta is at most 900 seconds;
+1. the alerts have different identifiers;
+2. the absolute time delta is at most 900 seconds;
 3. at least two relationship signals match from:
    - user
    - sourceIp
@@ -97,7 +98,7 @@ Pure tests cover:
 - cross-category two-entity matching;
 - rejection of category-only and single-entity relationships;
 - 15-minute window rejection;
-- future-candidate rejection;
+- reversed timestamp order and fractional window-overflow rejection;
 - connected grouping;
 - canonical pair normalization;
 - duplicate-safe pair persistence;
@@ -143,5 +144,33 @@ Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
 
 `Explainable alert correlation, connected grouping, time-window rejection and pair deduplication verified. Synthetic changes rolled back.`
 
-Task 18 incident management remains separate and Not Started. No external API or
+Task 18 incident management remains separate. No external API or
 API key is required.
+
+## Concurrent ingestion correction — 2026-09-30
+
+Correlation evaluation acquires PostgreSQL transaction advisory lock 73482117
+before reading candidates and holds it until the enclosing ingestion transaction
+commits or rolls back. In the production READ COMMITTED transaction, a waiting
+evaluator then sees the first evaluator's committed alerts. Candidate lookup and
+relationship checks use the same symmetric, exact 900-second boundary; canonical
+pair uniqueness still prevents duplicate edges. Standalone evaluation uses its
+own transaction and rolls back on failure. No migration is required.
+
+This deliberately serializes correlation evaluation across ingestion transactions;
+it is a small-system correctness choice and can increase wait time under load.
+Existing statement/query timeout behavior still applies. Historical relationships
+are not automatically rebuilt.
+
+The regression verifier runs two PostgreSQL transactions, proves the second waits
+for the first to commit, then confirms one canonical edge and one connected group.
+It explicitly makes the waiting alert older than the first committed alert and
+checks repeated evaluation does not create another edge. Its uniquely identified
+synthetic records are removed in finally; no existing configuration is altered.
+Run in the PowerShell window with PostgreSQL connection variables:
+
+```powershell
+npm.cmd run verify:correlation:concurrency
+```
+
+Expected: `Concurrent correlation blocking, reversed timestamp order, connected grouping and pair deduplication verified. Synthetic changes cleaned up.`
