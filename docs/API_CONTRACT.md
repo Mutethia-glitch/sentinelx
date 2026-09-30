@@ -86,3 +86,12 @@ The persisted model contains the generating rule, trigger event, threat category
 ## Task 16 alert management
 
 GET /api/alerts and GET /api/alerts/{uuid} require alerts.read; PATCH /api/alerts/{uuid}/status requires alerts.manage, exact Origin and a status/reason body. NEW and ACKNOWLEDGED are separate alert states. Status changes and audit records commit atomically. The /alerts console traces source events through the existing events.read API. See [ALERT_MANAGEMENT.md](ALERT_MANAGEMENT.md).
+
+
+## Task 17 alert correlation
+
+Task 17 adds no public correlation endpoint. Newly generated alerts are correlated
+internally after deterministic detection using the documented explainable
+relationships and persisted `alert_correlations` edges. Alert management APIs
+remain the Task 16 contract; Incident APIs remain future Task 18 work. See
+[CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
