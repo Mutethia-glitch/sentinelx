@@ -31,6 +31,12 @@ function summary(row) {
     statusUpdatedBy: row.status_updated_by ?? null,
     assessmentUpdatedAt: row.assessment_updated_at?.toISOString() ?? null,
     assessmentUpdatedBy: row.assessment_updated_by ?? null,
+    risk: row.risk_score === undefined ? null : {
+      score: Number(row.risk_score),
+      eventCount: Number(row.risk_event_count),
+      formulaVersion: Number(row.risk_formula_version),
+      calculatedAt: row.risk_calculated_at.toISOString(),
+    },
     resolutionNote: row.resolution_note ?? null,
     resolutionAt: row.resolution_at?.toISOString() ?? null,
     resolutionBy: row.resolution_by ?? null,
@@ -71,6 +77,11 @@ function incidentRepository(pool) {
   async function read(client, id) {
     const row = (await client.query(`${SELECT} WHERE i.id=$1`, [id])).rows[0];
     return row ? summary(row) : null;
+  }
+  async function refreshRisk(client, id) {
+    const count = (await client.query(`SELECT count(DISTINCT ae.event_id)::integer AS event_count
+      FROM incident_alerts ia JOIN alert_events ae ON ae.alert_id=ia.alert_id WHERE ia.incident_id=$1`, [id])).rows[0].event_count;
+    await client.query('UPDATE incidents SET risk_event_count=$2 WHERE id=$1', [id, count]);
   }
   return {
     async list(filters) {
@@ -127,6 +138,7 @@ function incidentRepository(pool) {
               CASE WHEN $5::uuid IS NULL THEN NULL ELSE $6::uuid END,clock_timestamp()) RETURNING id`,
           [data.title, data.description, severity, categoryCode, data.assignedTo, actorId])).rows[0];
           for (const alertId of data.alertIds) await client.query('INSERT INTO incident_alerts(incident_id,alert_id) VALUES($1,$2)', [row.id, alertId]);
+          await refreshRisk(client, row.id);
           await client.query(`INSERT INTO audit_logs(actor_id,actor_context,action,target_type,target_id,context)
             VALUES($1,'authenticated incident manager','INCIDENT_CREATED','incident',$2,$3::jsonb)`,
           [actorId, row.id, JSON.stringify({ alertIds: data.alertIds, severity, categoryCode, assignedTo: data.assignedTo, reason: data.reason })]);
