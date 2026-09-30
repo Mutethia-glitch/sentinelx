@@ -1,8 +1,18 @@
 const { transaction } = require('./auth-repository');
 const { requirePermission } = require('../access/policy');
 const { AuthError } = require('../auth/errors');
-const SELECT = `SELECT r.*, ARRAY(SELECT m.technique_id FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id WHERE rm.rule_id=r.id ORDER BY m.technique_id) AS mitre_ids FROM detection_rules r`;
-const view = row => ({ id: row.id, name: row.name, description: row.description, enabled: row.enabled, severity: row.threat_level, categoryCode: row.category_code, definition: row.definition, mitreTechniqueIds: row.mitre_ids || [], version: row.version, createdAt: row.created_at.toISOString(), updatedAt: row.updated_at.toISOString() });
+const SELECT = `SELECT r.*,
+  ARRAY(SELECT m.technique_id FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id WHERE rm.rule_id=r.id ORDER BY m.technique_id) AS mitre_ids,
+  COALESCE((SELECT jsonb_agg(jsonb_build_object(
+    'techniqueId',m.technique_id,'techniqueName',m.technique_name,
+    'tactics',COALESCE((SELECT jsonb_agg(jsonb_build_object('tacticId',t.tactic_id,'tacticName',t.tactic_name) ORDER BY t.tactic_id)
+      FROM mitre_mapping_tactics mt JOIN mitre_tactics t ON t.tactic_id=mt.tactic_id
+      WHERE mt.mapping_id=m.id),'[]'::jsonb)
+  ) ORDER BY m.technique_id)
+  FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id
+  WHERE rm.rule_id=r.id),'[]'::jsonb) AS mitre_details
+  FROM detection_rules r`;
+const view = row => ({ id: row.id, name: row.name, description: row.description, enabled: row.enabled, severity: row.threat_level, categoryCode: row.category_code, definition: row.definition, mitreTechniqueIds: row.mitre_ids || [], mitreMappings: row.mitre_details || [], version: row.version, createdAt: row.created_at.toISOString(), updatedAt: row.updated_at.toISOString() });
 class RulePersistenceError extends Error { constructor() { super('Detection rule persistence unavailable.'); } }
 function ruleRepository(pool) {
   function failure(error) {
@@ -43,8 +53,23 @@ function ruleRepository(pool) {
       catch (error) { failure(error); }
     },
     async mitre() {
-      try { return (await pool.query('SELECT technique_id, technique_name FROM mitre_mappings ORDER BY technique_id LIMIT 500')).rows.map(row => ({ techniqueId: row.technique_id, techniqueName: row.technique_name })); }
-      catch (error) { failure(error); }
+      try {
+        const rows=(await pool.query(`SELECT m.technique_id,m.technique_name,t.tactic_id,t.tactic_name
+          FROM mitre_mappings m
+          LEFT JOIN mitre_mapping_tactics mt ON mt.mapping_id=m.id
+          LEFT JOIN mitre_tactics t ON t.tactic_id=mt.tactic_id
+          ORDER BY m.technique_id,t.tactic_id LIMIT 2000`)).rows;
+        const map=new Map();
+        for(const row of rows){
+          if(!map.has(row.technique_id))map.set(row.technique_id,{
+            techniqueId:row.technique_id,techniqueName:row.technique_name,tactics:[],
+          });
+          if(row.tactic_id)map.get(row.technique_id).tactics.push({
+            tacticId:row.tactic_id,tacticName:row.tactic_name,
+          });
+        }
+        return [...map.values()];
+      } catch (error) { failure(error); }
     },
     async validate(data) {
       try { return await transaction(pool, async client => { await references(client, data); return data; }); }

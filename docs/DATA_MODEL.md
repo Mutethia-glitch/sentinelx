@@ -242,3 +242,9 @@ snapshot. JSON is canonical; CSV is a flattened export representation.
 ## Task 27 audit retrieval
 
 Task 27 adds no schema migration. It reads the existing append-only application audit records in `audit_logs`, including actor, actor context, action, target resource, JSON context and occurred_at. No audit mutation endpoint is introduced.
+
+## Task 28 ATT&CK tactic metadata
+
+Migration 015 adds `mitre_tactics` and `mitre_mapping_tactics` while retaining
+the existing `mitre_mappings` and `rule_mitre_mappings` technique model.
+Mappings are many-to-many and partial by design.

@@ -414,3 +414,10 @@ See [REPORTING.md](REPORTING.md).
 ## Task 27 protected audit retrieval
 
 Existing transactional audit writes remain distributed with the security-sensitive workflows that own them. Task 27 adds a centralized read-only Audit repository/service/API and console over `audit_logs`, authorized by `audit.read`. It does not duplicate or rewrite audit events.
+
+## Task 28 ATT&CK contextual layer
+
+ATT&CK remains contextual metadata attached to detection rules. Migration 015
+adds tactic metadata and documented partial mappings for implemented core rules.
+Incident views inherit this context only through linked alert/rule evidence; the
+incident model is not replaced by ATT&CK. See [MITRE_MAPPING.md](MITRE_MAPPING.md).

@@ -42,7 +42,8 @@
 - Task 25: Complete — consistent event/alert/incident filtering with parameterized evidence-chain search, validated date/severity/status/category/IP/user/host/rule/MITRE filters, RBAC and pagination; isolated checks passed 15/15 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 26: Verification Pending — stored-data security summary and incident reports with JSON/CSV export, date-range validation and read-only PostgreSQL verification implemented
 - Task 27: Verification Pending — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC verifier implemented
-- Tasks 28–43: Not Started
+- Task 28: Verification Pending — migration 015 tactic metadata, documented partial core-rule ATT&CK mappings, enriched rule catalog and incident-context propagation implemented
+- Tasks 29–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–25 are Complete. Tasks 26–27 are implemented and Verification Pending. Tasks 28–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–25 are Complete. Tasks 26–28 are implemented and Verification Pending. Task 28 introduces migration 015; Tasks 29–43 remain Not Started. See SESSION_HANDOFF.md.

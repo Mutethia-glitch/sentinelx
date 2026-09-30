@@ -218,3 +218,11 @@ repeatable-read, read-only PostgreSQL transactions. See [REPORTING.md](REPORTING
 ## Task 27 audit trail
 
 `GET /api/audit` requires `audit.read` and supports bounded actor/action/target/date/page filters. It is read-only; no POST, PUT, PATCH or DELETE audit endpoint exists. See [AUDIT_TRAIL.md](AUDIT_TRAIL.md).
+
+## Task 28 ATT&CK context
+
+The existing `GET /api/rules/mitre-mappings` response now includes stored tactic
+objects for mapped techniques. Rule representations include `mitreMappings`
+alongside the existing technique ID list. Incident investigation/report linked
+alerts include their detection rule's structured ATT&CK mappings.
+See [MITRE_MAPPING.md](MITRE_MAPPING.md).

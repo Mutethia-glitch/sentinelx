@@ -1,24 +1,35 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–25 are Complete. Tasks 26 Reporting and 27 Audit Trail are implemented
-and Verification Pending. The user requested implementation through Task 29, so
-continue sequentially with Tasks 28–29.
+Tasks 01–25 are Complete. Tasks 26 Reporting, 27 Audit Trail, and 28 MITRE ATT&CK
+Mapping are implemented and Verification Pending. The user requested implementation
+through Task 29, so Task 29 Advanced Detection Dataset is next.
 
 Task 26:
-- reports.read security summary + incident reports;
-- optional inclusive date range and JSON/CSV export;
-- PostgreSQL repeatable-read, read-only generation;
+- persisted security-summary and incident reports;
+- JSON/CSV export and inclusive date ranges;
 - verifier: `npm.cmd run verify:reports`.
 
 Task 27:
-- `GET /api/audit`, protected by `audit.read`;
-- Administrator/Security Analyst permitted; Viewer/Management denied;
-- actor/action/target/date/page filters, 50 rows per page;
-- no audit create/update/delete API;
+- protected read-only `GET /api/audit`;
+- audit.read for Administrator/Security Analyst, Viewer denied;
+- actor/action/target/date/page filters;
 - verifier: `npm.cmd run verify:audit`.
 
-Expected Task 27 verifier result:
-`Protected actor/action/resource/time/context audit retrieval, filtering, RBAC and read-only API behavior verified. Synthetic changes cleaned up.`
+Task 28:
+- migration `015_mitre_tactics_and_core_mappings.sql`;
+- tactic metadata plus intentionally partial technique mappings for eight precise
+  core detection scenarios;
+- seven broad scenarios intentionally remain unmapped;
+- existing rule catalog/detail returns structured technique+tactic metadata;
+- incident investigation/report linked alerts expose their rule mappings;
+- verifier: `npm.cmd run verify:mitre`.
 
-Applied migrations remain 001–014. Tasks 26–27 add no migrations.
-Task 28 MITRE ATT&CK Mapping is next in the requested batch.
+Expected Task 28 verifier result:
+`Documented partial ATT&CK technique/tactic mappings, core-rule assignments, rule catalog and incident-context propagation verified. Synthetic changes cleaned up.`
+
+Migrations 001–014 were not edited. Migration 015 is new and remains unverified
+until the user's Windows migration/verifier gate succeeds.
+
+Task 29 Advanced Detection Dataset must remain a controlled research dataset:
+no private personal data, no claim of real-world accuracy, no replacement of the
+normalized production event model, and no Task 30 feature-engineering work.

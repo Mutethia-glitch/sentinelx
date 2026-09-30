@@ -108,7 +108,15 @@ function investigationRepository(pool) {
 
   async function readAlerts(client, id) {
     return (await client.query(`SELECT a.id,a.category_code,a.threat_level,a.source,a.affected_entities,
-      a.status,a.created_at,a.match_reason,r.name AS rule_name
+      a.status,a.created_at,a.match_reason,r.name AS rule_name,
+      COALESCE((SELECT jsonb_agg(jsonb_build_object(
+        'techniqueId',m.technique_id,'techniqueName',m.technique_name,
+        'tactics',COALESCE((SELECT jsonb_agg(jsonb_build_object('tacticId',t.tactic_id,'tacticName',t.tactic_name) ORDER BY t.tactic_id)
+          FROM mitre_mapping_tactics mt JOIN mitre_tactics t ON t.tactic_id=mt.tactic_id
+          WHERE mt.mapping_id=m.id),'[]'::jsonb)
+      ) ORDER BY m.technique_id)
+      FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id
+      WHERE rm.rule_id=r.id),'[]'::jsonb) AS mitre_mappings
       FROM incident_alerts ia JOIN alerts a ON a.id=ia.alert_id
       JOIN detection_rules r ON r.id=a.rule_id
       WHERE ia.incident_id=$1 ORDER BY a.created_at ASC,a.id ASC`, [id])).rows.map(row => ({
@@ -121,6 +129,7 @@ function investigationRepository(pool) {
         timestamp: row.created_at.toISOString(),
         matchReason: row.match_reason,
         ruleName: row.rule_name,
+        mitreMappings: row.mitre_mappings || [],
       }));
   }
 

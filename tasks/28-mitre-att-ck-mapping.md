@@ -1,7 +1,7 @@
 # Task 28: MITRE ATT&CK Mapping
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Map implemented detection scenarios to appropriate MITRE ATT&CK tactics and techniques.
@@ -50,6 +50,15 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Migration 015 adds tactic metadata and durable partial core-rule mappings.
+- Eight core rules have documented technique/tactic context; seven broad rules remain intentionally unmapped.
+- Existing rule catalog/detail APIs expose structured tactic+technique mappings.
+- Incident investigation/report output references mappings through linked alert rules.
+- No claim of complete ATT&CK coverage or per-event technique proof is made.
+- Focused tests and a PostgreSQL verifier are implemented.
+- Task 29 remains separately scoped.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

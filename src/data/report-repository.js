@@ -47,7 +47,17 @@ function reportRepository(pool){
    return read(async(client,asOf)=>{
     const row=(await client.query(`SELECT i.*,u.display_name assigned_name FROM incidents i LEFT JOIN users u ON u.id=i.assigned_to WHERE i.id=$1`,[id])).rows[0];
     if(!row)throw new AuthError(404,'Incident not found.');
-    const alerts=(await client.query(`SELECT a.id,a.category_code,a.threat_level::text severity,a.status,a.created_at,r.name rule_name FROM incident_alerts ia JOIN alerts a ON a.id=ia.alert_id JOIN detection_rules r ON r.id=a.rule_id WHERE ia.incident_id=$1 ORDER BY a.created_at,a.id`,[id])).rows;
+    const alerts=(await client.query(`SELECT a.id,a.category_code,a.threat_level::text severity,a.status,a.created_at,r.name rule_name,
+      COALESCE((SELECT jsonb_agg(jsonb_build_object(
+        'techniqueId',m.technique_id,'techniqueName',m.technique_name,
+        'tactics',COALESCE((SELECT jsonb_agg(jsonb_build_object('tacticId',t.tactic_id,'tacticName',t.tactic_name) ORDER BY t.tactic_id)
+          FROM mitre_mapping_tactics mt JOIN mitre_tactics t ON t.tactic_id=mt.tactic_id
+          WHERE mt.mapping_id=m.id),'[]'::jsonb)
+      ) ORDER BY m.technique_id)
+      FROM rule_mitre_mappings rm JOIN mitre_mappings m ON m.id=rm.mapping_id
+      WHERE rm.rule_id=r.id),'[]'::jsonb) mitre_mappings
+      FROM incident_alerts ia JOIN alerts a ON a.id=ia.alert_id JOIN detection_rules r ON r.id=a.rule_id
+      WHERE ia.incident_id=$1 ORDER BY a.created_at,a.id`,[id])).rows.map(a=>({...a,mitreMappings:a.mitre_mappings||[]}));
     const notes=(await client.query(`SELECT n.id,n.created_at,n.content,u.display_name author FROM investigation_notes n JOIN users u ON u.id=n.author_id WHERE n.incident_id=$1 ORDER BY n.created_at,n.id`,[id])).rows;
     const responses=(await client.query(`SELECT ra.id,ra.action,ra.reason,ra.result,ra.succeeded,ra.performed_at,u.display_name actor FROM response_actions ra JOIN users u ON u.id=ra.authorized_by WHERE ra.incident_id=$1 ORDER BY ra.performed_at,ra.id`,[id])).rows;
     return {type:'INCIDENT_REPORT',asOf,range:{from:query.from||null,to:query.to||null},incident:{id:row.id,title:row.title,status:row.status,severity:row.threat_level,categoryCode:row.category_code,assignedTo:row.assigned_to?{id:row.assigned_to,displayName:row.assigned_name}:null,riskScore:Number(row.risk_score),createdAt:row.created_at.toISOString(),updatedAt:row.updated_at.toISOString(),resolutionNote:row.resolution_note||null},alerts,investigationNotes:notes,responses};
