@@ -1,7 +1,7 @@
 # Task 21: Investigation Workspace
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Build the incident investigation view with evidence, timeline, related events/alerts, affected entities, and analyst notes.
@@ -39,6 +39,8 @@ Complete the preceding tasks required by the sequence before implementing this t
 ## Acceptance Criteria
 Analysts can reconstruct a timeline and record findings.
 
+The workspace exposes linked alerts/events, affected entities, incident history, and append-only analyst findings. Viewer/Management is read-only; Administrator/Security Analyst users may record findings.
+
 ## Required Deliverables
 Investigation module.
 
@@ -50,6 +52,18 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Dedicated investigation API/service/repository are implemented using the existing core `investigation_notes` table.
+- Incident inspection displays related alerts/events, affected users/hosts/IPs, chronological history, and analyst findings.
+- Findings may cite only alerts/events actually linked to the incident.
+- Findings are append-only and write an `INVESTIGATION_NOTE_ADDED` audit record atomically.
+- Viewer/Management can read investigations but cannot record findings.
+- Task 21 introduces no new migration; migrations 001–013 remain unchanged.
+- PostgreSQL and browser verifiers are implemented.
+- Windows/PostgreSQL `verify:investigations` remains required before completion.
+- Task 22 Response Workflow remains Not Started.
+- No external API or API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
