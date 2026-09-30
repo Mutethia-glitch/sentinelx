@@ -1,7 +1,7 @@
 # Task 22: Response Workflow
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement controlled, auditable response actions such as assignment, containment status, escalation, notifications, tasks, notes, and closure.
@@ -37,7 +37,7 @@ Complete the preceding tasks required by the sequence before implementing this t
 12. If something is ambiguous, choose the smallest solution consistent with the existing SentinelX architecture and document the decision.
 
 ## Acceptance Criteria
-Authorized response actions are recorded and visible in incident history.
+Authorized response actions are recorded and visible in incident history. Failed manual containment does not change incident status. Only a successfully completed, expressly confirmed and transactionally recorded manual containment allows NEW/INVESTIGATING → CONTAINED. Existing Task 18 assignment/closure and Task 21 analyst notes remain available; notification delivery is Task 23.
 
 ## Required Deliverables
 Response module.
@@ -50,6 +50,19 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Controlled append-only manual response actions are implemented using the existing Task 01 `response_actions` table; migrations 001–013 remain unchanged.
+- Approved record-only actions: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK, COMMUNICATION.
+- No external host/account actions or notification delivery are performed by Task 22.
+- Administrator/Security Analyst may record; Viewer/Management reads response history only.
+- Success/failure, reason, result, actor and recorded time are retained and visible in the incident response console.
+- Successful confirmed manual containment creates a response record, changes the incident to CONTAINED and writes both audit entries in one locked transaction.
+- Failed containment is logged without changing status. Duplicate successful containment and response mutation on terminal incidents are rejected.
+- Existing direct status endpoint continues rejecting CONTAINED.
+- Focused staged backend/API tests passed 12/12 before repository preparation.
+- PostgreSQL and browser verifiers are implemented; Windows/PostgreSQL `verify:responses` is required before completion.
+- Task 23 Notifications remains Not Started; no additional API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

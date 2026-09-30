@@ -142,3 +142,15 @@ Implemented endpoints:
 Finding references are validated against the incident before persistence. Viewer/Management is read-only. Successful findings write an `INVESTIGATION_NOTE_ADDED` incident audit entry atomically.
 
 Task 21 does not execute response actions; Task 22 remains responsible for controlled response workflows. See [INVESTIGATION_WORKSPACE.md](INVESTIGATION_WORKSPACE.md).
+
+## Task 22 manual response workflow
+
+- `GET /api/responses/{incidentId}?page=1`: read-only response-action history, bounded pages of 50; requires `responses.read`.
+- `POST /api/responses/{incidentId}/actions`: record approved manual action; requires `responses.execute`, same-origin authenticated JSON.
+
+Exact write body: `{action, reason, details, succeeded, containmentPerformed}`.
+Approved types: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK, COMMUNICATION. Strict success/confirmation booleans and bounded text are required. A successful CONTAINMENT must expressly confirm that the authorized actor actually performed external manual containment; this is a human attestation, not an external execution API.
+
+Only successful confirmed containment can move NEW/INVESTIGATING to CONTAINED; response record, status change and audits share one PostgreSQL transaction. Failed containment never changes status. Terminal incidents reject new response actions. Existing direct incident status endpoint continues to reject CONTAINED.
+
+No actual notification is delivered here (Task 23). See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).

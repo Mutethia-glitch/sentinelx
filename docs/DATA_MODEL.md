@@ -190,3 +190,9 @@ Each note belongs to one incident and one author, stores append-only content plu
 The investigation workspace derives affected entities and timeline entries from existing incident/alert/event/audit relationships rather than adding duplicate evidence tables.
 
 See [INVESTIGATION_WORKSPACE.md](INVESTIGATION_WORKSPACE.md).
+
+## Task 22 response workflow
+
+Task 22 reuses `response_actions` from migration 001, with incident FK, authorized-by user FK, action, reason, JSON result, success flag and performed_at (SentinelX recording time). No migration 014 is introduced.
+
+Result JSON stores `summary`, `mode: "MANUAL_ATTESTATION"` and `containmentPerformed`. Response records are append-only through the API, and both response and controlled CONTAINED state changes are audited atomically. Incident status, severity, risk, assignment and resolution remain distinct fields. See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).

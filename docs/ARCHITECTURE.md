@@ -361,3 +361,9 @@ The Investigation service is now implemented between Incident and Response. It r
 Investigation write authorization is independent from general incident viewing: Viewer/Management can read investigation context, while Administrator/Security Analyst users can record findings through `investigations.write`.
 
 Task 21 does not execute containment or other response actions; that remains Task 22.
+
+## Task 22 runtime mapping
+
+Response stage is implemented as a separate service/repository/HTTP handler. It reuses approved response_actions and the incident status audit trail, with existing permission names responses.read and responses.execute. Response history is shown in the incident inspection UI and as incident-targeted history in the investigation timeline.
+
+This stage records explicit human-reported actions only: containment, escalation, follow-up tasks and communication. A successful human-confirmed manual containment transaction may change NEW/INVESTIGATING to CONTAINED. It never automatically disables an account, deletes data, blocks a host, or delivers a notification. Task 23 owns notification delivery. See [RESPONSE_WORKFLOW.md](RESPONSE_WORKFLOW.md).

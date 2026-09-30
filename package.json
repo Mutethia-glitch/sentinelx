@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -44,7 +44,10 @@
     "verify:risk": "node scripts/verify-risk-scoring.js",
     "test:investigations:integration": "node --test tests/integration/investigation-workspace.test.js",
     "test:investigations:ui": "node --test tests/integration/investigation-workspace-ui.test.js",
-    "verify:investigations": "node scripts/verify-investigation-workspace.js"
+    "verify:investigations": "node scripts/verify-investigation-workspace.js",
+    "test:responses:integration": "node --test tests/integration/response-workflow.test.js",
+    "test:responses:ui": "node --test tests/integration/response-workflow-ui.test.js",
+    "verify:responses": "node scripts/verify-response-workflow.js"
   },
   "engines": {
     "node": ">=20"

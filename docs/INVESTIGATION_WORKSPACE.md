@@ -188,3 +188,7 @@ The migration integrity/replay check also passed:
 
 Task 22 Response Workflow remains separate and Not Started. No external API or
 API key is required.
+
+## Task 22 response-history extension
+
+Task 22 adds a separate paginated, read-only response history to incident inspection. Its response record audits appear in the existing investigation timeline as `RESPONSE_ACTION_RECORDED` entries; successful manual containment also produces `INCIDENT_STATUS_CHANGED` with a response-action ID. Investigation findings remain separate from response records and retain Task 21's append-only behavior.

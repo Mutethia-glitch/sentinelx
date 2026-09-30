@@ -42,6 +42,7 @@ function affectedEntities(alerts, events) {
 function historySummary(entry) {
   const action = entry.action;
   const context = entry.context || {};
+  if (action === 'RESPONSE_ACTION_RECORDED') return `Manual ${context.action ?? 'response'} recorded (${context.succeeded ? 'reported success' : 'reported failure'}).`;
   if (action === 'INCIDENT_ASSIGNMENT_CHANGED') return 'Incident assignment changed.';
   if (action === 'INCIDENT_STATUS_CHANGED') return `Incident status changed to ${context.status ?? 'another state'}.`;
   if (action === 'INCIDENT_ASSESSMENT_CHANGED') return `Incident assessment changed to ${context.severity ?? 'updated severity'} / ${context.categoryCode ?? 'unclassified'}.`;

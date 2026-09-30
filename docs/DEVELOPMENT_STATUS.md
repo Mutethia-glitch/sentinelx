@@ -36,7 +36,8 @@
 - Task 19: Complete — controlled fifteen-taxonomy incident classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment implemented with assessment attribution; focused Task 19 tests passed 5/5 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 20: Complete — deterministic 0–100 severity/evidence-event risk formula, generated PostgreSQL score and migration 013 implemented; pure formula tests passed 4/4 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 21: Complete — investigation workspace with linked evidence, affected entities, chronological timeline and append-only findings implemented; focused logic checks passed 4/4; Windows/PostgreSQL acceptance and migration verification passed on 2026-09-30
-- Tasks 22–43: Not Started
+- Task 22: Verification Pending — controlled manual response history and non-destructive record workflow, failed/successful containment, live RBAC, audit atomicity and UI/API verifiers implemented; Windows/PostgreSQL gate pending
+- Tasks 23–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–21 are Complete. Task 21 provides linked alert/event evidence, affected-entity aggregation, chronological investigation history, append-only findings, read/write RBAC, and atomic auditing. Focused Task 21 logic checks passed 4/4; Windows/PostgreSQL acceptance and `node scripts/migrate.js` verification passed on 2026-09-30. Tasks 22–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–21 are Complete. Task 22 now implements recorded, non-destructive manual response actions from the existing core response_actions table. Failed containment preserves incident status; successful expressly attested manual containment atomically records an action, transitions NEW/INVESTIGATING to CONTAINED and audits both operations. Task 22 is Verification Pending until the Windows/PostgreSQL `verify:responses` gate passes. Tasks 23–43 remain Not Started. See SESSION_HANDOFF.md.

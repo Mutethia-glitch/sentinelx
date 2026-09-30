@@ -1,58 +1,62 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–21 are Complete. Task 21 (Investigation Workspace) passed its
-Windows/PostgreSQL acceptance gate on 2026-09-30. Task 22 (Response Workflow)
-remains Not Started and must not begin until the user requests it.
+Tasks 01–21 are Complete. Task 22 (Response Workflow) is implemented and is
+Verification Pending. Task 23 (Notifications) remains Not Started; do not begin it
+until Task 22 is accepted and the user requests continuation.
 
-Task 21 implements the Investigation stage using the existing core
-`investigation_notes` table from migration 001. No new migration was required.
-The applied append-only/checksum-tracked migration chain remains 001–013.
-The Windows migration check passed with:
-`PostgreSQL migrations verified/applied.`
+Task 22 reuses `response_actions` from Task 01 migration 001 and existing Task 18
+incident assignment/terminal status + Task 21 investigation-note workflows. No new
+migration is required. Migrations 001–013 remain applied and immutable.
 
-Investigation workspace endpoint:
-- `GET /api/investigations/{incidentId}`
+Approved manual record types: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK, COMMUNICATION.
+These are not external execution commands. COMMUNICATION records a report of past
+external communication but does not send notifications. Task 23 owns notification
+delivery. No destructive host/account/network action is performed.
 
-It returns incident context, linked alert summaries, distinct linked security-event
-summaries, affected user/host/source-IP/destination-IP values, append-only analyst
-findings, and one chronological timeline combining events, alerts, incident creation,
-incident-targeted audit history, and findings.
+API:
+- `GET /api/responses/{incidentId}?page=1`, requires responses.read, pages of 50.
+- `POST /api/responses/{incidentId}/actions`, requires responses.execute.
+- Exact write body: `{action,reason,details,succeeded,containmentPerformed}`.
+- Reason 1–500, reported outcome details 1–2000, strict booleans, exact fields.
+- containmentPerformed must equal (action === 'CONTAINMENT' && succeeded).
 
-Finding endpoint:
-- `POST /api/investigations/{incidentId}/notes`
+The response repository locks the incident and rechecks the actor's active live
+roles inside the transaction. Every response record is append-only, storing actor,
+action, reason, reported result, success flag and database recording timestamp.
+Material actions write RESPONSE_ACTION_RECORDED into the incident audit trail.
 
-Exact body: `{content, alertIds, eventIds}`.
+A failed manually reported containment remains logged but leaves status unchanged.
+An authorized actor may attest successful external containment on a NEW or
+INVESTIGATING incident, writing response action + CONTAINED status + both audit
+entries in one transaction. Audit failures roll back everything. Duplicate
+successful containment and response actions on RESOLVED/DISMISSED are rejected.
 
-Content is bounded to 4000 characters. Up to 50 unique alert IDs and 50 unique
-event IDs may be cited. Every cited alert/event must already belong to the
-incident; unrelated evidence is rejected.
+CONTAINED does not mean RESOLVED, does not change severity/risk, and does not
+populate a resolution note. The Task 18 direct status API still rejects CONTAINED.
+Terminal resolution/dismissal continues through Task 18 with a required note.
 
-Viewer/Management has `investigations.read` only. Administrator and Security
-Analyst roles have `investigations.write`. The repository rechecks the writer's
-live role inside PostgreSQL.
+The incident inspection UI shows paginated response history to readers and a
+manual record form only to responses.execute roles. Investigation timeline includes
+RESPONSE_ACTION_RECORDED and INCIDENT_STATUS_CHANGED audit entries. All displayed
+response strings use textContent.
 
-Findings are append-only in Task 21. Every successful finding writes
-`INVESTIGATION_NOTE_ADDED` to the incident audit trail in the same transaction;
-audit failure rolls back the note.
+Locally staged Task 22 backend/API checks passed 12/12. A PostgreSQL verifier
+and Chromium browser integration were added. Full Windows acceptance remains:
 
-The existing `/incidents` inspection UI contains the investigation workspace,
-displaying affected entities, linked events, timeline, and findings. Only
-investigation writers see the Record finding form. User-derived content is rendered
-with textContent.
+```powershell
+git pull origin main
+npm.cmd run quality
+node scripts/migrate.js
+npm.cmd run verify:responses
+```
 
-Task 21 does not perform containment, escalation, notification, tasks, or other
-response actions. Task 22 owns controlled response workflows.
+Expected output:
+`Controlled manual response recording, failed/successful containment, incident history, RBAC, terminal protection and atomic audit rollback verified. Synthetic changes cleaned up.`
 
-Focused Task 21 isolated logic checks passed 4/4. Windows/PostgreSQL acceptance
-verification passed on 2026-09-30 with:
+Use an explicitly disposable database for optional `test:responses:integration`
+and `test:responses:ui` with `SENTINELX_TEST_DATABASE=1`.
 
-`Investigation evidence, affected entities, chronological timeline, analyst findings, RBAC, evidence validation, auditing and rollback verified. Synthetic changes cleaned up.`
+PostgreSQL remains local on the user's Windows computer. No external API key is
+required. Never expose or commit real credentials or edit applied migrations.
 
-Do not edit migrations 001–013 or bypass checksum verification.
-PostgreSQL remains hosted on the user's Windows computer. Task 21 requires no
-external API or API key. Never expose or commit actual `.env` values or database
-credentials.
-
-When work resumes, read repository instructions, this handoff,
-`docs/DEVELOPMENT_STATUS.md`, and `tasks/22-response-workflow.md` before beginning.
-Proceed numerically from Task 22 only when requested.
+Task 23 (Notifications) remains Not Started.

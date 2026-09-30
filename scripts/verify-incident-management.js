@@ -10,6 +10,8 @@ const { incidentRepository } = require('../src/data/incident-repository');
 const { incidentService } = require('../src/incidents/service');
 const { investigationRepository } = require('../src/data/investigation-repository');
 const { investigationService } = require('../src/investigations/service');
+const { responseRepository } = require('../src/data/response-repository');
+const { responseService } = require('../src/responses/service');
 const { configFromEnv } = require('../src/auth/config');
 const { hashPassword } = require('../src/auth/passwords');
 const { createServer } = require('../src/api/server');
@@ -18,7 +20,7 @@ async function incidentManagementFixture(pool) {
   const users=[],eventIds=[],alertIds=[],incidentIds=[];let ruleId,server;
   async function cleanup(){
     if(server)await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});
-    if(incidentIds.length){await pool.query('DELETE FROM audit_logs WHERE target_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM investigation_notes WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incident_alerts WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incidents WHERE id=ANY($1::uuid[])',[incidentIds]);}
+    if(incidentIds.length){await pool.query('DELETE FROM audit_logs WHERE target_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM response_actions WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM investigation_notes WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incident_alerts WHERE incident_id=ANY($1::uuid[])',[incidentIds]);await pool.query('DELETE FROM incidents WHERE id=ANY($1::uuid[])',[incidentIds]);}
     if(alertIds.length){await pool.query('DELETE FROM alert_correlations WHERE alert_id=ANY($1::uuid[]) OR related_alert_id=ANY($1::uuid[])',[alertIds]);await pool.query('DELETE FROM alert_events WHERE alert_id=ANY($1::uuid[])',[alertIds]);await pool.query('DELETE FROM alerts WHERE id=ANY($1::uuid[])',[alertIds]);}
     if(eventIds.length)await pool.query('DELETE FROM security_events WHERE id=ANY($1::uuid[])',[eventIds]);
     if(ruleId)await pool.query('DELETE FROM detection_rules WHERE id=$1',[ruleId]);
@@ -33,7 +35,7 @@ async function incidentManagementFixture(pool) {
     for(let i=0;i<2;i++){const event=await eventRepo.create({timestamp:`2026-09-30T00:00:0${i}Z`,source,type:'authentication',sourceIp:`192.0.2.${18+i}`,destinationIp:null,user:'task18-user',host:'task18-host',action:'login',status:'failed',severity:i?'CRITICAL':'HIGH',rawData:{synthetic:true},metadata:{task:18}});eventIds.push(event.id);const alert=(await pool.query(`INSERT INTO alerts(rule_id,trigger_event_id,category_code,threat_level,source,affected_entities,status,confidence,match_reason,match_evidence) VALUES($1,$2,$3,$4,$5,$6::jsonb,'NEW',null,'Task 18 synthetic alert',$7::jsonb) RETURNING id`,[ruleId,event.id,category.code,i?'CRITICAL':'HIGH',source,JSON.stringify({user:'task18-user',host:'task18-host',sourceIp:`192.0.2.${18+i}`}),JSON.stringify({triggerEventId:event.id,eventIds:[event.id]})])).rows[0];alertIds.push(alert.id);await pool.query('INSERT INTO alert_events(alert_id,event_id) VALUES($1,$2)',[alert.id,event.id]);}
     const pair=[...alertIds].sort();await pool.query('INSERT INTO alert_correlations(alert_id,related_alert_id,relationship) VALUES($1,$2,$3::jsonb)',[pair[0],pair[1],JSON.stringify({matchedFields:['user','host'],timeDeltaSeconds:1,windowSeconds:900})]);
     const config=configFromEnv({}),authentication=authService(authRepo,config),access=accessService(accessRepository(pool),authentication),repository=incidentRepository(pool),service=incidentService(repository,access);
-    server=createServer(authentication,config,access,null,null,null,null,null,service,investigationService(investigationRepository(pool),access));await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${server.address().port}`;config.origin=base;
+    server=createServer(authentication,config,access,null,null,null,null,null,service,investigationService(investigationRepository(pool),access),responseService(responseRepository(pool),access));await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${server.address().port}`;config.origin=base;
     return{users,password,eventIds,alertIds,incidentIds,category:category.code,source,repository,base,cleanup};
   }catch(error){await cleanup();throw error;}
 }

@@ -12,5 +12,20 @@
 <h4>Timeline</h4><ol id="investigation-timeline"></ol>
 <h4>Analyst findings</h4><div id="investigation-notes"></div>
 <form id="investigation-note-form" hidden><label>Finding<textarea id="investigation-note-content" maxlength="4000" required></textarea></label><label>Related alert IDs (optional)<textarea id="investigation-note-alerts" maxlength="2000" placeholder="UUIDs separated by spaces, commas, or new lines"></textarea></label><label>Related event IDs (optional)<textarea id="investigation-note-events" maxlength="2000" placeholder="UUIDs separated by spaces, commas, or new lines"></textarea></label><button type="submit">Record finding</button></form>
+</section>
+<section id="response-workflow" hidden>
+<h3>Recorded response actions</h3>
+<p>Manual records only. SentinelX does not execute containment on hosts/accounts or deliver notifications here. Record communication only after it happened outside SentinelX.</p>
+<div id="response-action-rows"></div>
+<div class="pagination"><button id="response-previous" type="button" disabled>Previous responses</button><span id="response-page"></span><button id="response-next" type="button" disabled>Next responses</button></div>
+<form id="response-form" hidden>
+<h4>Record manual response</h4>
+<label>Action<select id="response-action"><option value="CONTAINMENT">Containment already performed / attempted</option><option value="ESCALATION">Escalation record</option><option value="FOLLOW_UP_TASK">Follow-up task record</option><option value="COMMUNICATION">Communication record (no delivery)</option></select></label>
+<label>Reason<textarea id="response-reason" maxlength="500" required></textarea></label>
+<label>Reported outcome / action details<textarea id="response-details" maxlength="2000" required></textarea></label>
+<label><input id="response-succeeded" type="checkbox"> The reported action succeeded</label>
+<label><input id="response-confirmation" type="checkbox" disabled> I confirm that successful manual containment was performed outside SentinelX.</label>
+<button type="submit">Record manual response</button>
+</form>
 </section><form id="assessment-form" hidden><h3>Classification and severity</h3><p>Severity is the Task 19 triage-priority dimension. Risk scoring is separate.</p><label>Threat category<select id="assessment-category"></select></label><label>Severity<select id="assessment-severity"><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label><label>Reason<textarea id="assessment-reason" maxlength="500" required></textarea></label><button type="submit">Update classification and severity</button></form><form id="assignment-form" hidden><h3>Assignment</h3><label>Assignment<select id="assignment-choice"><option value="self">Assign to me</option><option value="none">Unassign</option></select></label><label>Reason<textarea id="assignment-reason" maxlength="500" required></textarea></label><button type="submit">Update assignment</button></form><form id="status-form" hidden><h3>Lifecycle</h3><label>Status<select id="incident-status"><option>INVESTIGATING</option><option>RESOLVED</option><option>DISMISSED</option></select></label><label>Reason<textarea id="status-reason" maxlength="500" required></textarea></label><label>Resolution / dismissal note<textarea id="resolution-note" maxlength="4000"></textarea></label><button type="submit">Update incident status</button></form></section>
 </main></body></html>

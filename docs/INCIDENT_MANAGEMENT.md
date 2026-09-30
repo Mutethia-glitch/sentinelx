@@ -162,3 +162,7 @@ No external API or API key is required.
 Task 19 now provides the controlled correction path anticipated by Task 18. Authorized incident managers may update the incident taxonomy category and LOW/MEDIUM/HIGH/CRITICAL severity with a required reason. These adjustments are independent of incident lifecycle, so a terminal incident can be reclassified without reopening it or losing its resolution/dismissal note.
 
 The Task 18 highest-linked-alert severity and common-category behavior remain creation defaults, not immutable conclusions. See [INCIDENT_CLASSIFICATION.md](INCIDENT_CLASSIFICATION.md).
+
+## Task 22 containment entry path
+
+Task 18 intentionally excluded direct mutation to CONTAINED. Task 22 now provides the controlled authorized path: a human responder must attest that the approved containment was successfully performed outside SentinelX; recording the response action, the CONTAINED transition and both audits is atomic. Failure records the attempted action but leaves status unchanged. CONTAINED never automatically resolves an incident and does not change severity/risk or erase the resolution history.
