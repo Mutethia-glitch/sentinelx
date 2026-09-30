@@ -41,7 +41,7 @@ Null/unknown values are omitted. Task 15 does not invent assets, identities, own
 
 ## Status boundary
 
-Every generated Task 15 alert starts in `NEW`. Migration 008 constrains the Task 15 model to that value. Task 16 owns alert-management workflows and may introduce approved additional states and transitions; Task 15 does not implement them early.
+Every generated Task 15 alert starts in `NEW`. Task 16 subsequently adds the approved `ACKNOWLEDGED` analyst state through append-only migration 009 while preserving `NEW` as the creation default. Incident lifecycle states remain separate.
 
 ## Confidence boundary
 
