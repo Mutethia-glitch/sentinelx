@@ -64,8 +64,13 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   assert.equal(await page.locator('.sx-topbar-actions #logout').count(),1);
   assert.equal(await page.locator('#logout').getAttribute('data-icon'),'log-out');
   assert.equal(await page.locator('#logout svg').count(),1);
+  const topbarBox=await page.locator('.sx-topbar').boundingBox();
   const actionsBox=await page.locator('.sx-topbar-actions').boundingBox();
-  assert.ok(actionsBox&&actionsBox.x>700,'session actions should remain in the top-right area');
+  const refreshBox=await page.locator('.sx-topbar-actions #refresh').boundingBox();
+  const logoutBox=await page.locator('.sx-topbar-actions #logout').boundingBox();
+  assert.ok(topbarBox&&actionsBox&&refreshBox&&logoutBox,'topbar session controls must have measurable layout boxes');
+  assert.ok(Math.abs((actionsBox.x+actionsBox.width)-(topbarBox.x+topbarBox.width-24))<=3,'session actions should be right-aligned inside the top bar');
+  assert.ok(refreshBox.x+refreshBox.width<=logoutBox.x,'Refresh must remain immediately left of Sign out');
 
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
