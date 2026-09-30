@@ -1,7 +1,7 @@
 # Task 17: Alert Correlation
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement explainable correlation and deduplication using approved relationships such as user, source IP, host, category, and time window.
@@ -50,6 +50,19 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Deterministic 900-second correlation is implemented using user, source IP, host, category and time relationships.
+- A pair requires at least two matching signals and at least one entity match; category-only grouping is rejected.
+- Cross-category alerts may correlate when two entity relationships match.
+- Correlation evidence stores matched fields, elapsed seconds and window length.
+- Migration 010 persists canonical, unique alert pairs; reverse/duplicate pair storage is structurally rejected.
+- Connected components provide alert groups without creating incidents.
+- Newly generated production alerts invoke correlation in the existing ingestion transaction.
+- Focused Task 13/17 local tests passed 14/14 before repository update.
+- Windows/PostgreSQL migration plus `verify:correlation` remains required before completion.
+- Task 18 incident management remains Not Started.
+- No external API or API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
