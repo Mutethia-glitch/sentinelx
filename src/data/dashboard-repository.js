@@ -26,11 +26,11 @@ const QUERIES=Object.freeze({
     UNION ALL SELECT 'INCIDENT',status::text,count(*)::bigint FROM incidents GROUP BY status`,
   threats:`SELECT kind,code,n FROM (
     SELECT 'ALERT' AS kind,category_code AS code,count(*)::bigint AS n
-      FROM alerts GROUP BY category_code ORDER BY n DESC,code ASC LIMIT 10
-  ) a UNION ALL SELECT kind,code,n FROM (
+      FROM alerts GROUP BY category_code
+    UNION ALL
     SELECT 'INCIDENT' AS kind,coalesce(category_code,'UNCLASSIFIED') AS code,count(*)::bigint AS n
-      FROM incidents GROUP BY coalesce(category_code,'UNCLASSIFIED') ORDER BY n DESC,code ASC LIMIT 10
-  ) i ORDER BY kind,n DESC,code ASC`,
+      FROM incidents GROUP BY coalesce(category_code,'UNCLASSIFIED')
+  ) categories ORDER BY kind,n DESC,code ASC`,
   responses:`SELECT action,count(*)::bigint AS total,
     count(*) FILTER (WHERE succeeded)::bigint AS successful,
     count(*) FILTER (WHERE NOT succeeded)::bigint AS failed

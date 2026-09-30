@@ -10,7 +10,7 @@ This document maps the approved requirements baseline to the numbered implementa
 | FR-026 | Authentication | 05 |
 | FR-027, FR-028, NFR-003 | Role-based access control and protected operations | 05–06, 35 |
 | FR-001–FR-004, FR-029–FR-030 | Security events, authorized sources, ingestion, normalization, persistence | 07–10 |
-| FR-011 | Threat levels/categories | 11, 19–20 |
+| FR-011 | Threat levels/categories | 11, 19–20, 40 |
 | FR-005–FR-007, NFR-006 | Detection rules and deterministic detection | 12–14 |
 | FR-007–FR-008 | Alerts | 15–16 |
 | FR-009–FR-010 | Alert/event correlation | 17 |

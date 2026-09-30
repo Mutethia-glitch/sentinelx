@@ -38,3 +38,13 @@ Task 39 adds a dedicated database-free security regression suite covering authen
 The security-validation suite is intentionally synthetic and non-destructive. It complements, rather than replaces, the already accepted Task 35 API-hardening and Task 36 frontend-security tests.
 
 Known deployment-boundary considerations such as distributed rate limiting, trusted reverse-proxy identity and production HTTPS/HSTS remain documented for the later deployment phase rather than being silently invented here.
+
+
+## Task 40 controlled end-to-end and fifteen-category validation
+
+Task 40 adds three complementary layers:
+- `tests/system/taxonomy-propagation.test.js` runs in the normal quality suite and prevents taxonomy/rule/search/UI/category-aggregate drift below the canonical fifteen codes.
+- `tests/integration/taxonomy-ui.test.js` is a database-free Playwright check proving that Events, Alerts and Incidents expose all fifteen category filter choices.
+- `scripts/verify-end-to-end-scenarios.js` / `tests/integration/end-to-end-scenarios.test.js` use controlled synthetic PostgreSQL data to verify the full operational path for all fifteen categories, the required Task 40 scenario set, one persisted correlation case and a zero-alert benign control.
+
+The verifier restores temporary taxonomy availability and deletes all generated evidence after execution. It does not test real external systems or alter existing detection-rule policy.

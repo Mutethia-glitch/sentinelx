@@ -15,7 +15,7 @@ The security summary accepts `from`, `to`, and `format`. Dates are inclusive ISO
 
 Reports run in PostgreSQL `REPEATABLE READ, READ ONLY` transactions. Statistics are derived from persisted security events, alerts, incidents, investigation notes, and response actions. No demonstration values are injected.
 
-The security summary includes event/alert/incident counts, severity distributions, active incidents, average incident risk, incident categories, and recorded response outcomes for the selected range.
+The security summary includes event/alert/incident counts, severity distributions, active incidents, average incident risk, every persisted incident-category bucket, and recorded response outcomes for the selected range. Category aggregation is not truncated, so all fifteen approved taxonomy categories can coexist with UNCLASSIFIED.
 
 The incident report includes authoritative incident state, assignment, risk, linked alerts, investigation notes, and recorded response actions.
 

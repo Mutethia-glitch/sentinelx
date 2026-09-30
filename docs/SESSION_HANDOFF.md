@@ -1,3 +1,39 @@
+# Task 40 implementation checkpoint — 2026-10-01
+
+Task 40 is **Implemented — awaiting local acceptance**. Tasks 01–39 remain Complete. Task 41 has not started.
+
+Task 40 implements controlled synthetic end-to-end evaluation for the required brute-force, suspicious-authentication, privilege-escalation, reconnaissance, suspicious-outbound, correlation and false-positive scenarios.
+
+The user additionally required all fifteen SentinelX threat-taxonomy codes throughout the system. Task 40 therefore adds:
+- normal quality regressions proving the canonical 15-code taxonomy, one core rule per category, one scenario fixture per category, all category-aware search parsers, and incident assessment support;
+- explicit 15-code filter suggestions on Events, Alerts and Incidents;
+- removal of Dashboard threat-category truncation;
+- removal of Reporting category truncation, preserving all approved categories even when UNCLASSIFIED also exists;
+- a database-free Playwright taxonomy UI gate;
+- a controlled PostgreSQL verifier that carries all 15 categories through normalized event evidence → deterministic detection → alert → incident → investigation → manual response → resolution → category-aware search → dashboard → reporting, with audit assertions;
+- a second BRUTE_FORCE alert to prove persisted correlation;
+- a benign successful-login control proving zero-alert false-positive behavior.
+
+Existing rule enable/disable state is not changed. The verifier uses isolated temporary rules cloned from the accepted Task 14 definitions. It temporarily makes all 15 categories selectable only for the controlled run, restores each original category enabled state and updated timestamp, and cleans all synthetic users/sessions/rules/events/alerts/correlations/incidents/notes/responses/audit rows.
+
+MITRE ATT&CK remains intentionally partial as accepted in Task 28. Task 40 does not fabricate unsupported technique mappings.
+
+Windows acceptance required:
+- `npm.cmd run quality`
+- `npm.cmd run test:taxonomy:ui`
+- `$env:SENTINELX_TEST_DATABASE = "1"`
+- `npm.cmd run db:migrate`
+- `npm.cmd run verify:end-to-end`
+
+Expected verifier output:
+`15 threat categories propagated through detection, alert, incident, investigation, response, resolution, search, dashboard and reporting; required Task 40 scenarios and false-positive control verified. Synthetic changes cleaned up.`
+
+Do not mark Task 40 Complete or start Task 41 until those gates pass.
+
+See `docs/END_TO_END_DETECTION_SCENARIOS.md` and `tasks/40-end-to-end-detection-scenarios.md`.
+
+---
+
 # Task 39 accepted — 2026-10-01
 
 Task 39 is **Complete**. Tasks 01–39 are Complete; Task 40 has not started.

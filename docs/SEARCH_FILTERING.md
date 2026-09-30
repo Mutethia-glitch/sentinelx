@@ -75,7 +75,7 @@ exposing raw event payloads, audit context, notification contents or secrets.
 ## Console changes
 
 Existing filter forms on `/events`, `/alerts` and `/incidents` expose the
-new shared fields. Existing FormData serialization converts the date-local
+shared fields. Task 40 adds the same canonical fifteen-code threat-category datalist to all three category filters so operators can select every approved taxonomy code without memorizing it; backend validation remains authoritative. Existing FormData serialization converts the date-local
 inputs to ISO strings, resets pagination on filter changes, retains filters
 between page changes, and supports Clear filters. Text remains safely rendered
 with `textContent`.

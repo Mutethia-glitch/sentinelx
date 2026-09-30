@@ -54,9 +54,9 @@ Status distributions cover approved alert states NEW/ACKNOWLEDGED and incident
 states NEW/INVESTIGATING/CONTAINED/RESOLVED/DISMISSED, all independently zero-filled.
 
 Threat distributions group `alerts.category_code` and
-`incidents.category_code` separately, showing up to ten leading categories
-ordered by count then stable category code. Null incident classification is
-represented as UNCLASSIFIED.
+`incidents.category_code` separately and return every persisted category bucket,
+ordered by count then stable category code. No approved taxonomy category is
+truncated. Null incident classification is represented as UNCLASSIFIED.
 
 Response breakdown groups persisted `response_actions.action` and shows total,
 reported successful and reported failed records for each action. The UI renders

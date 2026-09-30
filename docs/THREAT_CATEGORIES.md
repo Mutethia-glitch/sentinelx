@@ -131,3 +131,12 @@ Several of those rules intentionally require explicit normalized classifications
 such as `type=malware`, `type=ransomware`, `type=insider_threat` or
 `type=supply_chain_compromise`; SentinelX does not infer those meanings from
 unrelated telemetry. See `INITIAL_DETECTION_RULES.md` for the exact tested logic.
+
+
+## Task 40 system-wide taxonomy propagation
+
+Task 40 verifies that all fifteen approved category codes remain available across every category-aware SentinelX layer: core rules, detection output, alert snapshots, incident classification, investigation/audit context, event/alert/incident filtering, dashboard aggregation and reporting.
+
+Dashboard and reporting no longer truncate category aggregates. Events, Alerts and Incidents expose all fifteen stable codes as filter suggestions. The backend canonical `CATEGORY_CODES` list remains authoritative.
+
+This does not change Task 28's deliberately partial MITRE ATT&CK mapping. A threat category may be fully supported by SentinelX without having an ATT&CK technique mapping.

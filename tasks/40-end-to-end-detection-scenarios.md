@@ -1,7 +1,7 @@
 # Task 40: End-to-End Detection Scenarios
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Run controlled scenarios for brute force, suspicious authentication, privilege escalation, reconnaissance, suspicious outbound activity, correlation, and false positives.
@@ -50,6 +50,20 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-10-01
+
+Task 40 runs controlled synthetic end-to-end scenarios for the required brute-force, suspicious-authentication, privilege-escalation, reconnaissance, suspicious-outbound, correlation and false-positive cases.
+
+Per the user's explicit taxonomy requirement, the implementation also validates all fifteen canonical threat categories across every category-aware layer: taxonomy catalog, core-rule definitions, normalized evidence, deterministic detection, alert snapshots, incidents, investigation/audit context, event/alert/incident category filters, Dashboard aggregation and Reporting.
+
+The PostgreSQL verifier uses isolated temporary rules cloned from the accepted core-rule definitions, restores original threat-category availability and timestamps, and cleans all synthetic records. Existing detection-rule policy is not changed.
+
+Task 40 also removes category truncation in Dashboard/Reporting and exposes all fifteen canonical codes as filter suggestions on Events, Alerts and Incidents. MITRE ATT&CK remains intentionally partial per Task 28; no unsupported mappings are fabricated.
+
+See `docs/END_TO_END_DETECTION_SCENARIOS.md`.
+
+Local acceptance is required before Task 40 is Complete. Task 41 must not start until Task 40 is accepted.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

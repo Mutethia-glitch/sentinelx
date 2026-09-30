@@ -34,7 +34,7 @@ function reportRepository(pool){
     const alertSeverity=await client.query(`SELECT threat_level::text severity,count(*)::integer count FROM alerts${aWhere} GROUP BY threat_level ORDER BY threat_level`,al);
     const incidents=await client.query(`SELECT count(*)::integer total,count(*) FILTER (WHERE status IN ('NEW','INVESTIGATING','CONTAINED'))::integer active,round(avg(risk_score)::numeric,1) average_risk FROM incidents${iWhere}`,inc);
     const incidentSeverity=await client.query(`SELECT threat_level::text severity,count(*)::integer count FROM incidents${iWhere} GROUP BY threat_level ORDER BY threat_level`,inc);
-    const categories=await client.query(`SELECT coalesce(category_code,'UNCLASSIFIED') code,count(*)::integer count FROM incidents${iWhere} GROUP BY 1 ORDER BY count DESC,code ASC LIMIT 15`,inc);
+    const categories=await client.query(`SELECT coalesce(category_code,'UNCLASSIFIED') code,count(*)::integer count FROM incidents${iWhere} GROUP BY 1 ORDER BY count DESC,code ASC`,inc);
     const responses=await client.query(`SELECT count(*)::integer total,count(*) FILTER(WHERE succeeded)::integer reported_successful,count(*) FILTER(WHERE NOT succeeded)::integer reported_failed FROM response_actions${rWhere}`,resp);
     return {type:'SECURITY_SUMMARY',asOf,range:{from:query.from||null,to:query.to||null},
       events:{total:events.rows.reduce((n,r)=>n+Number(r.total||0),0),severity:events.rows[0]?.severity||{}},

@@ -14,4 +14,4 @@
 | Validation | 38–40 | Automated testing, security testing, controlled end-to-end scenarios |
 | Delivery | 41–44 | Deployment, observability/recovery, final validation, handoff |
 
-The core implementation and validation work is complete through Task 39. Task 40 End-to-End Detection Scenarios is next; do not start it without explicit instruction.
+The core implementation and validation work is complete through Task 39. Task 40 End-to-End Detection Scenarios is Implemented — awaiting local acceptance; Task 41 Deployment remains Not Started.
