@@ -156,3 +156,14 @@ Expected verifier output:
 `Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
 
 No external API or API key is required.
+
+
+## Completion
+
+Task 20 is Complete. Pure Task 20 formula tests passed 4/4, and the
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Deterministic severity/event-frequency risk formula, database generation, boundaries, API display and severity recalculation verified. Synthetic changes cleaned up.`
+
+Task 21 Investigation Workspace remains separate and Not Started. No external API
+or API key is required.
