@@ -377,3 +377,16 @@ not on the manual response_actions table. Notification delivery commits in
 PostgreSQL; no SMTP/email, background queues, speculative delivery status,
 automatic containment or external endpoint action is claimed. Critical/high
 unread messages appear first in the web inbox. See [NOTIFICATIONS.md](NOTIFICATIONS.md).
+
+## Task 24 read-only dashboard boundary
+
+A dedicated Dashboard service/repository/API and `/dashboard` presentation are
+implemented using the existing `dashboard.read` permission. One repeatable-read,
+read-only PostgreSQL transaction collects event, alert, incident, threat/severity,
+time-series and recorded response metrics from persisted data. No dashboard write
+path, background ingestion, metric cache, external analytics service, or new table
+is introduced.
+
+The dashboard belongs to the presentation/report-query layer, not the detection
+engine. It never substitutes for individual alert/incident evidence, Task 25
+search/filtering, or Task 26 reports. See [DASHBOARD.md](DASHBOARD.md).

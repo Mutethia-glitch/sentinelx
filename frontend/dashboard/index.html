@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SentinelX · Security dashboard</title><link rel="stylesheet" href="/dashboard/dashboard.css"><script src="/dashboard/dashboard.js" defer></script></head><body><main>
+<header><p class="brand">SentinelX / IPHYN</p><h1>Security operations dashboard</h1><p>Read-only operational metrics derived from persisted SentinelX records.</p><nav><a href="/events">Events</a> · <a href="/alerts">Alerts</a> · <a href="/incidents">Incidents</a> · <a href="/notifications">Notifications</a> · <a href="/access">Access management</a></nav></header>
+<p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel"><h2>Sign in</h2><form id="login-form"><label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label><label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button></form></section>
+<section id="identity-panel" hidden><div class="section-heading"><div><h2>Authenticated view</h2><p id="identity"></p></div><div><button id="refresh" type="button">Refresh metrics</button> <button id="logout" type="button">Sign out</button></div></div></section>
+<div id="dashboard-panel" hidden>
+<section><h2>All-time operational totals</h2><p id="as-of"></p><dl id="total-cards" class="cards"></dl><p class="hint">Reported response success is an analyst-recorded outcome, not independently verified endpoint execution. Risk is the documented Task 20 score, not a probability.</p></section>
+<section><h2>Rolling 24-hour activity</h2><p>Event counts use receipt time; alerts/incidents use creation time; response actions use recording time.</p><dl id="recent-cards" class="cards"></dl></section>
+<div class="columns">
+<section><h2>Severity distribution · all time</h2><h3>Alerts</h3><div id="alert-severity"></div><h3>Incidents</h3><div id="incident-severity"></div></section>
+<section><h2>Workflow state · all time</h2><h3>Alert status</h3><div id="alert-status"></div><h3>Incident status</h3><div id="incident-status"></div></section>
+</div>
+<div class="columns">
+<section><h2>Threat categories · all time</h2><h3>Alerts · leading 10</h3><div id="alert-threats"></div><h3>Incidents · leading 10</h3><div id="incident-threats"></div><p class="hint">Unclassified incident assessments remain visible as UNCLASSIFIED.</p></section>
+<section><h2>Recorded response outcomes · all time</h2><p class="hint">Outcome flags are manual attestations from Task 22.</p><div id="response-types"></div></section>
+</div>
+<section><h2>Seven UTC calendar days</h2><p id="trend-explanation">The current UTC day is partial. Source timestamps: event received, alert/incident created, and response recorded.</p>
+<div class="table-scroll"><table aria-describedby="trend-explanation"><thead><tr><th>UTC date</th><th>Events received</th><th>Alerts created</th><th>Incidents created</th><th>Responses recorded</th></tr></thead><tbody id="trend-rows"></tbody></table></div></section>
+</div>
+</main></body></html>

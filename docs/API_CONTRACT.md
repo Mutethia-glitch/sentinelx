@@ -172,3 +172,19 @@ new committed in-app delivery returns HTTP 201/delivered=true. All mutations
 enforce exact Origin, JSON input, live roles and atomic audit; no other user's
 inbox is accessible. No SMTP/email or Task 22 response execution is implemented.
 See [NOTIFICATIONS.md](NOTIFICATIONS.md).
+
+## Task 24 security operations dashboard
+
+`GET /api/dashboard` is implemented, requires `dashboard.read` and returns
+`{dashboard:{asOf,period,totals,last24Hours,severity,status,threats,responses,trend}}`.
+No query parameters or mutation methods are accepted in Task 24.
+
+All aggregates derive from persisted security_events, alerts, incidents and
+response_actions in one PostgreSQL REPEATABLE READ READ ONLY snapshot. Seven-day
+trends use UTC calendar days (including current partial day), last24Hours uses a
+rolling PostgreSQL transaction-time cutoff, and response success counts reflect
+the manual Task 22 attestation flag, not independently measured endpoint actions.
+Missing status/severity categories are zero-filled; mean incident risk is null
+when there are no incidents. Query failures return sanitized 503.
+
+See [DASHBOARD.md](DASHBOARD.md). General cross-record filtering remains Task 25.

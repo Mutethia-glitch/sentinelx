@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -50,7 +50,10 @@
     "verify:responses": "node scripts/verify-response-workflow.js",
     "verify:notifications": "node scripts/verify-notifications.js",
     "test:notifications:integration": "node --test tests/integration/notifications.test.js",
-    "test:notifications:ui": "node --test tests/integration/notifications-ui.test.js"
+    "test:notifications:ui": "node --test tests/integration/notifications-ui.test.js",
+    "verify:dashboard": "node scripts/verify-dashboard.js",
+    "test:dashboard:integration": "node --test tests/integration/dashboard.test.js",
+    "test:dashboard:ui": "node --test tests/integration/dashboard-ui.test.js"
   },
   "engines": {
     "node": ">=20"

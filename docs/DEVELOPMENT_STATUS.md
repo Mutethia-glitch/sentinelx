@@ -38,7 +38,8 @@
 - Task 21: Complete — investigation workspace with linked evidence, affected entities, chronological timeline and append-only findings implemented; focused logic checks passed 4/4; Windows/PostgreSQL acceptance and migration verification passed on 2026-09-30
 - Task 22: Complete — controlled manual response history, failed/successful containment, live RBAC and atomic auditing implemented; focused staged tests passed 12/12 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 23: Complete — severity-aware in-app dispatch, private recipient inbox/read state, deduplication, atomic auditing and migration 014 implemented; isolated checks passed 18/18 and Windows/PostgreSQL acceptance verifier passed on 2026-09-30
-- Tasks 24–43: Not Started
+- Task 24: Verification Pending — authenticated read-only PostgreSQL dashboard for persisted event/alert/incident totals, severity/status/threat trends and response metrics with manual refresh, unit/API/PostgreSQL/browser verification; Windows gate pending
+- Tasks 25–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–23 are Complete. Task 23 provides explicit severity-aware in-app delivery from an incident or alert to an active recipient, private inbox/read-state, unread deduplication and atomic audit, without automatic incident/response changes or external email. Isolated checks passed 18/18 and the Windows/PostgreSQL `verify:notifications` acceptance verifier passed on 2026-09-30. Tasks 24–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–23 are Complete. Task 24 is implemented with a real-data, authenticated PostgreSQL dashboard snapshot, clear all-time/24-hour/UTC seven-day metric definitions, safe aggregate UI and manual refresh. Task 24 is Verification Pending until `verify:dashboard` passes on the user's Windows/PostgreSQL database. No new migration was needed. Tasks 25–43 remain Not Started. See SESSION_HANDOFF.md.

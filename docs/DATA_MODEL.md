@@ -208,3 +208,15 @@ Created_at is committed in-app delivery time, read_at is recipient acknowledgmen
 time; no speculative external delivery status exists. Concurrent sends are
 serialized by locking the active recipient row, then deduplicating any unread
 record for the same recipient and source. See [NOTIFICATIONS.md](NOTIFICATIONS.md).
+
+## Task 24 aggregate query layer
+
+Task 24 adds no schema migration. Its read-only Dashboard repository queries the
+existing `security_events.received_at`, `alerts.created_at`,
+`incidents.created_at`, severity/status/category snapshots, generated
+`incidents.risk_score`, and `response_actions.performed_at` / success flag.
+
+Metrics are recomputed from real persisted rows within a consistent PostgreSQL
+snapshot; no rollup, cache or synthetic metric table is stored. Missing severity
+and workflow status categories are returned as zero, while mean risk remains null
+for an empty incident table. See [DASHBOARD.md](DASHBOARD.md).

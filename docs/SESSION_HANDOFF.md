@@ -1,59 +1,67 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–23 are **Complete**. Task 23 (Notifications) passed its
-Windows/PostgreSQL `verify:notifications` acceptance gate on 2026-09-30.
-Task 24 (Dashboard) remains **Not Started**; begin it only when the user requests
-continuation.
+Tasks 01–23 are **Complete**. Task 24 (Dashboard) is implemented and
+**Verification Pending**. Do not begin Task 25 (Search and Filtering) before
+Task 24's Windows/PostgreSQL acceptance and the user's request.
 
-Task 23 implements explicit, authenticated IN_APP notification delivery.
-No email/SMTP provider or external service was configured, and notification
-delivery is not a substitute for investigation or incident response. Task 22's
-COMMUNICATION action is still only a historical manual record.
+Task 24 fulfills FR-032 using existing security event, alert, incident and
+response-action data. No new migration was required. Applied append-only,
+checksum-protected migrations 001–014 remain unchanged.
 
-Migration `014_notifications.sql` adds a nullable severity snapshot and
-recipient/state/severity index to the existing Task 01 notifications table.
-The verified local database includes the Task 23 schema. Migrations 001–014
-are now immutable under the append-only/checksum rule: do not edit them or
-expose actual credentials.
+Endpoint:
+- `GET /api/dashboard`; requires existing `dashboard.read` permission,
+  granted to Administrator, Security Analyst and Viewer/Management.
+- No parameters, mutation routes or general cross-record filters are introduced
+  (Task 25 owns search/filtering).
+- A single PostgreSQL REPEATABLE READ, READ ONLY transaction supplies all
+  aggregates from one snapshot, timestamped by `transaction_timestamp()`.
+- Errors roll back and return a generic unavailable message, not SQL/credentials.
 
-Approved permissions:
-- `notifications.read`: Administrator, Security Analyst, Viewer/Management.
-- `notifications.send`: Administrator and Security Analyst.
-- Regardless of role, each inbox and read operation is scoped to the
-  authenticated recipient; even an Administrator cannot read another inbox.
+Dashboard data:
+- All-time events/alerts/incidents, active incidents (NEW, INVESTIGATING,
+  CONTAINED), NEW alerts, recorded responses, reported successes/failures,
+  successful manually attested containment and mean generated incident risk.
+- Rolling 24-hour events by received_at, alerts/incidents by created_at,
+  responses by performed_at.
+- Separate alert/incident LOW/MEDIUM/HIGH/CRITICAL breakdowns and independent
+  approved alert/incident status buckets, zero-filled when absent.
+- Leading ten alert and incident taxonomy codes; null incident classification
+  is UNCLASSIFIED.
+- Response-action totals and reported outcomes by action.
+- Seven current/preceding UTC calendar-day buckets, where current UTC day is
+  partial. No forecasts or hard-coded decorative metrics.
+- Task 22 response succeeded flags remain human attestations, not independently
+  measured actions. Mean Task 20 risk is null when no incidents exist.
 
-Endpoints:
-- `GET /api/notifications?status=ALL&page=1`: recipient-only inbox,
-  unread count, 50-record pages, filters ALL/UNREAD/READ.
-- `POST /api/notifications`: exact body
-  `{recipientId,incidentId,alertId,reason}`; exactly one source is non-null,
-  recipient is an active SentinelX user and dispatch is explicitly authorized.
-- `PATCH /api/notifications/{id}/read`: exact `{}`; recipient-only,
-  idempotent read acknowledgment.
+`/dashboard` is an authenticated, responsive, read-only web console with a
+manual refresh button and safe text-rendered metric bars/tables. The existing
+console navigation exposes the dashboard. No external analytics API/key is used.
 
-At dispatch, the existing alert or incident provides an authoritative
-LOW/MEDIUM/HIGH/CRITICAL severity snapshot. Server-generated messages are
-generic and exclude raw incident/alert details, addresses, credentials and
-sender-provided text. Unread items display first, with CRITICAL/HIGH prioritized.
-The `/notifications` console provides private inbox/filtering, unread count,
-mark-as-read and authorized dispatch controls using safe text rendering.
+Unit/API tests, PostgreSQL acceptance verifier and optional browser integration
+are implemented. Task 24 must remain Verification Pending until the user runs:
 
-Recipient-row locking serializes concurrent dispatch. An existing unread item for
-the same recipient/source is returned with `deduplicated=true`, not delivered a
-second time. After that item is read, explicit redispatch is allowed. Delivery is
-claimed only after the transaction commits. `NOTIFICATION_DELIVERED` and
-`NOTIFICATION_READ` audit entries are atomic with their corresponding changes.
-Audit/storage failure rolls back changes and returns no false success receipt.
+```powershell
+git pull origin main
+npm.cmd run quality
+node scripts/migrate.js
+npm.cmd run verify:dashboard
+```
 
-Task 23 isolated model/service and transactional repository checks passed 18/18.
-Its Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+Expected verifier output:
 
-`Severity-aware in-app delivery, recipient isolation, duplicate suppression, read state, RBAC, auditing and atomic failure rollback verified. Synthetic changes cleaned up.`
+`Live dashboard totals, severity/status distributions, threat and UTC trends, recorded response outcomes, Viewer access, refresh accuracy and read-only rollback verified. Synthetic changes cleaned up.`
 
-No SMTP/email delivery, automatic containment or Task 24 dashboard behavior was
-introduced. PostgreSQL remains local on the user's Windows machine. Do not
-disclose or commit `.env` values.
+Optional explicit disposable-database checks:
 
-When work resumes, read this handoff, `docs/DEVELOPMENT_STATUS.md`, the repository
-working rules, `docs/NOTIFICATIONS.md`, and `tasks/24-dashboard.md`. Proceed
-numerically from Task 24 only when requested.
+```powershell
+$env:SENTINELX_TEST_DATABASE='1'
+npm.cmd run test:dashboard:integration
+npm.cmd run test:dashboard:ui
+```
+
+PostgreSQL remains local on the user's Windows computer. Do not expose real
+`.env` values, edit applied migrations, or claim tests passed before validation.
+See `docs/DASHBOARD.md`, `docs/DEVELOPMENT_STATUS.md` and
+`tasks/24-dashboard.md`.
+
+Task 25 Search and Filtering remains **Not Started**.

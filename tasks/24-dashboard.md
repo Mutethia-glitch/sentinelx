@@ -1,7 +1,7 @@
 # Task 24: Dashboard
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Build the security-operations dashboard using real SentinelX data for events, alerts, incidents, severity, threats, trends, and response metrics.
@@ -39,6 +39,13 @@ Complete the preceding tasks required by the sequence before implementing this t
 ## Acceptance Criteria
 Displayed metrics trace to real data and update correctly.
 
+Authenticated dashboard snapshots use PostgreSQL REPEATABLE READ READ ONLY.
+All-time totals, rolling 24-hour activity, severity/status distributions, leading
+threat categories, seven UTC calendar-day trends and recorded response outcomes
+are derived from existing security_events, alerts, incidents and response_actions.
+Refreshing after synthetic data changes updates the correct metrics without
+inventing demonstration figures or changing source records.
+
 ## Required Deliverables
 Dashboard.
 
@@ -50,6 +57,18 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Implemented `GET /api/dashboard` with live `dashboard.read` authorization and no arbitrary filters; all approved roles may view safe aggregate metrics.
+- Uses one PostgreSQL REPEATABLE READ READ ONLY transaction for a consistent snapshot.
+- `/dashboard` UI renders all-time totals, 24-hour activity, severity/status, top threat categories, response outcomes and seven UTC calendar days using textual counts and accessible proportional bars.
+- Manual refresh always re-reads database values; no decorative values, fake forecasts or cached simulated figures.
+- Missing severity/status buckets are zero-filled; average risk is null when no incidents exist.
+- Audit/status/response source records are not mutated by dashboard reads. SQL errors are sanitized and the read transaction is rolled back.
+- Task 24 adds no migration; preserve the applied append-only checksum chain 001–014.
+- Focused unit tests, PostgreSQL verifier and browser regression are implemented.
+- Windows/PostgreSQL `quality` plus `verify:dashboard` remains the acceptance gate.
+- Task 25 Search and Filtering remains Not Started. No external API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
