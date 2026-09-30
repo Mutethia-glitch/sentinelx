@@ -1,3 +1,1 @@
-@import url('/access/access.css');
-main{max-width:1000px}a{color:#203b5b}select,textarea{display:block;width:100%;padding:.65rem;margin-top:.35rem;font:inherit;border:1px solid #75899d;border-radius:.3rem;background:white;box-sizing:border-box}textarea{min-height:4rem;resize:vertical}
-.notification{border:1px solid #d6dfe8;border-radius:.3rem;padding:.9rem;margin:.7rem 0;overflow-wrap:anywhere}.notification p{margin:.35rem 0}.notification.urgent{border-left:5px solid #a42e2e}.notification.read{opacity:.76}.pagination{display:flex;gap:1rem;align-items:center}.notification button{margin-top:.4rem}
+#inbox-panel,#send-panel{min-width:0}.notification{position:relative}.notification.urgent::before{content:"Priority";display:inline-flex;margin-bottom:6px;color:var(--sx-critical);font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.notification button{margin-top:8px}

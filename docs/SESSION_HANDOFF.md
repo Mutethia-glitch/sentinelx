@@ -1,3 +1,24 @@
+# Task 37 checkpoint — 2026-09-30
+
+Task 37 is **Implemented — awaiting local acceptance**. Tasks 01–36 remain Complete; Task 38 has not started.
+
+The user approved a separate private Lovable prototype as the visual reference. SentinelX does not import Lovable's React/Tailwind implementation and the prototype is not connected to the SentinelX repository. The production code keeps the existing static HTML/CSS/JavaScript frontend, Node.js API layer and PostgreSQL data boundary.
+
+All seven consoles now use the shared `/ui/sentinelx-theme.css` design system and a consistent responsive application shell. Desktop uses a fixed-width SOC sidebar with permission-aware links; narrow screens convert it into a horizontally scrollable compact navigation bar. Page headers, panels, metric cards, filters, forms, tables, evidence/code areas, pagination, notifications, audit entries, findings and role-management cards use the same dark navy/slate system with restrained cyan accents. Exact severity/status values receive presentation-only semantic classes; CONTAINED and RESOLVED remain distinct.
+
+Task 36 security invariants are preserved: protected links are still hidden until `/api/access/me` grants them, backend RBAC remains authoritative, untrusted values still render through safe DOM/text operations, no Web Storage/token changes were added, and the restrictive CSP remains unchanged. The exact incident success behavior `message('Incident created.',false,true);` remains intact.
+
+Task 37 adds source-level regression coverage, a database-free Playwright desktop/390px responsive check, `verify:frontend-design`, and `test:frontend-design:ui`. No migration, package dependency, Supabase, backend feature, API behavior change, or Task 38 implementation was added.
+
+Windows acceptance still required:
+- `npm.cmd run quality`
+- `npm.cmd run verify:frontend-design`
+- `npm.cmd run test:frontend-design:ui`
+
+See `docs/FRONTEND_VISUAL_DESIGN.md` and `tasks/37-frontend-visual-design-and-polish.md`.
+
+---
+
 # Roadmap insertion — 2026-09-30
 
 After Task 36 acceptance, the user explicitly requested a dedicated frontend visual-design task before automated validation. Review of the remaining contracts confirmed that none of the existing Tasks 37–43 owned visual design/polish.

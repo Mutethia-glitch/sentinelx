@@ -4,13 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SentinelX · Access management</title>
-  <link rel="stylesheet" href="/access/access.css">
+  <link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/access/access.css">
   <script src="/ui/sentinelx-ui.js" defer></script><script src="/access/access.js" defer></script>
 </head>
-<body>
-  <main>
-    <header><p class="brand">SentinelX / IPHYN</p><h1>Access management</h1>
-      <p>Sign in to view your access. Administrators can assign approved roles.</p><nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a> <a href="/events" data-permission="events.read" hidden>Events</a> <a href="/alerts" data-permission="alerts.read" hidden>Alerts</a> <a href="/incidents" data-permission="incidents.read" hidden>Incidents</a> <a href="/notifications" data-permission="notifications.read" hidden>Notifications</a> <a href="/audit" data-permission="audit.read" hidden>Audit</a> <a href="/access">Access</a></nav></header>
+<body data-page="access"><div class="app-shell"><aside class="sidebar">
+<div class="brand-block"><p class="brand">SentinelX</p><p class="brand-subtitle">IPHYN Security Operations</p></div>
+<nav aria-label="SentinelX sections"><a href="/dashboard" data-permission="dashboard.read" hidden>Dashboard</a><a href="/events" data-permission="events.read" hidden>Events</a><a href="/alerts" data-permission="alerts.read" hidden>Alerts</a><a href="/incidents" data-permission="incidents.read" hidden>Incidents</a><a href="/notifications" data-permission="notifications.read" hidden>Notifications</a><a href="/audit" data-permission="audit.read" hidden>Audit</a><a href="/access">Access</a></nav>
+<p class="sidebar-note">Navigation reflects authenticated grants. Backend RBAC remains authoritative.</p>
+</aside><main class="app-main">
+    <header class="page-header"><p class="eyebrow">IPHYN Security Operations</p><h1>Access management</h1><p>Sign in to view your access. Administrators can assign approved roles.</p></header>
     <p id="message" role="status" aria-live="polite"></p>
     <section id="login-panel" aria-labelledby="login-heading">
       <h2 id="login-heading">Sign in</h2>
@@ -30,6 +32,4 @@
       <p>Role changes require a reason and sign the affected user out. At least one active Administrator must remain.</p>
       <div id="users"></div>
     </section>
-  </main>
-</body>
-</html>
+  </main></div></body></html>

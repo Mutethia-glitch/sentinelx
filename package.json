@@ -71,7 +71,9 @@
     "verify:external-integration": "node scripts/verify-external-integration.js",
     "verify:api-hardening": "node scripts/verify-api-hardening.js",
     "verify:frontend-security": "node scripts/verify-frontend-security.js",
-    "test:frontend-security:ui": "node --test tests/integration/frontend-security-ui.test.js"
+    "test:frontend-security:ui": "node --test tests/integration/frontend-security-ui.test.js",
+    "verify:frontend-design": "node scripts/verify-frontend-design.js",
+    "test:frontend-design:ui": "node --test tests/integration/frontend-design-ui.test.js"
   },
   "engines": {
     "node": ">=20"

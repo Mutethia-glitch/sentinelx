@@ -449,3 +449,10 @@ The limiter deliberately ignores caller-supplied forwarding headers. The current
 The seven operational consoles share `frontend/shared/sentinelx-ui.js` for live permission-aware navigation and common loading/error-state helpers. Permissioned links are hidden by default and only revealed from the authenticated access API; frontend visibility never becomes an authorization source.
 
 Operational API values remain safely rendered through DOM/text APIs, and browser storage is not used for credentials, session tokens, roles, permissions, or security records. The existing HttpOnly cookie and backend RBAC boundaries remain authoritative. See [FRONTEND_SECURITY_UX.md](FRONTEND_SECURITY_UX.md).
+
+
+## Task 37 presentation design layer
+
+Task 37 adds a shared native CSS presentation layer at `frontend/shared/sentinelx-theme.css` and a consistent semantic shell around the seven existing operational consoles. This is deliberately a presentation layer only: the Node.js API/application boundary, backend RBAC, HttpOnly session model, safe DOM rendering, PostgreSQL data-access boundary, deterministic detection foundation, and human-controlled response workflow are unchanged.
+
+A private Lovable prototype was used only to establish visual direction. No Lovable-generated React/Tailwind code, Supabase integration, frontend framework, database, authentication implementation, or external runtime dependency is part of SentinelX. See [FRONTEND_VISUAL_DESIGN.md](FRONTEND_VISUAL_DESIGN.md).

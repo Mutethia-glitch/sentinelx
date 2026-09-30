@@ -1,7 +1,7 @@
 # Task 37: Frontend Visual Design and Polish
 
 ## Status
-Not Started
+Implemented — awaiting local acceptance
 
 ## Objective
 Transform the existing secure SentinelX web interface from a functional/raw presentation into a cohesive, professional SOC-style interface with clear visual hierarchy, consistent components, responsive layouts, and accessible analyst workflows.
@@ -91,6 +91,16 @@ Do not mark this task complete until:
 - Existing functionality and security controls are not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Implementation Note — 2026-09-30
+
+The user approved a private Lovable mock-data prototype as the visual reference. The prototype itself is not connected to the SentinelX repository and its React/Tailwind stack is not imported. SentinelX keeps its existing static HTML/CSS/JavaScript frontend, Node.js backend and PostgreSQL architecture.
+
+Task 37 adds one shared native design system at `frontend/shared/sentinelx-theme.css`, a common responsive application shell across all seven consoles, presentation-only active-navigation and semantic severity/status decoration, and focused source/browser regression checks. The visual direction uses deep navy/slate surfaces, restrained cyan operational accents, professional cards/panels/tables/forms, contained technical evidence blocks, and distinct LOW/MEDIUM/HIGH/CRITICAL plus lifecycle treatments. CONTAINED and RESOLVED remain visually and semantically distinct.
+
+Task 35/36 security behavior remains authoritative and unchanged: permissioned navigation starts hidden, backend RBAC controls access, API values remain safely rendered, browser storage is not introduced, CSP remains restrictive, and the exact visible incident success call `message('Incident created.',false,true);` is preserved. No migration, Supabase, frontend framework, runtime dependency, backend feature, API change, authentication replacement, or Task 38 work was introduced.
+
+Local Windows quality, Task 37 verifier, and Task 37 browser acceptance remain pending. See `docs/FRONTEND_VISUAL_DESIGN.md`.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into Task 38 or later work. Do not redesign SentinelX's security architecture. Do not trade security correctness or analyst usability for decorative effects.**
