@@ -53,7 +53,7 @@ Do not mark this task complete until:
 
 ## Verification State
 - Migration 015 adds tactic metadata and durable partial core-rule mappings.
-- Eight core rules have documented technique/tactic context; seven broad rules remain intentionally unmapped.
+- Seven core rules have documented technique/tactic context; eight broad/underspecified rules remain intentionally unmapped.
 - Existing rule catalog/detail APIs expose structured tactic+technique mappings.
 - Incident investigation/report output references mappings through linked alert rules.
 - No claim of complete ATT&CK coverage or per-event technique proof is made.
