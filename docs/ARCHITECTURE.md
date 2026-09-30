@@ -328,3 +328,10 @@ failure is not silently ignored.
 
 Correlation preserves SecurityEvent, Alert and Incident as separate concepts and
 does not create incidents in Task 17. See [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
+
+
+## Task 18 runtime mapping
+
+The Incident service now sits after correlation as a distinct application/domain layer. Authorized incident managers create incidents from one or more existing alerts, preserving the alert records and links rather than merging them. Creation derives only an initial severity from linked alert severity; Task 19 owns later controlled classification/severity adjustment.
+
+The service enforces the Task 02 baseline lifecycle: NEW, INVESTIGATING, CONTAINED, RESOLVED and DISMISSED. Direct CONTAINED mutation is intentionally unavailable until Task 22 can prove a successful approved response action. Creation, assignment and allowed status transitions are audit-recorded transactionally. See [INCIDENT_MANAGEMENT.md](INCIDENT_MANAGEMENT.md).
