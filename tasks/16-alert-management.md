@@ -1,7 +1,7 @@
 # Task 16: Alert Management
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Build alert listing, details, filtering, status handling, and analyst workflows.
@@ -50,6 +50,17 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Alert listing, detail retrieval, filtering, source-event tracing, and the analyst console are implemented.
+- Task 16 alert statuses are NEW and ACKNOWLEDGED only.
+- Administrator/Security Analyst can acknowledge or reopen alerts with a reason; Viewer/Management is read-only.
+- Status changes re-check live alerts.manage permission transactionally and write ALERT_STATUS_CHANGED audit records.
+- Focused Task 15–16 regressions pass 7/7.
+- Append-only migration 009 implements the alert-management state fields and constraints.
+- Windows/PostgreSQL migration and `verify:alerts` acceptance gate remains required before this task may be marked Complete.
+- Task 17 correlation remains Not Started.
+- No external API or API key is required.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
