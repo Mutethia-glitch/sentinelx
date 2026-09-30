@@ -35,7 +35,10 @@
     "verify:correlation": "node scripts/verify-correlation.js",
     "test:incidents:integration": "node --test tests/integration/incidents.test.js",
     "test:incidents:ui": "node --test tests/integration/incidents-ui.test.js",
-    "verify:incidents": "node scripts/verify-incident-management.js"
+    "verify:incidents": "node scripts/verify-incident-management.js",
+    "test:incident-classification:integration": "node --test tests/integration/incident-classification.test.js",
+    "test:incident-classification:ui": "node --test tests/integration/incident-classification-ui.test.js",
+    "verify:incident-classification": "node scripts/verify-incident-classification.js"
   },
   "engines": {
     "node": ">=20"
