@@ -153,3 +153,17 @@ npm.cmd run test:notifications:ui
 
 No external email service, SMTP configuration or API key is introduced.
 Task 24 (Dashboard) remains Not Started until requested.
+
+## Completion
+
+Task 23 is **Complete**. Isolated model/service and transactional repository
+checks passed 18/18. The user-reported Windows/PostgreSQL acceptance verifier
+passed on 2026-09-30 with:
+
+`Severity-aware in-app delivery, recipient isolation, duplicate suppression, read state, RBAC, auditing and atomic failure rollback verified. Synthetic changes cleaned up.`
+
+Migration 014 is in the verified database schema. Preserve migrations 001–014
+under the existing append-only/checksum policy.
+
+Task 24 Dashboard remains separate and Not Started. No SMTP provider, external
+email integration or API key was required.
