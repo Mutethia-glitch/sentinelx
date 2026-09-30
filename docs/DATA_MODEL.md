@@ -179,3 +179,14 @@ incidents are backfilled from `incident_alerts → alert_events`.
 
 Formula version 1 does not add asset-impact, confidence, lifecycle, or taxonomy
 multipliers. See [RISK_SCORING.md](RISK_SCORING.md).
+
+
+## Task 21 investigation workspace
+
+Task 21 activates the existing `investigation_notes` table created by migration 001; no new migration is required.
+
+Each note belongs to one incident and one author, stores append-only content plus JSON evidence references, and retains its creation timestamp. The Task 21 repository accepts only alert/event references already linked to that incident.
+
+The investigation workspace derives affected entities and timeline entries from existing incident/alert/event/audit relationships rather than adding duplicate evidence tables.
+
+See [INVESTIGATION_WORKSPACE.md](INVESTIGATION_WORKSPACE.md).
