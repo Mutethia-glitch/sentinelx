@@ -9,7 +9,7 @@ Task 26 implements FR-033 using persisted SentinelX data only.
 
 Both require `reports.read`, which is available to the three approved reader roles.
 
-Supported query parameters are `from`, `to`, and `format`. Dates are inclusive ISO-8601 timestamps and ranges longer than 366 days are rejected. `format` is `json` or `csv`.
+The security summary accepts `from`, `to`, and `format`. Dates are inclusive ISO-8601 timestamps and ranges longer than 366 days are rejected. The single-incident report accepts only `format`. `format` is `json` or `csv`.
 
 ## Data integrity
 
