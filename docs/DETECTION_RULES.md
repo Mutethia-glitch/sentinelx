@@ -1,6 +1,6 @@
-# Configurable detection rules — Tasks 12–13
+# Configurable detection rules — Tasks 12–14
 
-Task 12 implements persistent declarative rule configuration and protected rule management APIs. Task 13 now executes enabled schema-v1 definitions deterministically against normalized ingested events and persists alerts when threshold/window/grouping criteria are met. Task 13 does not install the initial approved core rule set or claim detection coverage; that remains Task 14.
+Task 12 implements persistent declarative rule configuration and protected rule management APIs. Task 13 executes enabled schema-v1 definitions deterministically against normalized ingested events and persists alerts when threshold/window/grouping criteria are met. Task 14 now installs a conservative initial rule set covering all fifteen approved Task 11 taxonomy categories. The exact rule logic, severities, test scenarios and claim boundaries are documented in `INITIAL_DETECTION_RULES.md`.
 
 ## Candidate schema
 
@@ -103,8 +103,7 @@ wrap rules plus page/pageSize/hasMore. Validation returns
 
 ## Tests and Windows gate
 
-`npm run quality` covers 26 unit/API checks, including invalid expressions/fields,
-bounds, role rejection, validation and sanitized backend failures.
+`npm run quality` covers the rule model/API checks plus Task 13 detection regressions and Task 14's fifteen-category rule scenarios, including invalid expressions/fields, bounds, role rejection, validation and sanitized backend failures.
 `npm run test:rules:integration` requires a disposable database with
 `SENTINELX_TEST_DATABASE=1`. It verifies persisted definitions and mappings,
 create/edit/toggle, duplicate names, category/MITRE rejection, stale and concurrent
@@ -138,5 +137,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-rules.ps1 -Ex
 Use the existing Viewer/Management test account. Expected:
 `Viewer rule access and management rejection verified.` The policy override is
 process-local; credentials are prompted privately and the verifier logs out its
-own session. Both Windows/PostgreSQL 18.6 checks were confirmed on 2026-09-30. Task 12 is Complete.
-After completing Task 12, pause for the user's requested break before Task 13.
+own session. Both Task 12 Windows/PostgreSQL 18.6 checks were confirmed on 2026-09-30. Task 12 is Complete.
+
+## Task 14 initial rule set
+
+Append-only migration `007_initial_detection_rules.sql` installs one disabled core rule for each of the fifteen approved threat categories. The rules remain editable through the existing protected rule-management workflow after installation. The brute-force and credential-attack rules use the existing T1110 reference; other Task 14 rules intentionally omit MITRE mappings rather than guess ahead of Task 28.
+
+Task 14 test data lives in `fixtures/events/initial-rule-scenarios.json`. `tests/rules/initial-rules.test.js` verifies positive, below-threshold and non-match behavior for all fifteen categories. The read-only local database verifier is `npm.cmd run verify:initial-rules`. No external API or key is required.
