@@ -1,11 +1,10 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–13 are Complete. Task 14 (Initial Detection Rules) is implemented and is
-Verification Pending. Do not begin Task 15 until Task 14's Windows/PostgreSQL gate
-passes and Task 14 is explicitly marked Complete.
+Tasks 01–14 are Complete. Task 14 (Initial Detection Rules) passed its
+Windows/PostgreSQL acceptance gate on 2026-09-30. Task 15 (Alert Model) remains
+Not Started and must not begin until the user requests it.
 
-Task 14 now covers all fifteen approved Task 11 threat categories, including the
-eight taxonomy additions requested on 2026-09-30:
+Task 14 covers all fifteen approved Task 11 threat categories:
 
 - BRUTE_FORCE
 - CREDENTIAL_ATTACK
@@ -25,9 +24,9 @@ eight taxonomy additions requested on 2026-09-30:
 
 The version-controlled catalog is `src/rules/initial-rules.js`. Append-only
 migration `007_initial_detection_rules.sql` installs one rule per category.
-All fifteen rules are seeded disabled so the migration does not silently activate
-new production detection policy. Administrators/Security Analysts can enable them
-through the existing Task 12 protected rule-management workflow.
+All fifteen rules are seeded disabled so installation does not silently activate
+new production detection policy. Administrators/Security Analysts can review and
+enable them through the existing Task 12 protected rule-management workflow.
 
 The rules use only Task 12/13 schema-v1 fields/operators. Some rules express
 behavior directly (for example repeated failed logins); others require explicit
@@ -38,20 +37,11 @@ conditions documented in `docs/INITIAL_DETECTION_RULES.md`.
 
 Task 14 test data is in `fixtures/events/initial-rule-scenarios.json`.
 `tests/rules/initial-rules.test.js` checks positive, below-threshold and non-match
-outputs for every category. Local Task 14 automated checks passed 16/16 before
-repository update. `tests/integration/initial-rules.test.js` covers the seed in a
-disposable PostgreSQL database.
+outputs for every category. Local Task 14 automated checks passed 16/16.
+`tests/integration/initial-rules.test.js` covers the seed in a disposable
+PostgreSQL database.
 
-The local Windows/PostgreSQL acceptance gate is:
-
-```powershell
-git pull origin main
-npm.cmd run quality
-node scripts/migrate.js
-npm.cmd run verify:initial-rules
-```
-
-Expected final verifier output:
+Windows/PostgreSQL acceptance verification passed on 2026-09-30 with:
 
 `15 initial detection rules, all taxonomy categories, severities, logic, thresholds and expected outputs verified.`
 
@@ -63,9 +53,8 @@ private and never expose or commit `.env`. The application reads environment
 variables and does not automatically load `.env`.
 
 Migration files remain append-only and checksum tracked. Do not edit applied
-migrations 004/005/006/007 or bypass migration checksums after 007 is successfully
-applied.
+migrations 004/005/006/007 or bypass migration checksums.
 
-After the Task 14 Windows/PostgreSQL gate passes, update this file,
-`DEVELOPMENT_STATUS.md`, and `tasks/14-initial-detection-rules.md` to Complete.
-Then proceed only when the user requests Task 15.
+When work resumes, read repository instructions, this handoff,
+`docs/DEVELOPMENT_STATUS.md`, and `tasks/15-alert-model.md` before beginning.
+Proceed numerically from Task 15 only when requested.
