@@ -39,7 +39,8 @@
 - Task 22: Complete — controlled manual response history, failed/successful containment, live RBAC and atomic auditing implemented; focused staged tests passed 12/12 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 23: Complete — severity-aware in-app dispatch, private recipient inbox/read state, deduplication, atomic auditing and migration 014 implemented; isolated checks passed 18/18 and Windows/PostgreSQL acceptance verifier passed on 2026-09-30
 - Task 24: Complete — authenticated read-only PostgreSQL dashboard of persisted event/alert/incident totals, severity/status/threat trends and response metrics; isolated checks passed 14/14 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Tasks 25–43: Not Started
+- Task 25: Verification Pending — shared event/alert/incident filter validation, parameterized evidence-chain search, category/source/IP/user/host/rule/MITRE/date/status/severity filtering, existing UI controls, and Windows verifier implemented; acceptance gate pending
+- Tasks 26–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–24 are Complete. Task 24's real-data authenticated dashboard passed the Windows/PostgreSQL acceptance verifier on 2026-09-30. No new migration was required. Tasks 25–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–24 are Complete. Task 25 is implemented across the existing protected event/alert/incident listing APIs with one shared bounded validator and evidence-chain filters, preserving per-domain status and fields. Task 25 is Verification Pending until `verify:search` passes on the Windows/PostgreSQL environment. No new migration was needed. Tasks 26–43 remain Not Started. See SESSION_HANDOFF.md.

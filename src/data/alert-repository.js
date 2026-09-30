@@ -44,8 +44,21 @@ function alertRepository(pool) {
       if (filters.categoryCode) conditions.push(`a.category_code=${parameter(filters.categoryCode)}`);
       if (filters.source) conditions.push(`a.source=${parameter(filters.source)}`);
       if (filters.ruleId) conditions.push(`a.rule_id=${parameter(filters.ruleId)}::uuid`);
+      if (filters.mitreTechniqueId) {
+        const technique=parameter(filters.mitreTechniqueId);
+        conditions.push('EXISTS (SELECT 1 FROM rule_mitre_mappings rmm JOIN mitre_mappings m '+
+          'ON m.id=rmm.mapping_id WHERE rmm.rule_id=a.rule_id AND m.technique_id='+technique+')');
+      }
       if (filters.from) conditions.push(`a.created_at>=${parameter(filters.from)}::timestamptz`);
       if (filters.to) conditions.push(`a.created_at<=${parameter(filters.to)}::timestamptz`);
+      const entities=[];
+      for(const field of ['sourceIp','destinationIp','user','host']){
+        if(filters[field])entities.push("e.normalized_data->>'"+field+"'="+parameter(filters[field]));
+      }
+      if(entities.length){
+        conditions.push('EXISTS (SELECT 1 FROM alert_events ae JOIN security_events e ON e.id=ae.event_id '+
+          'WHERE ae.alert_id=a.id AND '+entities.join(' AND ')+')');
+      }
       if (filters.q) {
         const escaped = filters.q.replace(/[\\%_]/g, char => `\\${char}`);
         const pattern = parameter(`%${escaped}%`);

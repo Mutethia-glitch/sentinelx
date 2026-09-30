@@ -1,7 +1,7 @@
 # Task 25: Search and Filtering
 
 ## Status
-Not Started
+Verification Pending
 
 ## Objective
 Implement consistent filters across events, alerts, and incidents.
@@ -39,6 +39,11 @@ Complete the preceding tasks required by the sequence before implementing this t
 ## Acceptance Criteria
 Relevant date, severity, status, category, IP, user, host, rule, and MITRE filters work.
 
+The existing event/alert/incident list APIs share parameter names, input validation,
+parameterized SQL, and evidence-chain semantics. Existing domain-specific fields
+remain available. Reader roles can filter their authorized records; malformed
+filters return 400; linked evidence is matched without duplicate list rows.
+
 ## Required Deliverables
 Search/filter layer.
 
@@ -50,6 +55,17 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Verification State
+- Shared search parser validates common date, severity, status, category, source, IP, user, host, rule, MITRE, text and pagination parameters.
+- Event/alert/incident list repositories use parameterized EXISTS evidence joins; combinations match a consistent linked alert/event chain without row multiplication.
+- Existing event type/action, alert status, incident assignee and supported per-domain severities remain compatible.
+- Event category/rule/MITRE fields trace linked alert evidence; alert entity fields trace linked events; incident evidence fields trace linked alert/event chains.
+- The three existing console filter forms expose applicable fields.
+- Focused unit tests, PostgreSQL verifier and optional browser regression are implemented.
+- No migration needed; preserve 001–014.
+- Windows/PostgreSQL `quality` and `verify:search` are required before completion.
+- Task 26 Reporting remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

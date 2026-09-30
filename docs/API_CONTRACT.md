@@ -188,3 +188,22 @@ Missing status/severity categories are zero-filled; mean incident risk is null
 when there are no incidents. Query failures return sanitized 503.
 
 See [DASHBOARD.md](DASHBOARD.md). General cross-record filtering remains Task 25.
+
+## Task 25 consistent event/alert/incident filtering
+
+Existing protected list endpoints `GET /api/events`, `GET /api/alerts`, and
+`GET /api/incidents` now share the same bounded query keys and validation for:
+`q`, `from`, `to`, `severity`, `status`, `categoryCode`, `source`,
+`sourceIp`, `destinationIp`, `user`, `host`, `ruleId`,
+`mitreTechniqueId`, and `page`.
+
+Event-only `type`/`action`, incident-only `assignedTo`, and the approved
+per-domain status/severity rules remain available. `categoryCode=UNCLASSIFIED`
+is available only for null incident classification. Filter bounds are inclusive
+and use event occurrence time or alert/incident creation time.
+
+Linked rule/MITRE/entity searches are parameterized and use EXISTS, preserving
+one list item per record rather than multiplying results when linked evidence
+is present. Read RBAC, stable ordering and existing 50-row pages are unchanged.
+Invalid, unknown or duplicated filters return 400. See
+[SEARCH_FILTERING.md](SEARCH_FILTERING.md). Task 26 report filtering remains separate.

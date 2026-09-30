@@ -220,3 +220,15 @@ Metrics are recomputed from real persisted rows within a consistent PostgreSQL
 snapshot; no rollup, cache or synthetic metric table is stored. Missing severity
 and workflow status categories are returned as zero, while mean risk remains null
 for an empty incident table. See [DASHBOARD.md](DASHBOARD.md).
+
+## Task 25 evidence search relationships
+
+Task 25 uses existing indexed foreign-key evidence links rather than creating
+new search tables: security_events → alert_events → alerts → incident_alerts
+→ incidents, with detection_rules → rule_mitre_mappings → mitre_mappings.
+Shared normalized event entities are read from security_events.normalized_data,
+while incident classification/status and alert snapshots remain their authoritative
+domain fields. EXISTS matching prevents duplicate records in list pagination.
+No migration 015 is needed; applied migrations 001–014 remain checksum protected.
+
+See [SEARCH_FILTERING.md](SEARCH_FILTERING.md).

@@ -390,3 +390,16 @@ is introduced.
 The dashboard belongs to the presentation/report-query layer, not the detection
 engine. It never substitutes for individual alert/incident evidence, Task 25
 search/filtering, or Task 26 reports. See [DASHBOARD.md](DASHBOARD.md).
+
+## Task 25 shared protected search layer
+
+The event, alert and incident listing services retain their own live reader
+permissions while delegating query parameter parsing to the shared
+`src/search/filters.js` validator. Repository queries use bound parameters
+and EXISTS relationships through the existing alert_events, incident_alerts,
+rule_mitre_mappings and mitre_mappings tables. Multiple evidence constraints
+match one relevant linked alert/event chain; there is no global unauthenticated
+search route, denormalized copy, new migration or external indexing provider.
+
+See [SEARCH_FILTERING.md](SEARCH_FILTERING.md). Task 26 remains responsible for
+report generation and exports.

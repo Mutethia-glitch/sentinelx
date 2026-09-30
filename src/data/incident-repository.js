@@ -89,11 +89,25 @@ function incidentRepository(pool) {
       const add = value => { values.push(value); return '$' + values.length; };
       if (filters.status) conditions.push(`i.status=${add(filters.status)}::incident_status`);
       if (filters.severity) conditions.push(`i.threat_level=${add(filters.severity)}::threat_level`);
-      if (filters.categoryCode) conditions.push(`i.category_code=${add(filters.categoryCode)}`);
+      if(filters.categoryCode==='UNCLASSIFIED')conditions.push('i.category_code IS NULL');
+      else if(filters.categoryCode)conditions.push('i.category_code='+add(filters.categoryCode));
       if (filters.assignedTo === 'UNASSIGNED') conditions.push('i.assigned_to IS NULL');
       else if (filters.assignedTo) conditions.push(`i.assigned_to=${add(filters.assignedTo)}::uuid`);
       if (filters.from) conditions.push(`i.created_at>=${add(filters.from)}::timestamptz`);
       if (filters.to) conditions.push(`i.created_at<=${add(filters.to)}::timestamptz`);
+      const evidence=[];
+      if(filters.source)evidence.push('a.source='+add(filters.source));
+      if(filters.ruleId)evidence.push('a.rule_id='+add(filters.ruleId)+'::uuid');
+      if(filters.mitreTechniqueId)evidence.push(
+        'EXISTS (SELECT 1 FROM rule_mitre_mappings rmm JOIN mitre_mappings m ON m.id=rmm.mapping_id '+
+        'WHERE rmm.rule_id=a.rule_id AND m.technique_id='+add(filters.mitreTechniqueId)+')');
+      for(const field of ['sourceIp','destinationIp','user','host']){
+        if(filters[field])evidence.push("e.normalized_data->>'"+field+"'="+add(filters[field]));
+      }
+      if(evidence.length)conditions.push(
+        'EXISTS (SELECT 1 FROM incident_alerts ia JOIN alerts a ON a.id=ia.alert_id '+
+        'JOIN alert_events ae ON ae.alert_id=a.id JOIN security_events e ON e.id=ae.event_id '+
+        'WHERE ia.incident_id=i.id AND '+evidence.join(' AND ')+')');
       if (filters.q) {
         const escaped = filters.q.replace(/[\\%_]/g, char => `\\${char}`), pattern = add(`%${escaped}%`);
         conditions.push(`(i.title ILIKE ${pattern} ESCAPE '\\' OR i.description ILIKE ${pattern} ESCAPE '\\' OR coalesce(i.category_code,'') ILIKE ${pattern} ESCAPE '\\' OR coalesce(u.display_name,'') ILIKE ${pattern} ESCAPE '\\')`);

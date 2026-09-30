@@ -14,7 +14,7 @@
 <label>Severity<select name="severity"><option value="">All severities</option><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label>
 <label>Threat category<input name="categoryCode" maxlength="100" placeholder="BRUTE_FORCE"></label>
 <label>Source<input name="source" maxlength="500"></label>
-<label>Rule ID<input name="ruleId" maxlength="36"></label>
+<label>Rule ID<input name="ruleId" maxlength="36"></label><label>MITRE technique<input name="mitreTechniqueId" maxlength="9" placeholder="T1110.001"></label><label>Source IP<input name="sourceIp" maxlength="45"></label><label>Destination IP<input name="destinationIp" maxlength="45"></label><label>User<input name="user" maxlength="500"></label><label>Host<input name="host" maxlength="500"></label>
 <label>From (local time)<input name="from" type="datetime-local" step="1"></label>
 <label>To (local time)<input name="to" type="datetime-local" step="1"></label>
 </div><button type="submit">Apply filters</button> <button id="clear" type="button">Clear filters</button></form>

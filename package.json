@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -53,7 +53,10 @@
     "test:notifications:ui": "node --test tests/integration/notifications-ui.test.js",
     "verify:dashboard": "node scripts/verify-dashboard.js",
     "test:dashboard:integration": "node --test tests/integration/dashboard.test.js",
-    "test:dashboard:ui": "node --test tests/integration/dashboard-ui.test.js"
+    "test:dashboard:ui": "node --test tests/integration/dashboard-ui.test.js",
+    "verify:search": "node scripts/verify-search.js",
+    "test:search:integration": "node --test tests/integration/search.test.js",
+    "test:search:ui": "node --test tests/integration/search-ui.test.js"
   },
   "engines": {
     "node": ">=20"
