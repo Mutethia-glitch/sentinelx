@@ -43,8 +43,8 @@
 - Task 26: Complete — stored-data security summaries and incident reports with JSON/CSV export, date-range validation and read-only generation; Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 27: Complete — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC; Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 28: Verification Pending — migration 015 applied; Task 28 acceptance initially failed because the synthetic verifier fixture omitted the Rules service. Fixture corrected; rerun verify:mitre.
-- Task 29: Verification Pending — deterministic 80-record synthetic research dataset committed; Windows checkout line-ending comparison corrected and added to normal quality regression; rerun verify:dataset.
+- Task 29: Complete — deterministic 80-record synthetic research dataset, documented provenance/privacy/labels and cross-platform reproducibility verified; Windows `verify:dataset` acceptance passed on 2026-09-30.
 - Tasks 30–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–27 are Complete. The Windows quality suite passed 137/137 and migration 015 was applied on 2026-09-30. Reporting and Audit Trail acceptance verifiers both passed. Tasks 28–29 remain Verification Pending after targeted verifier fixes; rerun `verify:mitre` and `verify:dataset` against the updated branch. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–27 and Task 29 are Complete. The earlier Windows quality suite passed 137/137, migration 015 applied successfully, and Tasks 26–27 passed their PostgreSQL acceptance verifiers. Task 29's corrected Windows `verify:dataset` acceptance also passed on 2026-09-30. Task 28 remains Verification Pending; rerun `verify:mitre` against the updated branch. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
