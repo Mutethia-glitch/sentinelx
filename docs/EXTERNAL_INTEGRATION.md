@@ -73,3 +73,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Task 34 external integration verification fail
 ```
 
 The verifier uses synthetic data and a stubbed HTTPS receiver; it does not require PostgreSQL, an external SIEM, a real webhook URL, or credentials.
+
+
+## Acceptance — 2026-09-30
+
+Windows local acceptance passed. `npm.cmd run verify:external-integration` verified the optional HTTPS webhook contract, minimal event export, disabled/unavailable states, and safe core degradation. The full quality suite passed 171/171. Task 34 is Complete.

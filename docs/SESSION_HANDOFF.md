@@ -1,12 +1,12 @@
 # Task 34 checkpoint — 2026-09-30
 
-Task 34 is **Implemented — awaiting local acceptance**. Tasks 01–33 remain Complete; Task 35 has not started.
+Task 34 is **Complete**, accepted on Windows on 2026-09-30. Tasks 01–33 remain Complete; Task 35 has not started.
 
 Implemented one optional vendor-neutral outbound HTTPS webhook boundary in `src/integrations/webhook.js`. It is disabled by default and uses only environment configuration. When enabled, it sends a versioned minimal normalized event snapshot after the core event/detection transaction has committed. Raw event evidence and metadata are not exported. HTTPS is required, redirects are rejected, the bearer token is never returned/logged, and delivery uses a bounded 100–5000 ms timeout (2000 ms default).
 
 External delivery is best effort. Invalid configuration, network/timeout errors, redirect, non-2xx responses, and unexpected adapter failures degrade to `unavailable`; none can roll back event persistence, detection, alerts, correlation, or ingestion audit. No commercial SIEM dependency, inbound external-auth scheme, new migration, database table, package, retry queue, response automation, or frontend feature was added.
 
-Available-runtime validation before publication: focused Task 34 reconstruction tests passed 4/4 and `verify:external-integration` passed using synthetic data with a stubbed HTTPS receiver. Run `npm.cmd run quality` and `npm.cmd run verify:external-integration` on Windows before marking Task 34 Complete. Do not start Task 35 until Task 34 local acceptance is supplied.
+Available-runtime validation before publication: focused Task 34 reconstruction tests passed 4/4 and `verify:external-integration` passed using synthetic data with a stubbed HTTPS receiver. Windows acceptance then passed: `verify:external-integration` succeeded and the full quality suite passed 171/171. Task 34 is Complete. Do not start Task 35 without explicit instruction.
 
 See `docs/EXTERNAL_INTEGRATION.md` and `tasks/34-external-integration-boundary.md`.
 
