@@ -35,8 +35,8 @@
 - Task 18: Complete — incident creation from linked alerts, assignment, authoritative lifecycle, terminal notes and migration 011 implemented; focused Task 18 tests passed 10/10 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 19: Complete — controlled fifteen-taxonomy incident classification and LOW/MEDIUM/HIGH/CRITICAL severity adjustment implemented with assessment attribution; focused Task 19 tests passed 5/5 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 20: Complete — deterministic 0–100 severity/evidence-event risk formula, generated PostgreSQL score and migration 013 implemented; pure formula tests passed 4/4 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Task 21: Verification Pending — incident investigation API/workspace, linked evidence, affected entities, chronological timeline, append-only analyst findings, RBAC/audit rollback and PostgreSQL/browser verifiers implemented; focused logic checks pass 4/4; Windows/PostgreSQL gate pending
+- Task 21: Complete — investigation workspace with linked evidence, affected entities, chronological timeline and append-only findings implemented; focused logic checks passed 4/4; Windows/PostgreSQL acceptance and migration verification passed on 2026-09-30
 - Tasks 22–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–20 are Complete. Task 21 is implemented with linked alert/event evidence, affected-entity aggregation, chronological investigation history, append-only findings, read/write RBAC, and atomic auditing. Focused Task 21 logic checks passed 4/4. Task 21 remains Verification Pending until `verify:investigations` passes on the user's Windows/PostgreSQL database. Tasks 22–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–21 are Complete. Task 21 provides linked alert/event evidence, affected-entity aggregation, chronological investigation history, append-only findings, read/write RBAC, and atomic auditing. Focused Task 21 logic checks passed 4/4; Windows/PostgreSQL acceptance and `node scripts/migrate.js` verification passed on 2026-09-30. Tasks 22–43 remain Not Started. See SESSION_HANDOFF.md.
