@@ -1,62 +1,56 @@
 # SentinelX continuation checkpoint
 
-Tasks 01–21 are Complete. Task 22 (Response Workflow) is implemented and is
-Verification Pending. Task 23 (Notifications) remains Not Started; do not begin it
-until Task 22 is accepted and the user requests continuation.
+Tasks 01–22 are Complete. Task 22 (Response Workflow) passed the
+Windows/PostgreSQL `verify:responses` acceptance gate on 2026-09-30.
+Task 23 (Notifications) remains Not Started and must not begin until requested.
 
-Task 22 reuses `response_actions` from Task 01 migration 001 and existing Task 18
-incident assignment/terminal status + Task 21 investigation-note workflows. No new
-migration is required. Migrations 001–013 remain applied and immutable.
+Task 22 reuses `response_actions` from Task 01 migration 001, along with
+Task 18 assignment/terminal status and Task 21 investigation notes.
+No Task 22 migration was necessary. Applied migrations 001–013 remain
+append-only/checksum tracked; do not edit them or expose credentials.
 
-Approved manual record types: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK, COMMUNICATION.
-These are not external execution commands. COMMUNICATION records a report of past
-external communication but does not send notifications. Task 23 owns notification
-delivery. No destructive host/account/network action is performed.
+Approved manual record types: CONTAINMENT, ESCALATION, FOLLOW_UP_TASK,
+COMMUNICATION. These records do not execute external host/account/network
+operations. A COMMUNICATION action records something manually reported as
+communicated; it does not send a notification. Task 23 owns in-app notifications
+and any approved delivery implementation.
 
 API:
-- `GET /api/responses/{incidentId}?page=1`, requires responses.read, pages of 50.
-- `POST /api/responses/{incidentId}/actions`, requires responses.execute.
-- Exact write body: `{action,reason,details,succeeded,containmentPerformed}`.
-- Reason 1–500, reported outcome details 1–2000, strict booleans, exact fields.
-- containmentPerformed must equal (action === 'CONTAINMENT' && succeeded).
+- `GET /api/responses/{incidentId}?page=1` requires `responses.read`;
+  50 results per page.
+- `POST /api/responses/{incidentId}/actions` requires `responses.execute`.
+- Exact body: `{action,reason,details,succeeded,containmentPerformed}`.
+  Reason 1–500 characters and result details 1–2000 characters.
+  `containmentPerformed` must equal
+  `(action === 'CONTAINMENT' && succeeded)`.
 
-The response repository locks the incident and rechecks the actor's active live
-roles inside the transaction. Every response record is append-only, storing actor,
-action, reason, reported result, success flag and database recording timestamp.
-Material actions write RESPONSE_ACTION_RECORDED into the incident audit trail.
+Writes recheck the active actor and live RBAC inside the PostgreSQL transaction,
+lock the incident, and append the response record with actor, time, reason,
+reported result and outcome. `RESPONSE_ACTION_RECORDED` audit persistence is
+atomic.
 
-A failed manually reported containment remains logged but leaves status unchanged.
-An authorized actor may attest successful external containment on a NEW or
-INVESTIGATING incident, writing response action + CONTAINED status + both audit
-entries in one transaction. Audit failures roll back everything. Duplicate
-successful containment and response actions on RESOLVED/DISMISSED are rejected.
+Failed manually reported containment is recorded but does not change status.
+Successful explicitly attested external manual containment moves an incident from
+NEW/INVESTIGATING to CONTAINED in the same transaction as response insertion and
+both audit entries. Audit failure rolls everything back. A duplicate successful
+containment is rejected; terminal RESOLVED/DISMISSED incidents reject new response
+actions. Direct CONTAINED mutation through the incident status API remains blocked.
+CONTAINED never means RESOLVED, and never changes severity/risk or adds a terminal
+note.
 
-CONTAINED does not mean RESOLVED, does not change severity/risk, and does not
-populate a resolution note. The Task 18 direct status API still rejects CONTAINED.
-Terminal resolution/dismissal continues through Task 18 with a required note.
+The incident inspection UI shows paginated response history to readers and the
+manual response recording form only to `responses.execute` roles.
+The investigation timeline includes response and status audit history.
+All response details use safe text rendering.
 
-The incident inspection UI shows paginated response history to readers and a
-manual record form only to responses.execute roles. Investigation timeline includes
-RESPONSE_ACTION_RECORDED and INCIDENT_STATUS_CHANGED audit entries. All displayed
-response strings use textContent.
+Focused staged Task 22 backend/API tests passed 12/12. The
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
 
-Locally staged Task 22 backend/API checks passed 12/12. A PostgreSQL verifier
-and Chromium browser integration were added. Full Windows acceptance remains:
-
-```powershell
-git pull origin main
-npm.cmd run quality
-node scripts/migrate.js
-npm.cmd run verify:responses
-```
-
-Expected output:
 `Controlled manual response recording, failed/successful containment, incident history, RBAC, terminal protection and atomic audit rollback verified. Synthetic changes cleaned up.`
 
-Use an explicitly disposable database for optional `test:responses:integration`
-and `test:responses:ui` with `SENTINELX_TEST_DATABASE=1`.
+PostgreSQL remains local on the user's Windows computer. No external API key was
+required. Do not print or commit actual `.env` values or database credentials.
 
-PostgreSQL remains local on the user's Windows computer. No external API key is
-required. Never expose or commit real credentials or edit applied migrations.
-
-Task 23 (Notifications) remains Not Started.
+On resumption, read repository instructions, this handoff,
+`docs/DEVELOPMENT_STATUS.md`, and `tasks/23-notifications.md`.
+Begin Task 23 only when requested.
