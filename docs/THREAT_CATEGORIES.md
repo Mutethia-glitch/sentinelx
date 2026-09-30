@@ -2,10 +2,11 @@
 
 The original seven categories come from the approved families named in Task 14.
 At the user's request on 2026-09-30, eight business-relevant categories were added
-to bring the catalog to fifteen. They are
-classification choices for future rules/incidents, not implemented detection
-claims. Task 11 adds no detection logic, alerts, rule-management workflow or
-incident-management workflow. Severity and incident status remain independent.
+to bring the catalog to fifteen. Task 11 itself remains a classification layer and
+does not make detection claims from category labels alone. Task 14 now installs one
+explicit, tested core rule for each of all fifteen categories; the rule conditions,
+not the taxonomy label, define what SentinelX actually detects. Severity and
+incident status remain independent.
 
 | Stable code | Default label |
 |---|---|
@@ -39,7 +40,7 @@ which does not enable any detection rule.
 
 `detection_rules.category_code` and `incidents.category_code` reference the same
 catalog, with RESTRICT deletion/key updates and indexes. Existing records keep
-null (unknown) classifications instead of guessed backfills. Future rule/incident
+null (unknown) classifications instead of guessed backfills. Rule and incident
 services must validate required selection according to their own task contracts.
 The current migration preserves previous fixtures and unknown historical records.
 
@@ -125,5 +126,8 @@ application-layer attacks. Insider and supply-chain categories describe context
 and may overlap with attack mechanisms. Choose the most evidence-supported
 primary category for a rule/incident; record additional context in the future
 investigation workflow. Never infer malicious activity merely from a category label.
-The original Task 14 core rule scope remains unchanged; added classifications
-do not expand implemented detection coverage or require live monitoring.
+Task 14 now includes the eight added categories in the initial core-rule set.
+Several of those rules intentionally require explicit normalized classifications
+such as `type=malware`, `type=ransomware`, `type=insider_threat` or
+`type=supply_chain_compromise`; SentinelX does not infer those meanings from
+unrelated telemetry. See `INITIAL_DETECTION_RULES.md` for the exact tested logic.
