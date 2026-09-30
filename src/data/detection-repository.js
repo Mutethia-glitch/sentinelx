@@ -1,3 +1,5 @@
+const { createHash } = require('node:crypto');
+
 class DetectionPersistenceError extends Error {
   constructor() { super('Detection persistence unavailable.'); this.name = 'DetectionPersistenceError'; }
 }
@@ -7,6 +9,13 @@ const FIELD_SQL = Object.freeze({
   host: "normalized_data->>'host'", action: "normalized_data->>'action'",
   status: "normalized_data->>'status'", severity: "normalized_data->>'severity'",
 });
+function deterministicAlertId(ruleId, triggerEventId) {
+  const bytes = createHash('sha256').update(`sentinelx:detection-alert:${ruleId}:${triggerEventId}`).digest().subarray(0, 16);
+  bytes[6] = (bytes[6] & 0x0f) | 0x50;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = bytes.toString('hex');
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
 function detectionRepository(pool) {
   async function enabledRules(db = pool) {
     try {
@@ -45,17 +54,13 @@ function detectionRepository(pool) {
     } catch (error) { if (error instanceof DetectionPersistenceError) throw error; throw new DetectionPersistenceError(); }
   }
   async function insertAlert(client, rule, events, evidence) {
-    const trigger = evidence.triggerEventId;
-    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [rule.id + ':' + trigger]);
-    const duplicate = await client.query(`SELECT id FROM alerts
-      WHERE rule_id=$1 AND match_evidence->>'triggerEventId'=$2
-      LIMIT 1 FOR UPDATE`, [rule.id, trigger]);
-    if (duplicate.rows.length) return null;
+    const id = deterministicAlertId(rule.id, evidence.triggerEventId);
     const reason = `${rule.name} matched ${events.length} event(s) within ${evidence.windowSeconds} seconds.`;
-    const created = await client.query(`INSERT INTO alerts(rule_id, threat_level, match_reason, match_evidence)
-      VALUES ($1,$2,$3,$4::jsonb) RETURNING id, created_at`,
-    [rule.id, rule.severity, reason, JSON.stringify({ categoryCode: rule.categoryCode, ...evidence, eventIds: events.map(item => item.id) })]);
+    const created = await client.query(`INSERT INTO alerts(id, rule_id, threat_level, match_reason, match_evidence)
+      VALUES ($1,$2,$3,$4,$5::jsonb) ON CONFLICT (id) DO NOTHING RETURNING id, created_at`,
+    [id, rule.id, rule.severity, reason, JSON.stringify({ categoryCode: rule.categoryCode, ...evidence, eventIds: events.map(item => item.id) })]);
     const alert = created.rows[0];
+    if (!alert) return null;
     for (const item of events) await client.query('INSERT INTO alert_events(alert_id,event_id) VALUES ($1,$2)', [alert.id, item.id]);
     return { id: alert.id, ruleId: rule.id, severity: rule.severity, eventIds: events.map(item => item.id), createdAt: alert.created_at.toISOString() };
   }
@@ -77,4 +82,4 @@ function detectionRepository(pool) {
   }
   return { enabledRules, matchingEvents, createAlert };
 }
-module.exports = { detectionRepository, DetectionPersistenceError };
+module.exports = { detectionRepository, deterministicAlertId, DetectionPersistenceError };
