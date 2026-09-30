@@ -66,3 +66,13 @@ Expected:
 
 Task 29 adds no database migration. Task 30 ML Feature Engineering remains
 Not Started.
+
+## Completion
+
+Task 29 is **Complete**. After the cross-platform JSONL comparison fix, the
+user-reported Windows acceptance verifier passed on 2026-09-30:
+
+`Controlled synthetic dataset schema, provenance, labels, privacy constraints and deterministic reproduction verified.`
+
+This completes dataset preparation only; it does not demonstrate real-world
+model accuracy or begin Task 30 feature engineering.
