@@ -40,11 +40,11 @@
 - Task 23: Complete — severity-aware in-app dispatch, private recipient inbox/read state, deduplication, atomic auditing and migration 014 implemented; isolated checks passed 18/18 and Windows/PostgreSQL acceptance verifier passed on 2026-09-30
 - Task 24: Complete — authenticated read-only PostgreSQL dashboard of persisted event/alert/incident totals, severity/status/threat trends and response metrics; isolated checks passed 14/14 and Windows/PostgreSQL verifier passed on 2026-09-30
 - Task 25: Complete — consistent event/alert/incident filtering with parameterized evidence-chain search, validated date/severity/status/category/IP/user/host/rule/MITRE filters, RBAC and pagination; isolated checks passed 15/15 and Windows/PostgreSQL verifier passed on 2026-09-30
-- Task 26: Verification Pending — stored-data security summary and incident reports with JSON/CSV export, date-range validation and read-only PostgreSQL verification implemented
-- Task 27: Verification Pending — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC verifier implemented
-- Task 28: Verification Pending — migration 015 tactic metadata, documented partial core-rule ATT&CK mappings, enriched rule catalog and incident-context propagation implemented
-- Task 29: Verification Pending — deterministic privacy-safe synthetic anomaly research dataset, manifest, provenance/limitations documentation and reproducibility verifier implemented
+- Task 26: Complete — stored-data security summaries and incident reports with JSON/CSV export, date-range validation and read-only generation; Windows/PostgreSQL verifier passed on 2026-09-30
+- Task 27: Complete — protected read-only audit retrieval/API/UI with actor/action/resource/date filtering and RBAC; Windows/PostgreSQL verifier passed on 2026-09-30
+- Task 28: Verification Pending — migration 015 applied; Task 28 acceptance initially failed because the synthetic verifier fixture omitted the Rules service. Fixture corrected; rerun verify:mitre.
+- Task 29: Verification Pending — deterministic 80-record synthetic research dataset committed; Windows checkout line-ending comparison corrected and added to normal quality regression; rerun verify:dataset.
 - Tasks 30–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–25 are Complete. Tasks 26–29 are implemented and Verification Pending. Task 28 introduces migration 015; Tasks 26, 27 and 29 add no migrations. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–27 are Complete. The Windows quality suite passed 137/137 and migration 015 was applied on 2026-09-30. Reporting and Audit Trail acceptance verifiers both passed. Tasks 28–29 remain Verification Pending after targeted verifier fixes; rerun `verify:mitre` and `verify:dataset` against the updated branch. Tasks 30–43 remain Not Started. See SESSION_HANDOFF.md.
