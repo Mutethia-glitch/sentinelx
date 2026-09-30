@@ -45,7 +45,12 @@
 - Task 28: Complete — migration 015 applied, documented seven-rule partial ATT&CK technique/tactic mappings and incident-context propagation verified; corrected Windows/PostgreSQL `verify:mitre` acceptance passed on 2026-09-30.
 - Task 29: Complete — deterministic 80-record synthetic research dataset, documented provenance/privacy/labels and cross-platform reproducibility verified; Windows `verify:dataset` acceptance passed on 2026-09-30.
 - Task 30: Complete — Windows dataset/feature acceptance passed on 2026-09-30; reproducible research feature pipeline, tests and read-only Windows verifier added. Full quality suite 149/149, dataset/feature verifiers and simulated CRLF verification passed.
-- Tasks 31–43: Not Started
+- Task 31: Implemented — awaiting local acceptance; learned baseline anomaly service and safe failure behavior.
+- Task 32: Implemented — awaiting local acceptance; reproducible held-out synthetic evaluation.
+- Tasks 33–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–29 are Complete. Review fixes subsequently passed 142 quality tests and 36 PostgreSQL/browser integration checks; Windows correlation/concurrency/reporting checks and manual incident creation were accepted. The visible green incident success banner is retained. Task 30 is Complete following user-reported Windows dataset and feature verification; Tasks 31–43 remain Not Started. Migrations 001–015 remain immutable/checksum protected. See SESSION_HANDOFF.md and ML_FEATURE_ENGINEERING.md.
+Tasks 01–29 are Complete. Review fixes subsequently passed 142 quality tests and 36 PostgreSQL/browser integration checks; Windows correlation/concurrency/reporting checks and manual incident creation were accepted. The visible green incident success banner is retained. Task 30 is Complete following user-reported Windows dataset and feature verification; Tasks 31–32 are implemented and await local acceptance; Tasks 33–43 remain Not Started. Migrations 001–015 remain immutable/checksum protected. See SESSION_HANDOFF.md and ML_FEATURE_ENGINEERING.md.
+
+Tasks 31–32 validation: full quality suite 161/161 passed; model and evaluation
+verifiers passed. See ML_ANOMALY_DETECTION.md and ML_EVALUATION.md.

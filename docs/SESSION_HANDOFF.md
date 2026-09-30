@@ -1,3 +1,21 @@
+# Tasks 31–32 checkpoint — 2026-09-30
+
+Tasks 31–32 are **Implemented — awaiting local acceptance**. The user authorized
+both tasks as a batch. Implemented Task 31 first, then evaluated it for Task 32.
+Tasks 01–30 remain Complete; Tasks 33–43 remain Not Started.
+
+Task 31 adds a learned standardized baseline-distance model and safe in-memory
+service. Task 32 adds a fixed chronological train/calibration/test experiment,
+computed confusion metrics and checked-in reproducible report. Test counts:
+TP 12, TN 10, FP 0, FN 8. Synthetic-only results; all six transfer examples missed.
+Read docs/ML_ANOMALY_DETECTION.md and docs/ML_EVALUATION.md. No external API,
+new dependency, production integration, migration or credential access is needed.
+Full quality suite 161/161 passed; model and evaluation verifiers passed.
+
+Windows acceptance: npm.cmd run quality; npm.cmd run verify:ml:model;
+npm.cmd run verify:ml:evaluation. Await user results before completing either task.
+Task 33 has not started. Earlier checkpoints below are historical.
+
 # SentinelX continuation checkpoint — 2026-09-30
 
 ## Current Task 30 checkpoint

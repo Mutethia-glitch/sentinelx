@@ -1,0 +1,476 @@
+{
+  "evaluationVersion": "1.0.0",
+  "datasetId": "sentinelx-task29-synthetic-v1",
+  "datasetSha256": "99e923adcde0a56cc19ea953c60a0c0a7a1f796191d910d0270057ec7d95c766",
+  "split": {
+    "training": {
+      "count": 40,
+      "recordIds": [
+        "SX-ML-0001",
+        "SX-ML-0002",
+        "SX-ML-0003",
+        "SX-ML-0004",
+        "SX-ML-0005",
+        "SX-ML-0006",
+        "SX-ML-0007",
+        "SX-ML-0008",
+        "SX-ML-0009",
+        "SX-ML-0010",
+        "SX-ML-0011",
+        "SX-ML-0012",
+        "SX-ML-0013",
+        "SX-ML-0014",
+        "SX-ML-0015",
+        "SX-ML-0016",
+        "SX-ML-0017",
+        "SX-ML-0018",
+        "SX-ML-0019",
+        "SX-ML-0020",
+        "SX-ML-0021",
+        "SX-ML-0022",
+        "SX-ML-0023",
+        "SX-ML-0024",
+        "SX-ML-0025",
+        "SX-ML-0026",
+        "SX-ML-0027",
+        "SX-ML-0028",
+        "SX-ML-0029",
+        "SX-ML-0030",
+        "SX-ML-0031",
+        "SX-ML-0032",
+        "SX-ML-0033",
+        "SX-ML-0034",
+        "SX-ML-0035",
+        "SX-ML-0036",
+        "SX-ML-0037",
+        "SX-ML-0038",
+        "SX-ML-0039",
+        "SX-ML-0040"
+      ]
+    },
+    "calibration": {
+      "count": 10,
+      "recordIds": [
+        "SX-ML-0041",
+        "SX-ML-0042",
+        "SX-ML-0043",
+        "SX-ML-0044",
+        "SX-ML-0045",
+        "SX-ML-0046",
+        "SX-ML-0047",
+        "SX-ML-0048",
+        "SX-ML-0049",
+        "SX-ML-0050"
+      ]
+    },
+    "test": {
+      "count": 30,
+      "recordIds": [
+        "SX-ML-0051",
+        "SX-ML-0052",
+        "SX-ML-0053",
+        "SX-ML-0054",
+        "SX-ML-0055",
+        "SX-ML-0056",
+        "SX-ML-0057",
+        "SX-ML-0058",
+        "SX-ML-0059",
+        "SX-ML-0060",
+        "SX-ML-0061",
+        "SX-ML-0062",
+        "SX-ML-0063",
+        "SX-ML-0064",
+        "SX-ML-0065",
+        "SX-ML-0066",
+        "SX-ML-0067",
+        "SX-ML-0068",
+        "SX-ML-0069",
+        "SX-ML-0070",
+        "SX-ML-0071",
+        "SX-ML-0072",
+        "SX-ML-0073",
+        "SX-ML-0074",
+        "SX-ML-0075",
+        "SX-ML-0076",
+        "SX-ML-0077",
+        "SX-ML-0078",
+        "SX-ML-0079",
+        "SX-ML-0080"
+      ]
+    }
+  },
+  "historyPolicy": "Prior-only history crosses split boundaries; timestamp ties excluded.",
+  "model": {
+    "modelKind": "standardized-baseline-distance",
+    "modelVersion": "1.0.0",
+    "pipelineVersion": "1.0.0",
+    "windowSeconds": 900,
+    "featureNames": [
+      "userLoginCount",
+      "userFailedLoginCount",
+      "sourceIpEventCount",
+      "hostEventCount",
+      "eventCount"
+    ],
+    "trainingCount": 40,
+    "scaleFloor": 1,
+    "means": [
+      0,
+      0,
+      0,
+      0,
+      2.85
+    ],
+    "scales": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "threshold": 0.06286493151681935,
+  "thresholdPolicy": "Strictly greater than maximum calibration score.",
+  "metrics": {
+    "count": 30,
+    "tp": 12,
+    "tn": 10,
+    "fp": 0,
+    "fn": 8,
+    "accuracy": 0.7333333333333333,
+    "precision": 1,
+    "recall": 0.6,
+    "f1": 0.75,
+    "falsePositiveRate": 0
+  },
+  "perScenario": {
+    "authentication_anomaly": {
+      "count": 8,
+      "tp": 7,
+      "tn": 0,
+      "fp": 0,
+      "fn": 1,
+      "accuracy": 0.875,
+      "precision": 1,
+      "recall": 0.875,
+      "f1": 0.9333333333333333,
+      "falsePositiveRate": null
+    },
+    "baseline_network": {
+      "count": 10,
+      "tp": 0,
+      "tn": 10,
+      "fp": 0,
+      "fn": 0,
+      "accuracy": 1,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "falsePositiveRate": 0
+    },
+    "network_discovery_anomaly": {
+      "count": 6,
+      "tp": 5,
+      "tn": 0,
+      "fp": 0,
+      "fn": 1,
+      "accuracy": 0.8333333333333334,
+      "precision": 1,
+      "recall": 0.8333333333333334,
+      "f1": 0.9090909090909091,
+      "falsePositiveRate": null
+    },
+    "transfer_volume_anomaly": {
+      "count": 6,
+      "tp": 0,
+      "tn": 0,
+      "fp": 0,
+      "fn": 6,
+      "accuracy": 0,
+      "precision": null,
+      "recall": 0,
+      "f1": 0,
+      "falsePositiveRate": null
+    }
+  },
+  "rows": [
+    {
+      "recordId": "SX-ML-0051",
+      "timestamp": "2026-01-01T04:10:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0052",
+      "timestamp": "2026-01-01T04:15:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0053",
+      "timestamp": "2026-01-01T04:20:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0054",
+      "timestamp": "2026-01-01T04:25:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0055",
+      "timestamp": "2026-01-01T04:30:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0056",
+      "timestamp": "2026-01-01T04:35:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0057",
+      "timestamp": "2026-01-01T04:40:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0058",
+      "timestamp": "2026-01-01T04:45:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0059",
+      "timestamp": "2026-01-01T04:50:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0060",
+      "timestamp": "2026-01-01T04:55:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 0,
+      "scenario": "baseline_network",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0061",
+      "timestamp": "2026-01-01T05:00:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0062",
+      "timestamp": "2026-01-01T05:05:00.000Z",
+      "distance": 0.8969392398596462,
+      "anomalyScore": 0.4728349864943542,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0063",
+      "timestamp": "2026-01-01T05:10:00.000Z",
+      "distance": 1.7901117283566408,
+      "anomalyScore": 0.6415914137642817,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0064",
+      "timestamp": "2026-01-01T05:15:00.000Z",
+      "distance": 2.68411996751263,
+      "anomalyScore": 0.7285647566262181,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0065",
+      "timestamp": "2026-01-01T05:20:00.000Z",
+      "distance": 1.3433167906342867,
+      "anomalyScore": 0.5732544553955418,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0066",
+      "timestamp": "2026-01-01T05:25:00.000Z",
+      "distance": 1.5506450270774417,
+      "anomalyScore": 0.6079423089516256,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0067",
+      "timestamp": "2026-01-01T05:30:00.000Z",
+      "distance": 2.0504877468543916,
+      "anomalyScore": 0.6721835709613382,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0068",
+      "timestamp": "2026-01-01T05:35:00.000Z",
+      "distance": 2.68411996751263,
+      "anomalyScore": 0.7285647566262181,
+      "label": 1,
+      "scenario": "authentication_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0069",
+      "timestamp": "2026-01-01T05:40:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0070",
+      "timestamp": "2026-01-01T05:45:00.000Z",
+      "distance": 0.45221676218380047,
+      "anomalyScore": 0.31139756402740476,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0071",
+      "timestamp": "2026-01-01T05:50:00.000Z",
+      "distance": 0.8969392398596462,
+      "anomalyScore": 0.4728349864943542,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0072",
+      "timestamp": "2026-01-01T05:55:00.000Z",
+      "distance": 1.3433167906342867,
+      "anomalyScore": 0.5732544553955418,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0073",
+      "timestamp": "2026-01-01T06:00:00.000Z",
+      "distance": 1.3433167906342867,
+      "anomalyScore": 0.5732544553955418,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0074",
+      "timestamp": "2026-01-01T06:05:00.000Z",
+      "distance": 1.3433167906342867,
+      "anomalyScore": 0.5732544553955418,
+      "label": 1,
+      "scenario": "network_discovery_anomaly",
+      "prediction": 1
+    },
+    {
+      "recordId": "SX-ML-0075",
+      "timestamp": "2026-01-01T06:10:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0076",
+      "timestamp": "2026-01-01T06:15:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0077",
+      "timestamp": "2026-01-01T06:20:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0078",
+      "timestamp": "2026-01-01T06:25:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0079",
+      "timestamp": "2026-01-01T06:30:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    },
+    {
+      "recordId": "SX-ML-0080",
+      "timestamp": "2026-01-01T06:35:00.000Z",
+      "distance": 0.06708203932499365,
+      "anomalyScore": 0.06286493151681935,
+      "label": 1,
+      "scenario": "transfer_volume_anomaly",
+      "prediction": 0
+    }
+  ],
+  "limitations": [
+    "Only 80 artificial records; held-out test has 10 baseline and 20 injected anomalies.",
+    "Chronological scenario blocks are confounded with time and are not independent samples.",
+    "Training is baseline authentication only; calibration is baseline network only.",
+    "Prior-only counts can miss the first event and transfer-volume anomalies: no byte-volume feature exists.",
+    "No real-world accuracy, prevalence, maliciousness or operational readiness claim.",
+    "Threshold uses only 10 calibration examples; no cross-validation or uncertainty estimate."
+  ]
+}

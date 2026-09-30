@@ -64,7 +64,9 @@
     "test:mitre:integration": "node --test tests/integration/mitre-mapping.test.js",
     "verify:dataset": "node scripts/verify-dataset.js",
     "verify:features": "node scripts/verify-features.js",
-    "verify:correlation:concurrency": "node scripts/verify-correlation-concurrency.js"
+    "verify:correlation:concurrency": "node scripts/verify-correlation-concurrency.js",
+    "verify:ml:model": "node scripts/verify-ml-model.js",
+    "verify:ml:evaluation": "node scripts/verify-ml-evaluation.js"
   },
   "engines": {
     "node": ">=20"
