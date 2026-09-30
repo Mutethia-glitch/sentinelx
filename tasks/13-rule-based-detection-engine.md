@@ -1,7 +1,7 @@
 # Task 13: Rule-Based Detection Engine
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement deterministic detection against normalized events and generate alerts when rules match.
@@ -50,6 +50,15 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## Completion Evidence
+- Deterministic matching/non-matching, threshold, grouping and event-time-window behavior is covered by Task 13 automated tests.
+- Duplicate processing of the same rule/trigger is suppressed deterministically.
+- Alert persistence and event-link evidence use the existing PostgreSQL schema.
+- Detection failure rolls back the enclosing event-ingestion transaction.
+- Windows/PostgreSQL local acceptance verification passed on 2026-09-30:
+  `Deterministic matching, non-match rejection, thresholds, grouping, windows, duplicate suppression and atomic rollback verified.`
+- Task 13 requires no external API key and introduced no new migration.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
