@@ -1,7 +1,7 @@
 # Task 18: Incident Management
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement the incident lifecycle from creation through closure.
@@ -61,7 +61,8 @@ Do not mark this task complete until:
 - CONTAINED is recognized but cannot be set directly before Task 22 records a successful approved containment action.
 - Creation, assignment and status changes are audited transactionally with live RBAC rechecks.
 - Focused Task 18 local tests passed 10/10 before repository update.
-- Migration 011 and Windows/PostgreSQL `verify:incidents` remain required before completion.
+- Migration 011 and Windows/PostgreSQL `verify:incidents` passed on 2026-09-30.
+- Windows/PostgreSQL result: `Incident creation, alert linking, severity inheritance, assignment, lifecycle, terminal notes, RBAC, auditing and rollback verified. Synthetic changes cleaned up.`
 - Task 19 remains Not Started.
 - No external API or API key is required.
 
