@@ -28,7 +28,8 @@
 - Task 11: Complete — 15-category taxonomy, selection safeguards and authenticated catalog verified automatically and on Windows
 - Task 12: Complete — rule configuration, lifecycle/version protection and Viewer denial verified automatically and on Windows
 - Task 13: Complete — deterministic rule evaluation, thresholds/windows/grouping, alert evidence, duplicate-trigger suppression and atomic rollback verified; Windows/PostgreSQL acceptance gate passed on 2026-09-30
-- Tasks 14–43: Not Started
+- Task 14: Verification Pending — fifteen-category core rule set, test scenarios, migration 007 and read-only verifier implemented; local Task 14 checks pass 16/16; Windows/PostgreSQL gate pending
+- Tasks 15–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–13 are Complete. Task 13's Windows/PostgreSQL acceptance verification passed on 2026-09-30. Work is intentionally paused before Task 14. Tasks 14–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–13 are Complete. Task 14 implementation covers all fifteen approved taxonomy categories and its local automated checks pass 16/16. Task 14 remains Verification Pending until migration 007 and `verify:initial-rules` pass against the user's Windows/PostgreSQL database. Tasks 15–43 remain Not Started. See SESSION_HANDOFF.md.
