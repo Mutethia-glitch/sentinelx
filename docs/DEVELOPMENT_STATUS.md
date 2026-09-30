@@ -27,8 +27,8 @@
 - Task 10: Complete — event UI, protected viewing APIs and Windows access/filter/inspection checks passed
 - Task 11: Complete — 15-category taxonomy, selection safeguards and authenticated catalog verified automatically and on Windows
 - Task 12: Complete — rule configuration, lifecycle/version protection and Viewer denial verified automatically and on Windows
-- Task 13: Verification Pending — deterministic engine implemented; automated unit checks pass; Windows/PostgreSQL local gate pending
+- Task 13: Complete — deterministic rule evaluation, thresholds/windows/grouping, alert evidence, duplicate-trigger suppression and atomic rollback verified; Windows/PostgreSQL acceptance gate passed on 2026-09-30
 - Tasks 14–43: Not Started
 
 ## Current session checkpoint
-Tasks 01–12 are Complete. Task 13 implementation is in the repository and automated Task 13 unit checks pass; Windows/PostgreSQL local verification remains required before it may be marked Complete. Tasks 14–43 remain Not Started. See SESSION_HANDOFF.md.
+Tasks 01–13 are Complete. Task 13's Windows/PostgreSQL acceptance verification passed on 2026-09-30. Work is intentionally paused before Task 14. Tasks 14–43 remain Not Started. See SESSION_HANDOFF.md.
