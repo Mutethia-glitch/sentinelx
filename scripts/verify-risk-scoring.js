@@ -68,9 +68,7 @@ async function verifyRiskScoring(pool){
     }
 
     const before=(await pool.query('SELECT risk_score FROM incidents WHERE id=$1',[incident.id])).rows[0].risk_score;
-    await pool.query('SAVEPOINT generated_risk');
     await assert.rejects(pool.query('UPDATE incidents SET risk_score=99 WHERE id=$1',[incident.id]));
-    await pool.query('ROLLBACK TO SAVEPOINT generated_risk');
     const after=(await pool.query('SELECT risk_score FROM incidents WHERE id=$1',[incident.id])).rows[0].risk_score;
     assert.equal(after,before);
 
