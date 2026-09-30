@@ -352,3 +352,12 @@ the same versioned formula for application/tests.
 Risk is read-only derived context; it does not replace incident severity,
 classification, lifecycle, investigation, or response decisions. Unimplemented
 confidence/asset-impact inputs are not fabricated.
+
+
+## Task 21 runtime mapping
+
+The Investigation service is now implemented between Incident and Response. It reads existing incident-alert-event evidence, aggregates affected entities, combines evidence and incident history into a deterministic timeline, and persists append-only analyst findings in the core `investigation_notes` table.
+
+Investigation write authorization is independent from general incident viewing: Viewer/Management can read investigation context, while Administrator/Security Analyst users can record findings through `investigations.write`.
+
+Task 21 does not execute containment or other response actions; that remains Task 22.
