@@ -15,6 +15,7 @@ transactionally and records SHA-256 checksums in `schema_migrations`.
 | detection_rules | Disabled by default; deterministic definition JSON and threat level; optional creator. |
 | alerts | Rule reference, persisted threat level and explainable match reason/evidence. |
 | alert_events | Many-to-many alert/event evidence, unique per pair. |
+| alert_correlations | Explainable undirected alert-to-alert relationship edges, one canonical row per pair. |
 | incidents | Title, description, independent status/threat level, optional assignee. |
 | incident_alerts | Many-to-many incident/alert correlation evidence, unique per pair. |
 | investigation_notes | Incident, author, note and evidence JSON with creation time. |
@@ -135,3 +136,17 @@ Migration 008 extends `alerts` into the explicit Task 15 signal snapshot without
 Deterministic Task 15 rules leave confidence null because no calibrated probability model is implemented. The 0–1 database constraint applies only when confidence is present. Task 16 owns later alert-management states/workflows and must explicitly revise the Task 15 status constraint if additional states are approved.
 
 See [ALERT_MODEL.md](ALERT_MODEL.md).
+
+
+## Task 17 alert correlation
+
+Migration 010 adds `alert_correlations`, bringing the application/migration table
+count to 19. Each row references two existing alerts and stores explainable JSON
+relationship evidence. Pairs are stored in canonical UUID order and are unique, so
+the same relationship cannot be duplicated in reverse.
+
+Correlation groups are connected components of these persisted alert-pair edges.
+The table does not create or replace incidents; Task 18 remains responsible for
+incident lifecycle behavior.
+
+See [CORRELATION_ENGINE.md](CORRELATION_ENGINE.md).
