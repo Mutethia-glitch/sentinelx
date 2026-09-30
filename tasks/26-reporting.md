@@ -1,7 +1,7 @@
 # Task 26: Reporting
 
 ## Status
-Verification Pending
+Complete
 
 ## Objective
 Implement incident reports, security summaries, and date-range reporting.
@@ -59,6 +59,13 @@ Do not mark this task complete until:
 - Focused tests and a Windows/PostgreSQL verifier are implemented.
 - No schema migration or external reporting service is required.
 - Task 27 remains separately scoped.
+
+## Accepted Windows/PostgreSQL gate — 2026-09-30
+
+The user ran the full quality suite (137/137 passing), verified migration 015,
+and reported successful acceptance:
+
+`Stored-data security summaries, incident reports, date ranges, JSON/CSV export, RBAC and read-only reporting verified. Synthetic changes cleaned up.`
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**
