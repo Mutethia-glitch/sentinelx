@@ -134,3 +134,14 @@ entity correlation, category-only rejection, time-window rejection, connected
 groups, duplicate-pair rejection and reverse-pair rejection.
 
 No external API or API key is required.
+
+
+## Completion
+
+Task 17 is Complete. Focused Task 13/17 tests passed 14/14, and the
+Windows/PostgreSQL acceptance verifier passed on 2026-09-30 with:
+
+`Explainable alert correlation, connected grouping, time-window rejection and pair deduplication verified. Synthetic changes rolled back.`
+
+Task 18 incident management remains separate and Not Started. No external API or
+API key is required.
