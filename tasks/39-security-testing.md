@@ -1,7 +1,7 @@
 # Task 39: Security Testing
 
 ## Status
-Implemented — awaiting local acceptance
+Complete
 
 ## Objective
 Perform controlled application-security testing of authentication, authorization, input validation, API access, and common web weaknesses.
@@ -59,7 +59,7 @@ The dedicated regression suite validates session-cookie transport, authenticatio
 
 The findings register in `docs/SECURITY_TESTING.md` records the tested controls and residual deployment considerations. The controlled review found no new exploitable application defect requiring production-code remediation, so Task 39 changes tests/documentation only.
 
-Local acceptance is still required. Task 40 must not start until Task 39 is accepted.
+Windows/local acceptance passed on 2026-10-01. The quality gate passed, `verify:security-testing` passed, `test:security:application` passed 5/5, and `test:frontend-security:ui` passed 1/1. Task 39 is Complete. Task 40 remains Not Started.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

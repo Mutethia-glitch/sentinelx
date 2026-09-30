@@ -1,3 +1,23 @@
+# Task 39 accepted — 2026-10-01
+
+Task 39 is **Complete**. Tasks 01–39 are Complete; Task 40 has not started.
+
+Accepted Task 39 controlled security validation:
+- quality gate: passed;
+- `npm.cmd run verify:security-testing`: passed;
+- `npm.cmd run test:security:application`: **5/5 passed**;
+- `npm.cmd run test:frontend-security:ui`: **1/1 passed**.
+
+The accepted coverage validates session-cookie transport, rejection of token-substitution attempts, exact-origin mutation/CSRF controls, absence of permissive CORS, backend-authoritative RBAC despite forged client role state, malformed/oversized/unsupported input rejection, login rate limiting, sanitized failures, restrictive CSP/clickjacking controls, sensitive-path probing, and the existing safe-DOM/XSS/no-Web-Storage protections.
+
+The controlled review identified no new exploitable application defect requiring production-code remediation. Task 39 therefore leaves production source, PostgreSQL migrations, API behavior, authentication/RBAC behavior and frontend behavior unchanged. Residual deployment considerations remain documented for the later deployment task.
+
+Task 40 — End-to-End Detection Scenarios — is next and remains Not Started. Do not start it without explicit instruction.
+
+See `docs/SECURITY_TESTING.md` and `tasks/39-security-testing.md`.
+
+---
+
 # Task 39 implementation checkpoint — 2026-10-01
 
 Task 39 is **Implemented — awaiting local acceptance**. Tasks 01–38 remain Complete. Task 40 has not started.

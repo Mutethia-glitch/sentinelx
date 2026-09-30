@@ -65,3 +65,15 @@ if ($LASTEXITCODE -ne 0) { throw "Task 39 frontend security browser test failed"
 ```
 
 The Task 39 application-security test and verifier are database-free and use synthetic/stubbed identities and services. The existing frontend security browser test uses Playwright with synthetic data.
+
+
+## Acceptance — 2026-10-01
+
+Windows/local acceptance passed:
+
+- full quality gate: passed;
+- `npm.cmd run verify:security-testing`: passed;
+- `npm.cmd run test:security:application`: 5/5 passed;
+- `npm.cmd run test:frontend-security:ui`: 1/1 passed.
+
+Task 39 is Complete. No production-code remediation was required by the controlled findings.
