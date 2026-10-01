@@ -488,3 +488,5 @@ body[data-page="dashboard"] .sx-trend-details summary{padding:.75rem 1rem;border
 .sx-auth-centered #code{font-size:1.25rem;letter-spacing:.3em;text-align:center}
 .sx-auth-centered #resend{background:var(--secondary);color:var(--foreground)}
 .sx-auth-centered .hint{text-align:center;margin:0}
+
+.sx-resend-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}.sx-resend-row #resend{flex:1}.sx-resend-row #resend-timer{font-size:.8rem;color:var(--muted-foreground)}

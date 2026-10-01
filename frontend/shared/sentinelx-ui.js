@@ -22,6 +22,11 @@
         throw error;
       }
       return body;
+    }catch(error){
+      if(globalThis.document?.getElementById('identity-panel')?.hidden){
+        const panel=globalThis.document.getElementById('login-panel');if(panel)panel.hidden=false;
+      }
+      throw error;
     }finally{clearTimeout(timeout);pendingRequests--;}
   }
   function livePauseReason(doc=globalThis.document){
@@ -140,6 +145,7 @@
   function beginTwoFactor(result,pathname=globalThis.location?.pathname||'/dashboard'){
     if(!result?.requiresTwoFactor)return false;
     const allowed=/^\/(?:access|dashboard|events|alerts|incidents|notifications|audit)(?:\/)?$/.test(pathname)?pathname:'/dashboard';
+    try{globalThis.sessionStorage.setItem('sentinelx-resend-after',String(Date.now()+60000));}catch{}
     globalThis.location?.assign('/verify?continue='+encodeURIComponent(allowed));return true;
   }
   function markCurrentPage(doc=globalThis.document,pathname=''){

@@ -144,3 +144,5 @@ if ($LASTEXITCODE -ne 0) { throw "Task 37 frontend design browser verification f
 The Task 37 verifier and browser gate do not require PostgreSQL. The browser gate uses synthetic stub services and Playwright Chromium.
 
 The site root redirects to `/access`, the existing secure sign-in and company access page. Failed login requests display the backend error in the page status area; expired sessions retain the sign-in prompt.
+
+Console sign-in panels start hidden while backend session checks run and appear when authentication or connectivity fails. Verification shows a 60-second resend countdown beside the button, retained across reloads in the current tab.
