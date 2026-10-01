@@ -87,7 +87,8 @@
     "verify:deployment": "node scripts/verify-deployment.js",
     "smoke:online": "node scripts/smoke-online.js",
     "test:tenant-auth:integration": "node --test tests/integration/tenant-authentication.test.js",
-    "test:platform-signup:integration": "node --test tests/integration/platform-signup.test.js"
+    "test:platform-signup:integration": "node --test tests/integration/platform-signup.test.js",
+    "test:platform-signup:ui": "node --test tests/integration/company-signup-ui.test.js"
   },
   "engines": {
     "node": ">=20"

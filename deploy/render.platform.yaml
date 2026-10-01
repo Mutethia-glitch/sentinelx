@@ -1,0 +1,35 @@
+# Separate onboarding service; does not modify the existing tenant service.
+services:
+  - type: web
+    name: sentinelx-onboarding
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: node src/platform/server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PLATFORM_BIND_HOST
+        value: 0.0.0.0
+      - key: PLATFORM_ORIGIN
+        sync: false
+      - key: PLATFORM_DATABASE_URL
+        sync: false
+      - key: PLATFORM_OTP_SECRET
+        generateValue: true
+      - key: EMAIL_DELIVERY_URL
+        value: https://api.resend.com/emails
+      - key: EMAIL_DELIVERY_TOKEN
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: TENANT_BASE_DOMAIN
+        sync: false
+      - key: TENANT_PROVISIONER_URL
+        sync: false
+      - key: TENANT_PROVISIONER_TOKEN
+        sync: false

@@ -27,7 +27,7 @@ function createPlatformServer(service,config,{limiter=loginLimiter(),security=nu
       res.statusCode=200;return res.end(JSON.stringify({status:'ok'}));
     }
     if(boundary(req,res))return;
-    const asset=FILES.get(req.url);
+    const asset=FILES.get(req.url.split('?',1)[0]);
     if(asset){
       res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
       res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");

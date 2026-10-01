@@ -1,7 +1,7 @@
 const {isIP}=require('node:net');
 const {otpSecret}=require('../auth/otp');
 function platformConfig(env=process.env){
-  const production=env.NODE_ENV==='production',port=Number(env.PLATFORM_PORT||3100);
+  const production=env.NODE_ENV==='production',port=Number(env.PLATFORM_PORT||env.PORT||3100);
   if(!Number.isInteger(port)||port<1||port>65535)throw new Error('Invalid PLATFORM_PORT.');
   const originValue=env.PLATFORM_ORIGIN||(production?'':`http://localhost:${port}`);
   let origin;try{origin=new URL(originValue);}catch{throw new Error('Set a valid PLATFORM_ORIGIN.');}

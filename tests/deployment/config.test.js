@@ -24,3 +24,9 @@ test('platform production configuration is separate from tenant runtime configur
   PLATFORM_OTP_SECRET:'p'.repeat(32),TENANT_BASE_DOMAIN:'example.com',TRUSTED_PROXY_IPS:'127.0.0.1'});
  assert.equal(config.origin,'https://signup.example.com');assert.equal(config.baseDomain,'example.com');assert.deepEqual(config.trustedProxyIps,['127.0.0.1']);
 });
+test('platform binds managed host PORT while preserving explicit local override',()=>{
+ const base={PLATFORM_DATABASE_URL:'postgresql://platform.invalid/db',PLATFORM_OTP_SECRET:'p'.repeat(32)};
+ assert.equal(platformConfig({...base,PORT:'10000'}).port,10000);
+ assert.equal(platformConfig({...base,PORT:'10000',PLATFORM_PORT:'3100'}).port,3100);
+ assert.throws(()=>platformConfig({...base,PORT:'invalid'}));
+});

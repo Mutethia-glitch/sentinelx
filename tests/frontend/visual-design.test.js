@@ -61,9 +61,9 @@ test('page styles do not compete with the shared stylesheet',()=>{
 
 test('Access uses a structured sign-in flow without fabricated registration',()=>{
   const html=fs.readFileSync(path.join(__dirname,'../../frontend/access/index.html'),'utf8');
-  assert.match(html,/id="login-panel" class="sx-auth-screen"/);
+  assert.match(html,/id="login-panel" hidden class="sx-auth-screen"/);
   assert.match(html,/Secure access to SentinelX/);
-  assert.match(html,/Self-service sign-up is not enabled/);
+  assert.match(html,/href="\/company-signup">Create a company account/);
   assert.doesNotMatch(html,/>\s*Sign up\s*</i);
   assert.match(html,/id="refresh"[^>]*aria-label="Refresh access"/);
   assert.match(html,/id="logout"[^>]*data-icon="log-out"/);

@@ -296,3 +296,43 @@ No production credentials or verification codes should be pasted into issue,
 chat, test output or source control.
 
 The tenant Access page includes a company-registration link. Set `COMPANY_SIGNUP_URL` to the deployed HTTPS onboarding signup page to enable its redirect. Until configured, the link displays registration availability rather than accepting credentials or creating accounts in the company database.
+
+## Render / Neon pilot onboarding preparation
+
+`deploy/render.platform.yaml` defines a separate free-plan Docker web service
+named `sentinelx-onboarding`. Use that file as the Blueprint path, or create a
+separate Docker web service with command `node src/platform/server.js` and health
+path `/healthz`. Do not change the running tenant service's command. The platform
+uses Render's `PORT` unless `PLATFORM_PORT` is explicitly set; leave the latter
+unset on Render. No database or paid service is created by this template.
+
+Create a **separate, empty Neon project/database** for the control plane. Run
+`npm run db:migrate:platform` against its `PLATFORM_DATABASE_URL` (only
+`?sslmode=require` for migration scripts). Never use the existing tenant database
+or a branch copied from its data as the onboarding database.
+
+Provide the exact assigned HTTPS `PLATFORM_ORIGIN`, independent platform OTP
+secret, email sender/token, `TENANT_BASE_DOMAIN` and authenticated
+`TENANT_PROVISIONER_URL`/token. The template deliberately has no invented
+provisioner URL. Startup remains blocked until these real dependencies exist.
+The provisioner must enforce idempotency, create a separate company database and
+runtime, apply migrations/bootstrap, configure the expected custom hostname,
+and report readiness before returning that origin. The current synchronous
+adapter times out after ten seconds; a real cloud provisioning integration must
+handle longer deployment times before public signup can be enabled.
+
+When the service and provisioner are ready, set the tenant service's
+`COMPANY_SIGNUP_URL` to `https://<onboarding-host>/signup`. Do not enable that link
+for public registration merely because a static signup page loads. Resend's
+`onboarding@resend.dev` sender remains limited to the account owner's mailbox
+until a controlled domain is verified. Render free-service inactivity and
+shared usage limits also apply to this additional service.
+
+The signup page uses the centered authentication layout, displays provider/API
+errors, clears passwords after submission, shows the sixty-second resend timer,
+and prevents overlapping resend/verification requests. Temporary provisioning
+failures retain the entered code for retry within its validity window. Registration
+credentials/codes are not persisted in browser storage.
+
+UI regression check (requires Playwright Chromium):
+`node --test tests/integration/company-signup-ui.test.js`.
