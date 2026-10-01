@@ -148,3 +148,8 @@ See `docs/COMPANY_CONNECTOR.md` for setup, validation and explicit limitations.
 No new automatic containment, trusted client IP attribution or durable delivery
 is claimed. Both live connector configuration and PostgreSQL acceptance remain
 pending. Never place connector credentials in browser variables.
+
+Collector implementation committed to SentinelX main as
+`7fde5f17fcfe6f6878aa0810f37ad81238526838`. Iphyn reporting is proposed in
+draft PR `https://github.com/Mutethia-glitch/iphyn/pull/23`; not merged/deployed.
+Local validation: 227 SentinelX tests; Iphyn type check, build and 36 tests.

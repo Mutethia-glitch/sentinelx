@@ -61,11 +61,11 @@ Vercel edge/firewall events are outside this connector's current coverage.
 
 No new automatic containment is implemented. `rate_limit_blocked` means the
 application's existing limiter rejected a request, not that an attack was stopped.
-Local validation passed: SentinelX quality 226/226 plus the added repository
-rollback/idempotency test (four focused connector tests); Iphyn type check,
-production build and 36/36 tests. The repository's frozen lockfile has a
-pre-existing overrides mismatch; a temporary non-frozen local install was used
-and its changed lockfile is not included. Live tenant migration, credential
+Local validation passed: SentinelX syntax checks and 227/227 tests, including
+four focused connector tests for authentication/privacy/rollback/idempotency; Iphyn type check,
+production build and 36/36 tests. An initial workspace package-manager mismatch
+required rechecking with Iphyn's pinned pnpm version, which accepts the original
+frozen lockfile. No repository lockfile changes are needed. Live tenant migration, credential
 configuration, controlled event delivery, duplicate/rollback PostgreSQL acceptance
 and cross-tenant credential rejection remain pending. Add
 durable delivery, trusted IP attribution and explicitly approved bounded control
