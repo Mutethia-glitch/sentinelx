@@ -9,7 +9,8 @@ const FILES=new Map([
  ['/activate/activate.js',['activate/activate.js','text/javascript; charset=utf-8']],
 ]);
 function authPages(req,res){
- const file=FILES.get(req.url);if(!file)return false;
+ const pathname=req.url.split('?',1)[0];
+ const file=FILES.get(pathname);if(!file)return false;
  res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
  res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
  if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');res.end();return true;}
