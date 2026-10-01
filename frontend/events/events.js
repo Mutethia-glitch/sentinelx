@@ -22,7 +22,7 @@ function reset() {ui.clearAccess();
 const request=ui.request;
 function handleError(error) {
   if (error.status === 401 || error.status === 403) reset();
-  if (error.status === 401) return message('Sign in to continue.');
+  if (error.status === 401) return message(error.requestPath==='/api/auth/login'?ui.safeError(error):'Sign in to continue.',error.requestPath==='/api/auth/login');
   message(ui.safeError(error), true);
 }
 async function inspect(id,background=false) {background=background===true;if(!background)ui.clearDrafts();

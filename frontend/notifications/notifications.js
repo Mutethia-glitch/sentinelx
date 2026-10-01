@@ -4,7 +4,7 @@ const el=id=>document.getElementById(id);let userId=null,canSend=false,page=1,st
 function message(value,error=false){el('message').textContent=error?'Error: '+value:value;el('message').classList.toggle('error',error);}
 function reset(){ui.clearAccess();generation++;userId=null;canSend=false;page=1;status='ALL';el('filter-status').value='ALL';el('notification-rows').replaceChildren();el('login-panel').hidden=false;el('identity-panel').hidden=true;el('inbox-panel').hidden=true;el('send-panel').hidden=true;}
 const request=ui.request;
-function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message('Sign in to continue.');message(ui.safeError(error),true);}
+function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message(error.requestPath==='/api/auth/login'?ui.safeError(error):'Sign in to continue.',error.requestPath==='/api/auth/login');message(ui.safeError(error),true);}
 function renderNotification(item){
  const article=document.createElement('article');article.className='notification';
  if(['CRITICAL','HIGH'].includes(item.severity)&&item.state==='UNREAD')article.classList.add('urgent');

@@ -13,7 +13,7 @@ function reset(){ui.clearAccess();
  el('login-panel').hidden=false;el('identity-panel').hidden=true;el('dashboard-panel').hidden=true;el('as-of').textContent='';
 }
 const request=ui.request;
-function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message('Sign in to continue.');message(ui.safeError(error),true);}
+function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message(error.requestPath==='/api/auth/login'?ui.safeError(error):'Sign in to continue.',error.requestPath==='/api/auth/login');message(ui.safeError(error),true);}
 function number(value){return value===null||value===undefined?'No incident data':nf.format(value);}
 function card(container,label,value){
  const dl=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');

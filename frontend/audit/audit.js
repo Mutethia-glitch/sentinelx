@@ -23,7 +23,7 @@ function reset(){
 }
 function handleError(error){
   if(error.status===401||error.status===403)reset();
-  if(error.status===401)return message('Sign in to continue.');
+  if(error.status===401)return message(error.requestPath==='/api/auth/login'?ui.safeError(error):'Sign in to continue.',error.requestPath==='/api/auth/login');
   message(ui.safeError(error),true);
 }
 function iso(value){return value?new Date(value).toISOString():null;}

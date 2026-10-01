@@ -16,7 +16,7 @@
       const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,signal:controller.signal});
       const body=response.status===204?null:await response.json();
       if(!response.ok){
-        const error=new Error(body?.error||'Request failed.');error.status=response.status;
+        const error=new Error(body?.error||'Request failed.');error.status=response.status;error.requestPath=path;
         const retry=Number(response.headers.get('Retry-After'));
         if(Number.isFinite(retry)&&retry>0)error.retryAfter=Math.min(retry*1000,300000);
         throw error;

@@ -7,6 +7,13 @@ const FILES = {
   '/access/access.css': ['access.css', 'text/css; charset=utf-8'],
 };
 function accessPage(req, res) {
+  if (req.url === '/') {
+    res.setHeader('Cache-Control', 'no-store');
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.statusCode = 405; res.setHeader('Allow', 'GET, HEAD'); res.end(); return true;
+    }
+    res.statusCode = 302; res.setHeader('Location', '/access'); res.end(); return true;
+  }
   if (!Object.hasOwn(FILES, req.url)) return false;
   const file = FILES[req.url];
   if (!file) return false;
