@@ -14,7 +14,7 @@ function verifyInput(body){
 }
 function resendInput(body){
   if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).join(',')!=='registrationId'||
-    typeof body.registrationId!=='string'||!/^[0-9a-f]{8}-(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(body.registrationId))throw new AuthError(400,'Invalid resend request.');
+    typeof body.registrationId!=='string'||!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(body.registrationId))throw new AuthError(400,'Invalid resend request.');
   return{registrationId:body.registrationId};
 }
 module.exports={signupInput,verifyInput,resendInput};

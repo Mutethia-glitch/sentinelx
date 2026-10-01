@@ -26,3 +26,15 @@ test('company signup verifies a six-digit email code before handing an isolated 
  assert.equal(provisioned.admin.passwordHash,stored.passwordHash===null?provisioned.admin.passwordHash:stored.passwordHash);
  assert.equal(verified.tenant.origin,'https://'+stored.slug+'.example.com');assert.ok(activated);
 });
+test('company resend accepts standard registration UUIDs and preserves cooldown and code delivery',async()=>{
+ const {resendInput}=require('../../src/platform/validation');
+ const id='9528daaa-1798-49ca-80d2-4729409cdee5';
+ assert.deepEqual(resendInput({registrationId:id}),{registrationId:id});
+ for(const value of ['9528daaa--1798-49ca-80d2-4729409cdee5','invalid','',null])assert.throws(()=>resendInput({registrationId:value}));
+ assert.throws(()=>resendInput({registrationId:id,code:'123456'}));
+ let sent=null,cooldown=false;
+ const repository={registration:async()=>({id,status:'VERIFIED'}),replaceCode:async()=>cooldown?{cooldown:true}:{email:'synthetic@example.invalid',companyName:'Synthetic'}};
+ const service=platformService(repository,{otpSecret:'p'.repeat(32),otpSeconds:600,otpResendSeconds:60},{sendCode:async message=>{sent=message;}},{});
+ assert.deepEqual(await service.resend({registrationId:id}),{expiresInSeconds:600});assert.match(sent.code,/^\d{6}$/);assert.equal(sent.to,'synthetic@example.invalid');
+ cooldown=true;await assert.rejects(()=>service.resend({registrationId:id}),error=>error.status===429);
+});
