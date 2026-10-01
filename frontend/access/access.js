@@ -21,7 +21,8 @@ function userCard(user,roles){
   const reason=document.createElement('input');reason.required=true;reason.maxLength=500;reasonLabel.append(reason);
   const save=document.createElement('button');save.type='submit';save.textContent='Save roles';
   const active=document.createElement('button');active.type='button';active.textContent=user.active?'Disable user':'Enable user';
-  form.append(fieldset,reasonLabel,save,active);
+  const actions=document.createElement('div');actions.className='sx-user-actions';actions.append(save,active);
+  form.append(fieldset,reasonLabel,actions);
   form.addEventListener('submit',async event=>{event.preventDefault();save.disabled=true;try{
     await request(`/api/access/users/${encodeURIComponent(user.id)}/roles`,{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({roles:boxes.filter(box=>box.checked).map(box=>box.value),reason:reason.value})});

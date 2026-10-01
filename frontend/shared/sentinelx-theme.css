@@ -490,3 +490,8 @@ body[data-page="dashboard"] .sx-trend-details summary{padding:.75rem 1rem;border
 .sx-auth-centered .hint{text-align:center;margin:0}
 
 .sx-resend-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}.sx-resend-row #resend{flex:1}.sx-resend-row #resend-timer{font-size:.8rem;color:var(--muted-foreground)}
+
+body[data-page="access"] #users{display:grid;gap:1rem;margin-top:1.5rem}
+body[data-page="access"] .sx-user-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
+body[data-page="access"] .sx-user-actions button{margin:0}
+@media(max-width:480px){body[data-page="access"] .sx-user-actions button{flex:1 1 100%}}
