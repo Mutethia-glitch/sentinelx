@@ -37,7 +37,14 @@ test('production requires HTTPS origin and local HTTP is development-only', () =
   assert.throws(() => configFromEnv({ APP_ORIGIN: 'http://example.invalid' }));
   assert.throws(() => configFromEnv({ PORT: '-1' }));
   assert.throws(() => configFromEnv({ APP_ORIGIN: 'https://example.invalid/path' }));
-  const config = configFromEnv({ NODE_ENV: 'production', APP_ORIGIN: 'https://sentinel.example.invalid' });
+  const config = configFromEnv({
+    NODE_ENV: 'production',
+    APP_ORIGIN: 'https://sentinel.example.invalid',
+    AUTH_OTP_SECRET: 'x'.repeat(32),
+    TENANT_ID: '00000000-0000-4000-8000-000000000041',
+    TENANT_NAME: 'Synthetic Tenant',
+    TENANT_SLUG: 'synthetic-tenant',
+  });
   assert.match(sessionCookie('token', config), /__Host-sentinelx_session=token; Path=\/; HttpOnly; SameSite=Strict; Max-Age=28800; Secure/);
   assert.match(sessionCookie('', config, true), /Max-Age=0; Secure$/);
 });
