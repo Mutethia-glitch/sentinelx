@@ -105,3 +105,46 @@ provided. Deploy it separately and apply platform migration 002. Set the
 onboarding service to `TENANT_ORIGIN_MODE=render` for assigned HTTPS company
 URLs. Provider fixtures are not live acceptance; domain-backed email delivery
 and hosted multi-company acceptance remain pending.
+
+## Latest continuation — 2026-10-02 Africa/Nairobi
+
+This section supersedes the earlier deployment/resume position. Onboarding and
+the provisioner are deployed at `https://sentinelx-onboarding.onrender.com` and
+`https://sentinelx-provisioner.onrender.com`; both health checks were reported OK.
+The Iphyn Network tenant provisioned and reached ACTIVE / READY.
+
+The working Render tenant service was accidentally deleted. The user retained
+its Neon database and recreated the service without changing tenant identity:
+
+- Company: Iphyn Network; tenant `89238480-9405-49b1-abeb-34bb851612ab`.
+- Existing Neon project ID `aged-water-48730628` (display name starts
+  `sentinelx-89238480`), retained.
+- Replacement Render service ID `srv-davchlou01pc73e884h0`.
+- Replacement origin `https://sentinelx-iphyn-network.onrender.com`.
+- User updated APP_ORIGIN, then platform tenants.origin and provisioning
+  service_id/render_url; both guarded updates affected one row.
+- User confirmed sign-in/2FA restored, company name displayed correctly, and
+  their account shows Administrator / Active. Opening the original tenant
+  required a separate sign-in. That checks session separation, not full data/RBAC
+  isolation acceptance.
+
+Duplicate tenant `78111a84-73e5-40eb-8173-ec05d44ef231` was set FAILED and its
+signup secret material cleared in platform SQL. Its event/alert/incident counts
+were zero. Deletion of its remaining Render/Neon resources is not confirmed.
+Do not delete the replacement service, working Neon project, original tenant,
+platform, onboarding or provisioner.
+
+Task 41 remains open. The user explicitly deferred other-recipient invitations,
+role/disablement live checks until purchasing and verifying an email domain.
+They then authorized proceeding with the company connector implementation,
+using their Vercel site `iphyn.vercel.app` and private GitHub repository
+`Mutethia-glitch/iphyn` as the first integration. This does not close Task 41 or
+mark Tasks 42–44 started/completed.
+
+Iphyn has a React/Vite frontend and Express/tRPC server functions. First connector
+code adds a tenant-scoped authenticated collector and server-only reporting for
+local login failures, denied procedure access and existing rate-limit blocks.
+See `docs/COMPANY_CONNECTOR.md` for setup, validation and explicit limitations.
+No new automatic containment, trusted client IP attribution or durable delivery
+is claimed. Both live connector configuration and PostgreSQL acceptance remain
+pending. Never place connector credentials in browser variables.

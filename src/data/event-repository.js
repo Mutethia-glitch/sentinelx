@@ -16,11 +16,16 @@ function eventRepository(pool) {
     };
   }
   return {
-    async create(input, actorId = null, afterPersist = null) {
+    async create(input, actorId = null, afterPersist = null, connector = null) {
       const event = securityEvent(input);
       const { rawData, ...normalized } = event;
       try {
         const work = async client => {
+          if (connector) {
+            await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 73482144))', [connector.source + ':' + connector.externalId]);
+            const existing = await client.query('SELECT e.* FROM connector_receipts c JOIN security_events e ON e.id=c.event_id WHERE c.source=$1 AND c.external_id=$2', [connector.source, connector.externalId]);
+            if (existing.rows[0]) return stored(existing.rows[0]);
+          }
           if (actorId) {
             const actor = await client.query('SELECT active FROM users WHERE id = $1 FOR SHARE', [actorId]);
             if (!actor.rows[0]?.active) throw new AuthError(403, 'Permission denied.');
@@ -32,11 +37,15 @@ function eventRepository(pool) {
             VALUES ($1, $2, $3, $4::jsonb, $5::jsonb, now()) RETURNING *`,
           [event.source, event.type, event.timestamp, JSON.stringify(rawData), JSON.stringify(normalized)]);
           const saved = stored(result.rows[0]);
+          if (connector) {
+            await client.query('INSERT INTO connector_receipts(source,external_id,event_id) VALUES ($1,$2,$3)', [connector.source,connector.externalId,saved.id]);
+            await client.query("INSERT INTO audit_logs(actor_context,action,target_type,target_id,context) VALUES ('authenticated company connector','CONNECTOR_EVENT_INGESTED','security_event',$1,$2::jsonb)", [saved.id,JSON.stringify({source:connector.source,externalId:connector.externalId})]);
+          }
           if (actorId) await client.query(`INSERT INTO audit_logs(actor_id, actor_context, action, target_type, target_id, context) VALUES ($1, 'authenticated event submitter', 'EVENT_INGESTED', 'security_event', $2, $3::jsonb)`, [actorId, saved.id, JSON.stringify({ source: event.source, type: event.type })]);
           if (afterPersist) await afterPersist(saved, client);
           return saved;
         };
-        return actorId || afterPersist ? await transaction(pool, work) : await work(pool);
+        return actorId || afterPersist || connector ? await transaction(pool, work) : await work(pool);
       } catch (error) { if (error instanceof AuthError) throw error; throw new EventPersistenceError(); }
     },
     async list(filters) {
