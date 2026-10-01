@@ -2,6 +2,7 @@
 const ui=window.SentinelXUi;
 const el = id => document.getElementById(id);
 let generation = 0, currentEventId=null;
+const eventsPerPage = 10;
 let page = 1;
 let activeFilters = new URLSearchParams();
 function message(text, error = false) {
@@ -50,10 +51,12 @@ async function load(background=false) {background=background===true;if(!backgrou
     el('login-panel').hidden = true; el('identity-panel').hidden = false;
     el('identity').textContent = `${access.user.displayName} · ${access.roles.join(', ') || 'No role assigned'}`;
     if (!access.permissions.includes('events.read')) { el('events-panel').hidden = true; message('Your account does not have permission to view events.', true); return; }
-    const params = new URLSearchParams(activeFilters); params.set('page', String(page));
+    const params = new URLSearchParams(activeFilters); params.set('page', String(Math.ceil(page / 5)));
     const data = await request(`/api/events?${params}`);
     if (current !== generation||(background&&!ui.liveCanApply())) return false;
-    el('rows').replaceChildren();for (const event of data.events) {
+    const start = ((page - 1) % 5) * eventsPerPage;
+    const visibleEvents = data.events.slice(start, start + eventsPerPage);
+    el('rows').replaceChildren();for (const event of visibleEvents) {
       const row = document.createElement('tr');
       for (const value of [event.timestamp.replace('T', ' ').replace(/\.000Z$/, ' UTC').replace(/Z$/, ' UTC'), event.source, event.type, event.severity || 'Unknown', `${event.user || 'Unknown'} / ${event.host || 'Unknown'}`, event.status || 'Unknown']) {
         const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
@@ -62,8 +65,8 @@ async function load(background=false) {background=background===true;if(!backgrou
       button.type = 'button'; button.textContent = 'Inspect'; button.setAttribute('aria-label', `Inspect event ${event.id}`);
       button.addEventListener('click', () => inspect(event.id)); cell.append(button); row.append(cell); el('rows').append(row);
     }
-    el('events-panel').hidden = false; el('results').textContent = data.events.length ? `${data.events.length} ${data.events.length === 1 ? 'event' : 'events'} on this page.` : 'No events match these filters.';
-    el('page').textContent = `Page ${data.page}`; el('previous').disabled = page <= 1; el('next').disabled = !data.hasMore;
+    el('events-panel').hidden = false; el('results').textContent = visibleEvents.length ? `${visibleEvents.length} ${visibleEvents.length === 1 ? 'event' : 'events'} on this page · 10 per page.` : 'No events match these filters.';
+    el('page').textContent = `Page ${page}`; el('previous').disabled = page <= 1; el('next').disabled = !(start + eventsPerPage < data.events.length || data.hasMore);
     if(!background)message('Events loaded.');return true;
   } catch (error) { if (current === generation&&(!background||error.status===401||error.status===403)) handleError(error);if(background)throw error; }
 }
@@ -76,7 +79,7 @@ el('filters').addEventListener('submit', event => {
 });
 el('clear').addEventListener('click', () => { el('filters').reset(); activeFilters = new URLSearchParams(); page = 1; load(); });
 el('previous').addEventListener('click', () => { if (page > 1) { page--; load(); } });
-el('next').addEventListener('click', () => { if (page < 2000) { page++; load(); } });
+el('next').addEventListener('click', () => { if (!el('next').disabled && page < 10000) { page++; load(); } });
 el('login-form').addEventListener('submit', async event => {
   event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
   try {
