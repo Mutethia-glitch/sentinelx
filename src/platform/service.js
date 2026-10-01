@@ -25,12 +25,13 @@ function platformService(repository,config,mailer,provisioner){
     if(!equalDigest(row.code_digest,digest)){await repository.failCode(row.id,config.otpMaxAttempts);throw new AuthError(400,'Invalid or expired company verification.');}
     const verified=await repository.markVerified(row.id,config.otpMaxAttempts);
     if(!verified)throw new AuthError(400,'Invalid or expired company verification.');
-    const expectedOrigin='https://'+verified.slug+'.'+config.baseDomain;
+    const expectedOrigin=config.originMode==='render'?null:'https://'+verified.slug+'.'+config.baseDomain;
     let result;
     try{result=await provisioner.provision({tenantId:verified.tenant_id,companyName:verified.company_name,slug:verified.slug,
       origin:expectedOrigin,admin:{email:verified.admin_email,name:verified.admin_name,passwordHash:verified.admin_password_hash}});}
     catch(error){throw error;}
-    if(result.origin!==expectedOrigin)throw new AuthError(503,'Company provisioning returned an invalid tenant origin.');
+    if(result.status==='PROVISIONING')return{status:'PROVISIONING',retryAfterSeconds:60};
+    if(config.originMode==='render'?!/^https:\/\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.onrender\.com$/.test(result.origin):result.origin!==expectedOrigin)throw new AuthError(503,'Company provisioning returned an invalid tenant origin.');
     const activated=await repository.activate(row.id,result.origin);
     if(!activated)throw new AuthError(503,'Company provisioning could not be finalized.');
     return{tenant:{id:verified.tenant_id,name:verified.company_name,slug:verified.slug,origin:result.origin,status:'ACTIVE'}};

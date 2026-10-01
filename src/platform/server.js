@@ -48,7 +48,7 @@ function createPlatformServer(service,config,{limiter=loginLimiter(),security=nu
         if(body&&typeof body.adminEmail==='string')limiter.account(body.adminEmail.trim().toLowerCase());
         const result=await service.signup(body);return send(201,result);
       }
-      if(req.url==='/api/company-signup/verify')return send(200,await service.verify(body));
+      if(req.url==='/api/company-signup/verify'){const result=await service.verify(body);return send(result.status==='PROVISIONING'?202:200,result);}
       return send(200,await service.resend(body));
     }catch(error){
       const expected=error instanceof AuthError,status=expected?error.status:503;

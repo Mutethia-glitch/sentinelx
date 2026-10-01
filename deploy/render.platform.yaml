@@ -27,8 +27,8 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
-      - key: TENANT_BASE_DOMAIN
-        sync: false
+      - key: TENANT_ORIGIN_MODE
+        value: render
       - key: TENANT_PROVISIONER_URL
         sync: false
       - key: TENANT_PROVISIONER_TOKEN

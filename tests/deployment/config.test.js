@@ -30,3 +30,8 @@ test('platform binds managed host PORT while preserving explicit local override'
  assert.equal(platformConfig({...base,PORT:'10000',PLATFORM_PORT:'3100'}).port,3100);
  assert.throws(()=>platformConfig({...base,PORT:'invalid'}));
 });
+test('assigned Render origins do not require a custom tenant domain',()=>{
+ const config=platformConfig({NODE_ENV:'production',PLATFORM_ORIGIN:'https://signup.onrender.com',PLATFORM_DATABASE_URL:'postgresql://platform.invalid/db',PLATFORM_OTP_SECRET:'p'.repeat(32),TENANT_ORIGIN_MODE:'render'});
+ assert.equal(config.originMode,'render');assert.equal(config.baseDomain,'');
+ assert.throws(()=>platformConfig({PLATFORM_DATABASE_URL:'postgresql://platform.invalid/db',PLATFORM_OTP_SECRET:'p'.repeat(32),TENANT_ORIGIN_MODE:'invalid'}));
+});

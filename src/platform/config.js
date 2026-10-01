@@ -9,12 +9,14 @@ function platformConfig(env=process.env){
   const bindHost=env.PLATFORM_BIND_HOST||(production?'0.0.0.0':'127.0.0.1');
   if(!['0.0.0.0','127.0.0.1','::','::1'].includes(bindHost)&&!isIP(bindHost))throw new Error('Invalid PLATFORM_BIND_HOST.');
   if(!env.PLATFORM_DATABASE_URL)throw new Error('Set PLATFORM_DATABASE_URL.');
+  const originMode=env.TENANT_ORIGIN_MODE||'custom';
+  if(!['custom','render'].includes(originMode))throw new Error('Invalid TENANT_ORIGIN_MODE.');
   const baseDomain=(env.TENANT_BASE_DOMAIN||'').trim().toLowerCase();
-  if(production&&!/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(baseDomain))throw new Error('Set TENANT_BASE_DOMAIN.');
+  if(production&&originMode==='custom'&&!/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(baseDomain))throw new Error('Set TENANT_BASE_DOMAIN.');
   const proxyRaw=env.TRUSTED_PROXY_IPS||'',trustedProxyIps=proxyRaw?proxyRaw.split(',').map(v=>v.trim()).filter(Boolean):[];
   if(trustedProxyIps.length>16||trustedProxyIps.some(v=>!isIP(v)))throw new Error('Invalid TRUSTED_PROXY_IPS.');
   return{production,port,bindHost,origin:origin.origin,databaseUrl:env.PLATFORM_DATABASE_URL,
     otpSecret:otpSecret(env.PLATFORM_OTP_SECRET),otpSeconds:600,otpMaxAttempts:5,otpResendSeconds:60,
-    baseDomain,trustedProxyIps:Object.freeze(trustedProxyIps)};
+    baseDomain,originMode,trustedProxyIps:Object.freeze(trustedProxyIps)};
 }
 module.exports={platformConfig};

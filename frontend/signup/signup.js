@@ -1,6 +1,6 @@
 'use strict';
 const by=id=>document.getElementById(id);
-let registrationId=null,resendAfter=0,busy=false;
+let registrationId=null,resendAfter=0,busy=false,pending=false;
 async function request(path,body){
   let response,result;
   try{
@@ -13,9 +13,10 @@ async function request(path,body){
 function msg(text,error=false){by('message').textContent=error?'Error: '+text:text;by('message').classList.toggle('error',error);}
 function controls(){
   const seconds=Math.max(0,Math.ceil((resendAfter-Date.now())/1000));
-  by('resend').disabled=busy||!registrationId||seconds>0;
+  by('resend').disabled=busy||pending||!registrationId||seconds>0;
   by('resend-timer').textContent=seconds?'Available in '+seconds+'s':'';
-  by('verify-form').querySelector('button[type="submit"]').disabled=busy;
+  by('verify-form').querySelector('button[type="submit"]').disabled=busy||pending;
+  by('code').disabled=busy||pending;
 }
 function cooldown(){resendAfter=Date.now()+60000;controls();}
 setInterval(controls,1000);controls();
@@ -29,16 +30,17 @@ by('signup-form').addEventListener('submit',async event=>{
   }catch(error){msg(error.message,true);}
   finally{by('password').value='';busy=false;button.disabled=false;controls();}
 });
-by('verify-form').addEventListener('submit',async event=>{
-  event.preventDefault();if(!registrationId||busy)return;busy=true;controls();msg('Verifying and creating your company environment…');
+async function verifyCompany(){if(!registrationId||busy)return;busy=true;controls();msg('Verifying and creating your company environment…');
   try{
     const result=await request('/api/company-signup/verify',{registrationId,code:by('code').value});
-    by('code').value='';by('verify-form').hidden=true;by('complete').hidden=false;
+    if(result.status==='PROVISIONING'){pending=true;msg('Your company environment is being prepared. This page will check again automatically.');setTimeout(()=>{pending=false;verifyCompany();},60000);return;}
+    pending=false;by('code').value='';by('verify-form').hidden=true;by('complete').hidden=false;
     by('company-result').textContent=result.tenant.name+' is ready.';by('tenant-link').href=result.tenant.origin;
     registrationId=null;msg('Your company environment is ready. Open SentinelX to sign in.');
-  }catch(error){if(error.status===400)by('code').value='';msg(error.message,true);}
+  }catch(error){pending=false;if(error.status===400)by('code').value='';msg(error.message,true);}
   finally{busy=false;controls();}
-});
+}
+by('verify-form').addEventListener('submit',event=>{event.preventDefault();verifyCompany();});
 by('resend').addEventListener('click',async()=>{
   if(!registrationId||busy||Date.now()<resendAfter)return;busy=true;controls();
   try{await request('/api/company-signup/resend',{registrationId});cooldown();by('code').value='';msg('A new six-digit code was sent.');}

@@ -15,6 +15,7 @@ function tenantProvisioner(config=provisionerConfig()){
         body:JSON.stringify({schemaVersion:1,type:'sentinelx.tenant.provision',tenant:payload})});
       if(response.status<200||response.status>=300)throw new Error('status');
       const body=await response.json();
+      if(response.status===202&&body?.status==='PROVISIONING')return{status:'PROVISIONING',retryAfterSeconds:60};
       if(!body||typeof body.origin!=='string')throw new Error('body');
       return{origin:body.origin};
     }catch{throw new AuthError(503,'Company provisioning is temporarily unavailable.');}

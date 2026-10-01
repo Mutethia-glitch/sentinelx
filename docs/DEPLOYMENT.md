@@ -312,14 +312,13 @@ Create a **separate, empty Neon project/database** for the control plane. Run
 or a branch copied from its data as the onboarding database.
 
 Provide the exact assigned HTTPS `PLATFORM_ORIGIN`, independent platform OTP
-secret, email sender/token, `TENANT_BASE_DOMAIN` and authenticated
+secret, email sender/token, `TENANT_ORIGIN_MODE=render` and authenticated
 `TENANT_PROVISIONER_URL`/token. The template deliberately has no invented
 provisioner URL. Startup remains blocked until these real dependencies exist.
 The provisioner must enforce idempotency, create a separate company database and
 runtime, apply migrations/bootstrap, configure the expected custom hostname,
-and report readiness before returning that origin. The current synchronous
-adapter times out after ten seconds; a real cloud provisioning integration must
-handle longer deployment times before public signup can be enabled.
+and report readiness before returning that origin. The adapter bounds each request to ten seconds; the included provisioner returns
+202 between recorded steps so longer deployments can be checked on later requests.
 
 When the service and provisioner are ready, set the tenant service's
 `COMPANY_SIGNUP_URL` to `https://<onboarding-host>/signup`. Do not enable that link
@@ -336,3 +335,77 @@ credentials/codes are not persisted in browser storage.
 
 UI regression check (requires Playwright Chromium):
 `node --test tests/integration/company-signup-ui.test.js`.
+
+## Render/Neon provisioner implementation
+
+The trusted provisioner is now included at `src/provisioning/server.js`, with
+`deploy/render.provisioner.yaml` and `deploy/provisioner.env.example`. It is a
+separate Docker web service, command `node src/provisioning/server.js`. Keep its
+provider API keys out of company runtimes and out of the onboarding frontend.
+Its bearer-authenticated POST `/provision` checks the platform database's verified
+registration before making provider requests. Both services use the same platform
+database and the same `TENANT_PROVISIONER_TOKEN` (32+ characters). Use an independent
+random `PROVISIONER_OTP_KEY` (32+ characters), which deterministically derives a
+separate HMAC key per company; do not rotate it without accounting for existing
+company secrets. `RENDER_OWNER_ID` and `NEON_ORG_ID` select the operator's accounts.
+
+Apply append-only platform migration 002 with `npm run db:migrate:platform` before
+starting the provisioner. `tenant_provisioning` stores non-secret resource IDs,
+progress and an HMAC request fingerprint, never DB connection URLs or API keys.
+PostgreSQL advisory locks serialize requests for the same tenant. Before each
+non-idempotent resource creation or deploy request, the stage is persisted. An
+uncertain result pauses for operator review rather than repeating creation. Review
+the provider dashboards for resources named `sentinelx-<tenant UUID>` and reconcile
+the resource IDs/stage after verifying ownership and tenant identity. Never reset
+a paused job to NEW without confirming no resource was created. Do not delete
+live resources as an automatic retry mechanism.
+
+The provisioner creates a fresh Neon project/database, applies all tenant
+migrations and bootstraps the verified Administrator through transient child
+process environment variables. It then creates a Render Docker web service with
+`plan: free`, separate tenant identity/database and email 2FA. It does not select
+paid plans or register custom domains. Provider errors, quota limits, payment
+requirements and private-repository access failures stop the operation. A free
+Neon account/organization is an operational prerequisite; this code cannot change
+or guarantee the provider's account-level billing plan.
+
+For this pilot, set onboarding `TENANT_ORIGIN_MODE=render`. Its provisioner payload
+has `origin: null`; the trusted Render API assigns the actual `https://*.onrender.com`
+origin. The initial runtime origin is deliberately non-routable
+`https://unconfigured.invalid`. The provisioner updates APP_ORIGIN to the assigned
+URL and triggers a deployment. Company activation waits for HTTPS `/healthz` to
+return that exact company's non-secret tenant UUID and configured public origin.
+This prevents an initial deployment with the placeholder APP_ORIGIN from being
+marked ready before the corrected configuration is live. Existing custom-domain
+adapters remain supported through the platform's default `custom` mode and exact
+TENANT_BASE_DOMAIN matching, but the included Render provisioner uses assigned
+Render URLs. This avoids needing a custom application domain per tenant; email
+sending still requires a verified sender domain for recipients beyond Resend's
+own-account test restriction.
+
+The provisioning adapter returns HTTP 202 while preparation is incomplete. The
+signup page checks again each minute, using the code still in browser memory;
+no password, hash, code or provider key is stored in browser storage. Keep that
+page open during preparation. The original ten-minute verification expiry and
+failed-attempt limits remain enforced. If preparation outlasts code validity,
+request a fresh code and retry; it resumes the same recorded resources. Closing
+the page pauses progress until verified requests resume. On completion the
+platform erases temporary password/code material as before.
+
+Free Render services can sleep and share workspace usage limits, so these
+artifacts support a pilot rather than guarantee always-on multi-company service.
+The actual Render/Neon account permissions, API response compatibility, private
+repository deployment access and multi-company isolation must pass live
+acceptance. Local provider tests use fixtures and do not create cloud resources.
+
+Configuration order: provisioner database migration and environment -> provisioner
+service URL -> onboarding TENANT_PROVISIONER_URL (`https://<host>/provision`) and
+matching token -> onboarding exact PLATFORM_ORIGIN -> tenant COMPANY_SIGNUP_URL.
+Never paste provider keys or database passwords into chat or commits.
+
+Set provisioner `COMPANY_SIGNUP_URL` to the onboarding HTTPS signup page before
+accepting company registrations, so newly created company services also receive
+the company-registration link. Existing services must be updated separately.
+Changing TENANT_PROVISIONER_TOKEN changes request fingerprints; finish or carefully
+reconcile pending jobs before token rotation. Provider keys may be rotated without
+changing those fingerprints.

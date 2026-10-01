@@ -81,6 +81,7 @@
     "verify:end-to-end": "node scripts/verify-end-to-end-scenarios.js",
     "test:end-to-end:integration": "node --test tests/integration/end-to-end-scenarios.test.js",
     "test:taxonomy:ui": "node --test tests/integration/taxonomy-ui.test.js",
+    "start:provisioner": "node src/provisioning/server.js",
     "start:platform": "node src/platform/server.js",
     "db:migrate:platform": "node scripts/migrate-platform.js",
     "tenant:bootstrap": "node scripts/bootstrap-tenant.js",

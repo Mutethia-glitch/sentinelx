@@ -86,3 +86,22 @@ Continue provisioning integration and deployment preparation. Domain verificatio
 will unblock real email delivery to other company users. Finish Task 41 acceptance,
 then scope the requested company monitoring, self-monitoring and containment
 workflow above.
+
+
+## Evening continuation
+
+The user created the separate Neon platform project and reported that platform
+migrations applied. They created provider API keys, which must remain private.
+Render workspace ID: `tea-d6s2gos50q8c73fc0540`.
+Neon organization ID: `org-lingering-fire-67318529`. These are non-secret
+configuration identifiers, not API credentials.
+
+A platform database role password appeared in chat during a Read-Host mistake;
+the user was instructed to rotate it. Rotation was not explicitly confirmed.
+Use the rotated connection URL for subsequent deployment configuration.
+
+The included Render/Neon provisioner was implemented after these IDs were
+provided. Deploy it separately and apply platform migration 002. Set the
+onboarding service to `TENANT_ORIGIN_MODE=render` for assigned HTTPS company
+URLs. Provider fixtures are not live acceptance; domain-backed email delivery
+and hosted multi-company acceptance remain pending.

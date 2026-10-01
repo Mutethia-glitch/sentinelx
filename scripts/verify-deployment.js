@@ -13,6 +13,7 @@ function main(){
  assert.equal(platform.baseDomain,'example.com');
  assert.equal(CATEGORY_CODES.length,15);assert.equal(new Set(CATEGORY_CODES).size,15);
  for(const file of ['Dockerfile','deploy/tenant.env.example','deploy/platform.env.example','deploy/compose.tenant.yml','deploy/compose.platform.yml',
+   'deploy/render.provisioner.yaml','deploy/provisioner.env.example','src/provisioning/server.js','platform/db/migrations/002_provisioning_progress.sql',
    'db/migrations/016_tenant_identity_and_email_auth.sql','platform/db/migrations/001_company_onboarding.sql'])assert.equal(fs.existsSync(path.join(__dirname,'..',file)),true,file);
  const auth=source('src/api/auth-handler.js');for(const route of ['/api/auth/verify-2fa','/api/auth/resend-2fa','/api/auth/activate'])assert.ok(auth.includes(route),route);
  const access=source('src/api/access-handler.js');assert.ok(access.includes('/api/access/invitations'));assert.ok(access.includes('/active'));
@@ -20,7 +21,7 @@ function main(){
  const platformServer=source('src/platform/server.js');assert.ok(platformServer.includes('/api/company-signup/verify'));assert.ok(platformServer.includes('/healthz'));
  const ui=source('frontend/shared/sentinelx-ui.js');assert.ok(ui.includes('beginTwoFactor'));
  for(const page of ['events','alerts','incidents','dashboard','notifications','audit'])assert.ok(source('frontend/'+page+'/'+page+'.js').includes('beginTwoFactor'),page+' 2FA redirect');
- const pkg=JSON.parse(source('package.json'));for(const name of ['start:platform','db:migrate:platform','tenant:bootstrap','verify:deployment','smoke:online','test:tenant-auth:integration','test:platform-signup:integration'])assert.ok(pkg.scripts[name],name);
+ const pkg=JSON.parse(source('package.json'));for(const name of ['start:platform','start:provisioner','db:migrate:platform','tenant:bootstrap','verify:deployment','smoke:online','test:tenant-auth:integration','test:platform-signup:integration'])assert.ok(pkg.scripts[name],name);
  console.log('Production HTTPS configuration, isolated tenant identity, six-digit email 2FA, company user administration, onboarding control plane and deployment artifacts verified.');
 }
 if(require.main===module){try{main();}catch(error){console.error('Task 41 deployment verification failed: '+error.message);process.exitCode=1;}}

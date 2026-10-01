@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: sentinelx-provisioner
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerCommand: node src/provisioning/server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PLATFORM_DATABASE_URL
+        sync: false
+      - key: TENANT_PROVISIONER_TOKEN
+        sync: false
+      - key: PROVISIONER_OTP_KEY
+        generateValue: true
+      - key: RENDER_OWNER_ID
+        sync: false
+      - key: NEON_ORG_ID
+        sync: false
+      - key: RENDER_API_KEY
+        sync: false
+      - key: NEON_API_KEY
+        sync: false
+      - key: EMAIL_DELIVERY_URL
+        value: https://api.resend.com/emails
+      - key: EMAIL_DELIVERY_TOKEN
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

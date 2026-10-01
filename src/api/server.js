@@ -78,7 +78,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
     if(req.url==='/healthz'){
       res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');
       if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');return res.end(JSON.stringify({error:'Method not allowed.'}));}
-      res.statusCode=200;return res.end(JSON.stringify({status:'ok'}));
+      res.statusCode=200;return res.end(JSON.stringify({status:'ok',...(config.tenant?.id?{tenantId:config.tenant.id,origin:config.origin}:{})}));
     }
     if (security(req, res)) return;
     if (auditing && req.url.startsWith('/api/audit')) return auditing(req, res);
