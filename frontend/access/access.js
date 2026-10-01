@@ -38,7 +38,7 @@ async function refresh(background=false){background=background===true;if(!backgr
   const current=++generation;if(!background)ui.loading('Loading access…');if(!background){element('users-panel').hidden=true;element('users').replaceChildren();}
   const access=await request('/api/access/me');if(current!==generation||(background&&!ui.liveCanApply()))return false;ui.applyAccess(access);element('login-panel').hidden=true;element('identity-panel').hidden=false;element('access-overview').hidden=false;
   element('identity').textContent=`${access.user.displayName} · ${access.user.email}`;
-  element('tenant-name').textContent=access.tenant?`Company: ${access.tenant.name} · ${access.tenant.slug}`:'Local development tenant';
+  element('tenant-name').textContent=access.tenant?`Company: ${access.tenant.name}`:'Local development tenant';
   element('assigned-roles').textContent=access.roles.length?`Roles: ${access.roles.join(', ')}`:'No role assigned. Ask an Administrator to configure your access.';
   if(access.permissions.includes('users.read')&&access.permissions.includes('users.roles.manage')){
     const [users,roles]=await Promise.all([request('/api/access/users'),request('/api/access/roles')]);
