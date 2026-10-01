@@ -50,7 +50,7 @@
         <h3 class="sx-section-title" data-icon="activity">Source events</h3><div class="table-scroll"><table><thead><tr><th>Event ID</th><th>Occurred</th><th>Source / type</th><th>User / host</th><th>Status</th><th>Trigger</th><th>Evidence</th></tr></thead><tbody id="event-rows"></tbody></table></div>
         <section id="event-detail" hidden tabindex="-1"><h3 class="sx-section-title" data-icon="eye">Source-event inspection</h3><p id="event-identity"></p><h4>Normalized event</h4><pre id="normalized-event"></pre><h4>Raw evidence</h4><pre id="raw-event"></pre></section>
       </div>
-      <form id="status-form" hidden><h3>Analyst status</h3><p class="hint">Record triage disposition.</p><label>Status<select id="alert-status"><option>NEW</option><option>ACKNOWLEDGED</option></select></label><label>Reason<textarea id="status-reason" maxlength="500" required></textarea></label><button type="submit" data-icon="check">Update alert status</button></form>
+      <form id="status-form" hidden><h3>Analyst status</h3><p class="hint">Record triage disposition.</p><label>Status<select id="alert-status"><option>NEW</option><option>ACKNOWLEDGED</option></select></label><label>Reason<textarea id="status-reason" maxlength="500" required></textarea></label><button type="submit" data-icon="check">Update alert status</button></form><a id="create-incident-from-alert" hidden>Create incident from alert</a>
     </div>
   </section>
 </div></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

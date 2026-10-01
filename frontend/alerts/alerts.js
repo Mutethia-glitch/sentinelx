@@ -1,9 +1,9 @@
 'use strict';
 const ui=window.SentinelXUi;
 const el=id=>document.getElementById(id);
-let generation=0,page=1,activeFilters=new URLSearchParams(),canManage=false,currentAlertId=null,currentEventId=null;
+let generation=0,page=1,activeFilters=new URLSearchParams(),canManage=false,canCreateIncident=false,currentAlertId=null,currentEventId=null;
 function message(text,error=false){el('message').textContent=error?`Error: ${text}`:text;el('message').classList.toggle('error',error);if(error)el('message').scrollIntoView({block:'center'});}
-function clearDetail(){currentAlertId=null;el('detail-panel').hidden=true;el('detail-fields').replaceChildren();el('entities').textContent='';el('match-evidence').textContent='';el('event-rows').replaceChildren();el('status-form').hidden=true;el('status-reason').value='';clearEvent();}
+function clearDetail(){currentAlertId=null;el('detail-panel').hidden=true;el('detail-fields').replaceChildren();el('entities').textContent='';el('match-evidence').textContent='';el('event-rows').replaceChildren();el('status-form').hidden=true;el('create-incident-from-alert').hidden=true;el('status-reason').value='';clearEvent();}
 function clearData(){el('rows').replaceChildren();el('results').textContent='';el('page').textContent='';el('previous').disabled=true;el('next').disabled=true;clearDetail();}
 function reset(){ui.clearAccess();generation++;clearData();el('login-panel').hidden=false;el('identity-panel').hidden=true;el('alerts-panel').hidden=true;el('identity').textContent='';canManage=false;}
 const request=ui.request;
@@ -38,7 +38,7 @@ async function inspect(id,background=false){background=background===true;if(!bac
       const cell=document.createElement('td'),button=document.createElement('button');button.type='button';button.textContent='Inspect event';button.setAttribute('aria-label',`Inspect source event ${event.id}`);button.addEventListener('click',()=>inspectEvent(event.id));cell.append(button);row.append(cell);
       el('event-rows').append(row);
     }
-    el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
+    el('create-incident-from-alert').hidden=!canCreateIncident;el('create-incident-from-alert').href='/incidents?fromAlert='+encodeURIComponent(alert.id)+'#create-form';el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
     el('detail-panel').hidden=false;if(!background)el('detail-panel').focus();if(!background)message('Alert loaded.');return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
@@ -48,11 +48,11 @@ async function load(background=false){background=background===true;if(!backgroun
     const access=await request('/api/access/me');if(current!==generation||(background&&!ui.liveCanApply()))return false;ui.applyAccess(access);
     el('login-panel').hidden=true;el('identity-panel').hidden=false;el('identity').textContent=`${access.user.displayName} · ${access.roles.join(', ')||'No role assigned'}`;
     if(!access.permissions.includes('alerts.read')){el('alerts-panel').hidden=true;message('Your account does not have permission to view alerts.',true);return;}
-    canManage=access.permissions.includes('alerts.manage');
+    canManage=access.permissions.includes('alerts.manage');canCreateIncident=access.permissions.includes('incidents.manage');
     const params=new URLSearchParams(activeFilters);params.set('page',String(page));
     const data=await request(`/api/alerts?${params}`);if(current!==generation||(background&&!ui.liveCanApply()))return false;
     el('rows').replaceChildren();for(const alert of data.alerts){
-      const row=document.createElement('tr');
+      const row=document.createElement('tr');row.dataset.alertId=alert.id;
       for(const value of [alert.timestamp.replace('T',' ').replace(/\.000Z$/,' UTC').replace(/Z$/,' UTC'),alert.severity,alert.threat,alert.rule.name,alert.source,alert.status]){
         const cell=document.createElement('td');cell.textContent=value;row.append(cell);
       }
@@ -71,7 +71,8 @@ el('status-form').addEventListener('submit',async event=>{
   const id=currentAlertId,current=++generation,button=event.currentTarget.querySelector('button');
   const body=JSON.stringify({status:el('alert-status').value,reason:el('status-reason').value});button.disabled=true;
   try{
-    await request(`/api/alerts/${encodeURIComponent(id)}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body});
+    const updated=await request(`/api/alerts/${encodeURIComponent(id)}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body});
+    for(const row of el('rows').querySelectorAll('tr'))if(row.dataset.alertId===id)row.cells[5].textContent=updated.alert.status;
     if(current!==generation)return;
     await load();
     if(current+1!==generation)return;
