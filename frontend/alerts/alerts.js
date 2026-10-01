@@ -38,7 +38,7 @@ async function inspect(id,background=false){background=background===true;if(!bac
       const cell=document.createElement('td'),button=document.createElement('button');button.type='button';button.textContent='Inspect event';button.setAttribute('aria-label',`Inspect source event ${event.id}`);button.addEventListener('click',()=>inspectEvent(event.id));cell.append(button);row.append(cell);
       el('event-rows').append(row);
     }
-    el('create-incident-from-alert').hidden=!canCreateIncident;el('create-incident-from-alert').href='/incidents?fromAlert='+encodeURIComponent(alert.id)+'#create-form';el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
+    el('create-incident-from-alert').hidden=!canCreateIncident;el('create-incident-from-alert').href='/incidents#fromAlert='+encodeURIComponent(alert.id);el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
     el('detail-panel').hidden=false;if(!background)el('detail-panel').focus();if(!background)message('Alert loaded.');return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
@@ -53,7 +53,7 @@ async function load(background=false){background=background===true;if(!backgroun
     const data=await request(`/api/alerts?${params}`);if(current!==generation||(background&&!ui.liveCanApply()))return false;
     el('rows').replaceChildren();for(const alert of data.alerts){
       const row=document.createElement('tr');row.dataset.alertId=alert.id;
-      for(const value of [alert.timestamp.replace('T',' ').replace(/\.000Z$/,' UTC').replace(/Z$/,' UTC'),alert.severity,alert.threat,alert.rule.name,alert.source,alert.status]){
+      for(const value of [alert.id,alert.timestamp.replace('T',' ').replace(/\.000Z$/,' UTC').replace(/Z$/,' UTC'),alert.severity,alert.threat,alert.rule.name,alert.source,alert.status]){
         const cell=document.createElement('td');cell.textContent=value;row.append(cell);
       }
       const cell=document.createElement('td'),button=document.createElement('button');button.type='button';button.textContent='Inspect';button.setAttribute('aria-label',`Inspect alert ${alert.id}`);button.addEventListener('click',()=>inspect(alert.id));cell.append(button);row.append(cell);el('rows').append(row);
@@ -69,10 +69,10 @@ el('next').addEventListener('click',()=>{if(page<2000){page++;load();}});
 el('status-form').addEventListener('submit',async event=>{
   event.preventDefault();if(!currentAlertId)return;
   const id=currentAlertId,current=++generation,button=event.currentTarget.querySelector('button');
-  const body=JSON.stringify({status:el('alert-status').value,reason:el('status-reason').value});button.disabled=true;
+  const body=JSON.stringify({status:el('alert-status').value,reason:el('status-reason').value.trim()||'No analyst note supplied.'});button.disabled=true;
   try{
     const updated=await request(`/api/alerts/${encodeURIComponent(id)}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body});
-    for(const row of el('rows').querySelectorAll('tr'))if(row.dataset.alertId===id)row.cells[5].textContent=updated.alert.status;
+    for(const row of el('rows').querySelectorAll('tr'))if(row.dataset.alertId===id)row.cells[6].textContent=updated.alert.status;
     if(current!==generation)return;
     await load();
     if(current+1!==generation)return;

@@ -22,15 +22,15 @@ test('all consoles use the imported Lovable shell and protected navigation',()=>
   }
 });
 
-test('runtime theme preserves final Lovable dark tokens',()=>{
+test('runtime theme uses readable light tokens and preserves layouts',()=>{
   const css=fs.readFileSync(path.join(__dirname,'../../frontend/shared/sentinelx-theme.css'),'utf8');
-  assert.match(css,/color-scheme:dark/);
-  assert.match(css,/--background:oklch\(\.145 \.025 255\)/);
-  assert.match(css,/--foreground:oklch\(\.92 \.012 250\)/);
-  assert.match(css,/--primary:oklch\(\.72 \.13 225\)/);
-  assert.match(css,/--sidebar:oklch\(\.12 \.026 258\)/);
-  assert.match(css,/--surface-subtle:oklch\(\.17 \.024 255\)/);
-  assert.match(css,/--severity-critical:oklch\(\.68 \.2 25\)/);
+  assert.match(css,/color-scheme:light/);
+  assert.match(css,/--background:#f5f7fb/);
+  assert.match(css,/--foreground:#182638/);
+  assert.match(css,/--primary:#075985/);
+  assert.match(css,/--sidebar:#eef2f7/);
+  assert.match(css,/--surface-subtle:#f0f3f8/);
+  assert.match(css,/--severity-critical:#b42332/);
   assert.match(css,/@media\(max-width:767px\)/);
   assert.match(css,/\.sx-incident-layout/);
   assert.match(css,/\.sx-notification-layout/);

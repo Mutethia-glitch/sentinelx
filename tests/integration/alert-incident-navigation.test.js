@@ -1,0 +1,58 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { chromium } = require('playwright');
+const { createServer } = require('../../src/api/server');
+const { configFromEnv } = require('../../src/auth/config');
+const { createInput } = require('../../src/incidents/model');
+const { statusUpdateInput } = require('../../src/alerts/model');
+
+test('real HTTP alert update and incident navigation preserve IDs, prefill and creation', async t => {
+  const id = '00000000-0000-4000-8000-000000000001';
+  const otherId = '00000000-0000-4000-8000-000000000002';
+  const alert = { id, timestamp: '2026-10-01T00:00:00Z', severity: 'HIGH', threat: 'BRUTE_FORCE', source: 'iphyn-app', status: 'NEW', confidence: null, rule: { id: otherId, name: 'Repeated failures' }, events: [], affectedEntities: {}, matchEvidence: {}, matchReason: 'Five failed logins' };
+  const other = { ...alert, id: otherId };
+  const user = { id: otherId, displayName: 'Test administrator', email: 'test@example.invalid', active: true, roles: ['Administrator'] };
+  const identity = { user, roles: user.roles, permissions: ['alerts.read', 'alerts.manage', 'incidents.read', 'incidents.manage', 'users.read'] };
+  let created;
+  const config = configFromEnv({});
+  const server = createServer({}, config, { me: async () => identity, users: async () => [user] }, null, null, null, null, {
+    list: async () => ({ alerts: [alert, alert, other], page: 1, hasMore: false }),
+    inspect: async () => alert,
+    authorizeWrite: async () => user,
+    updateStatus: async (_, target, body) => { assert.equal(target, id); Object.assign(alert, { status: statusUpdateInput(body).status }); return alert; },
+  }, {
+    list: async () => ({ incidents: [], page: 1, hasMore: false }),
+    authorizeWrite: async () => user,
+    create: async (_, body) => { created = createInput(body); return { id: otherId }; },
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  config.origin = `http://127.0.0.1:${server.address().port}`;
+  const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+  t.after(async () => { await browser.close(); await new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }); });
+  const page = await browser.newPage();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('response', response => { if (response.status() >= 400 && !response.url().endsWith('/favicon.ico')) errors.push(`${response.status()} ${response.url()}`); });
+  await page.goto(config.origin + '/alerts');
+  await page.locator('#rows button').first().click();
+  await page.locator('#alert-status').selectOption('ACKNOWLEDGED');
+  await page.getByRole('button', { name: 'Update alert status', exact: true }).click();
+  await page.waitForFunction(() => [...document.querySelectorAll('#rows tr')].slice(0, 2).every(row => row.cells[6].textContent === 'ACKNOWLEDGED'));
+  assert.equal(await page.locator('#rows tr').nth(2).locator('td').nth(6).textContent(), 'NEW');
+  const update = await page.getByRole('button', { name: 'Update alert status', exact: true }).boundingBox();
+  const link = page.getByRole('link', { name: 'Create incident from alert', exact: true });
+  const linkBox = await link.boundingBox();
+  assert.ok(linkBox.y >= update.y + update.height);
+  await link.click();
+  await page.waitForURL('**/incidents#fromAlert=*');
+  await page.waitForFunction(id => document.querySelector('#create-alerts').value === id, id);
+  assert.equal(await page.locator('#create-reason').inputValue(), 'Five failed logins');
+  assert.equal(await page.locator('#create-category-context').inputValue(), 'BRUTE_FORCE');
+  await page.locator('#create-assignee').selectOption(otherId);
+  await page.getByRole('button', { name: 'Create incident', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#message').textContent === 'Incident created.');
+  assert.deepEqual(created.alertIds, [id]);
+  assert.equal(created.assignedTo, otherId);
+  assert.equal(created.reason, 'Five failed logins');
+  assert.deepEqual(errors, []);
+});
