@@ -58,7 +58,7 @@ async function load(background=false) {background=background===true;if(!backgrou
     const visibleEvents = data.events.slice(start, start + eventsPerPage);
     el('rows').replaceChildren();for (const event of visibleEvents) {
       const row = document.createElement('tr');
-      for (const value of [event.timestamp.replace('T', ' ').replace(/\.000Z$/, ' UTC').replace(/Z$/, ' UTC'), event.source, event.type, event.severity || 'Unknown', `${event.user || 'Unknown'} / ${event.host || 'Unknown'}`, event.status || 'Unknown']) {
+      for (const value of [event.timestamp.replace('T', ' ').replace(/\.000Z$/, ' UTC').replace(/Z$/, ' UTC'), event.source, event.type, event.severity || 'Unknown', `${event.user || 'Unknown'} / ${event.host || 'Unknown'}`, event.status || 'Unknown', event.action || 'Unknown']) {
         const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
       }
       const cell = document.createElement('td'), button = document.createElement('button');
