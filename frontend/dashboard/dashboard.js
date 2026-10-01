@@ -2,20 +2,17 @@
 const ui=window.SentinelXUi;
 const el=id=>document.getElementById(id);
 let generation=0;
+let trendData=[];
 const nf=new Intl.NumberFormat(undefined,{maximumFractionDigits:1});
 function message(value,error=false){el('message').textContent=error?'Error: '+value:value;el('message').classList.toggle('error',error);}
 function reset(){ui.clearAccess();
  generation++;
  for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
-  'alert-threats','incident-threats','response-outcomes','response-types','trend-rows'])el(id).replaceChildren();
+  'alert-threats','incident-threats','response-outcomes','response-types','trend-rows','trend-chart'])el(id).replaceChildren();
+ trendData=[];
  el('login-panel').hidden=false;el('identity-panel').hidden=true;el('dashboard-panel').hidden=true;el('as-of').textContent='';
 }
-async function request(path,options={}){
- const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});
- const body=response.status===204?null:await response.json();
- if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}
- return body;
-}
+const request=ui.request;
 function handleError(error){if(error.status===401||error.status===403)reset();if(error.status===401)return message('Sign in to continue.');message(ui.safeError(error),true);}
 function number(value){return value===null||value===undefined?'No incident data':nf.format(value);}
 function card(container,label,value){
@@ -69,6 +66,21 @@ function trendCell(row,count,max){
  track.className='mini-track';track.setAttribute('aria-hidden','true');fill.className='mini-fill';
  fill.style.width=Math.max(0,Math.min(100,100*count/Math.max(1,max)))+'%';track.append(fill);td.append(value,track);row.append(td);
 }
+function renderTrend(){
+ const series=el('trend-series').value;
+ const labels={events:'Events received',alerts:'Alerts created',incidents:'Incidents created',responses:'Responses recorded'};
+ const max=Math.max(1,...trendData.map(day=>day[series]));
+ const chart=el('trend-chart');chart.replaceChildren();
+ chart.setAttribute('aria-label',labels[series]+' by UTC day');
+ for(const day of trendData){
+  const column=document.createElement('div'),plot=document.createElement('div'),count=document.createElement('span'),bar=document.createElement('span'),date=document.createElement('time');
+  column.className='sx-trend-column';plot.className='sx-trend-plot';count.className='sx-trend-value';bar.className='sx-trend-bar';
+  count.textContent=nf.format(day[series]);const height=(day[series]/max*100)+'%';bar.style.height=height;count.style.bottom=height;bar.setAttribute('aria-hidden','true');
+  date.dateTime=day.day;date.textContent=new Date(day.day+'T00:00:00Z').toLocaleDateString(undefined,{day:'numeric',month:'short',timeZone:'UTC'});
+  column.title=day.day+' UTC · '+labels[series]+': '+day[series];
+  plot.append(count,bar);column.append(plot,date);chart.append(column);
+ }
+}
 function render(d){
  el('as-of').textContent='Snapshot captured: '+d.asOf+' · All-time counts unless a period is stated.';
  const t=d.totals,r=d.last24Hours;
@@ -90,6 +102,7 @@ function render(d){
  categoryRows(el('incident-threats'),d.threats.incidents);
  responseOutcomes(t);
  barRows(el('response-types'),d.responses.map(x=>({label:x.action,count:x.total})));
+ trendData=d.trend;renderTrend();
  const keys=['events','alerts','incidents','responses'];
  const max=Object.fromEntries(keys.map(key=>[key,Math.max(1,...d.trend.map(day=>day[key]))]));
  for(const day of d.trend){
@@ -99,18 +112,18 @@ function render(d){
  }
  el('dashboard-panel').hidden=false;
 }
-async function load(){
- const current=++generation;el('refresh').disabled=true;ui.loading('Loading dashboard…');
+async function load(background=false){background=background===true;if(!background)ui.clearDrafts();
+ const current=++generation;el('refresh').disabled=true;if(!background)ui.loading('Loading dashboard…');
  try{
-  const access=await request('/api/access/me');if(current!==generation)return;ui.applyAccess(access);
+  const access=await request('/api/access/me');if(current!==generation||(background&&!ui.liveCanApply()))return false;ui.applyAccess(access);
   if(!access.permissions.includes('dashboard.read')){el('login-panel').hidden=true;el('identity-panel').hidden=false;el('dashboard-panel').hidden=true;el('identity').textContent=access.user.displayName+' · '+access.roles.join(', ');message('Your account does not have permission to view the dashboard.',true);return;}
   el('identity').textContent=access.user.displayName+' · '+access.roles.join(', ');
-  const result=await request('/api/dashboard');if(current!==generation)return;
+  const result=await request('/api/dashboard');if(current!==generation||(background&&!ui.liveCanApply()))return false;
   for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
    'alert-threats','incident-threats','response-outcomes','response-types','trend-rows'])el(id).replaceChildren();
   render(result.dashboard);el('login-panel').hidden=true;el('identity-panel').hidden=false;
-  message('Dashboard refreshed from PostgreSQL.');
- }catch(error){if(current===generation)handleError(error);}
+  if(!background)message('Dashboard refreshed from PostgreSQL.');return true;
+ }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
  finally{if(current===generation)el('refresh').disabled=false;}
 }
 el('login-form').addEventListener('submit',async event=>{
@@ -120,8 +133,11 @@ el('login-form').addEventListener('submit',async event=>{
  catch(error){handleError(error);}finally{el('password').value='';button.disabled=false;}
 });
 el('refresh').addEventListener('click',load);
+el('trend-series').addEventListener('change',renderTrend);
 el('logout').addEventListener('click',async()=>{
  reset();try{await request('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});message('Signed out.');}
  catch(error){handleError(error);}
 });
 load();
+
+ui.startLiveUpdates(()=>load(true),()=>!document.getElementById('identity-panel').hidden&&!document.getElementById('dashboard-panel').hidden);

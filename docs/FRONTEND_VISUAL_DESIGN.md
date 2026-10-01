@@ -55,6 +55,45 @@ groups stay separate to preserve the existing API semantics. Panels stack below
 1280px, matching the Lovable reference breakpoint. All styling is dashboard-scoped
 in the shared stylesheet; the backend, API, migrations and taxonomy are unchanged.
 
+### Automatic console updates and UTC graph — 2026-10-01
+
+The seven-day dashboard trend is a cyan column graph built from the existing UTC
+API buckets, with a selector for alerts (default), events, incidents and responses.
+Each column has its actual count and UTC day. Zero counts have zero height; the
+current UTC day remains partial. A disclosure retains the complete daily table.
+
+All seven consoles poll their existing authorized APIs every five seconds while
+the tab is visible and active. This is near-real-time snapshot polling, not a
+server-push event stream or a new ingestion/detection scheduler. Open events,
+alerts (including source-event details), incidents, investigations and response
+history refresh alongside their lists. Audit selections remain open because audit
+entries are immutable. Current filters, pages, selected trend series and incident
+tabs are preserved. API/RBAC/database/session behavior is unchanged.
+
+The shared refresh coordinator never overlaps its refresh cycles or starts while
+another API request is pending. Background rendering checks both page generation
+and user activity before applying results. It does not clear the screen, steal
+focus or replace unsaved form values. Refresh pauses while editing or with an
+unsaved form, offline, hidden, or after 60 seconds without trusted user activity;
+the status indicator explains the pause. This bounds the session idle extension
+caused by polling existing authenticated endpoints. Typing/clicking resumes
+activity; saving/resetting forms clears their pending edits. Manual refresh remains
+available. The status indicator records the last successful background update.
+
+Requests time out after 15 seconds. Failed background refreshes keep the last
+snapshot, show delayed/stale status, and retry with exponential backoff (up to
+60 seconds, or the server's numeric Retry-After up to five minutes). Authentication
+or permission failures clear protected UI through the existing reset flow.
+Sign-out invalidates pending results; polling stops while signed out. No Web
+Storage, new runtime dependency, backend endpoint or migration is introduced.
+
+Browser acceptance (synthetic APIs, no database):
+
+```powershell
+node --test tests/integration/live-updates-ui.test.js
+if ($LASTEXITCODE -ne 0) { throw "Live console browser checks failed" }
+```
+
 ## Screen mapping
 
 The existing SentinelX backend workflows are fitted into the approved design:

@@ -8,12 +8,7 @@ function message(value,error=false){
   el('message').classList.toggle('error',error);
   if(error)el('message').scrollIntoView({block:'center'});
 }
-async function request(path,options={}){
-  const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});
-  const body=response.status===204?null:await response.json();
-  if(!response.ok){const error=new Error(body?.error||'Request failed.');error.status=response.status;throw error;}
-  return body;
-}
+const request=ui.request;
 function clearDetail(){
   el('audit-detail-panel').hidden=true;
   el('audit-detail-id').textContent='';
@@ -58,22 +53,22 @@ function row(item){
   button.type='button';button.textContent='Inspect';button.setAttribute('aria-label','Inspect audit entry '+item.action);
   button.addEventListener('click',()=>showDetail(item));td.append(button);tr.append(td);return tr;
 }
-async function load(){
-  const current=++generation;ui.loading('Loading audit trail…');
+async function load(background=false){background=background===true;if(!background)ui.clearDrafts();
+  const current=++generation;if(!background)ui.loading('Loading audit trail…');
   try{
-    const access=await request('/api/access/me');if(current!==generation)return;
+    const access=await request('/api/access/me');if(current!==generation||(background&&!ui.liveCanApply()))return false;
     ui.applyAccess(access);
     el('login-panel').hidden=true;el('identity-panel').hidden=false;
     el('identity').textContent=access.user.displayName+' · '+(access.roles.join(', ')||'No role assigned');
     if(!access.permissions.includes('audit.read')){el('audit-panel').hidden=true;message('Your account does not have permission to view the audit trail.',true);return;}
     const query=new URLSearchParams(filters);query.set('page',String(page));
-    const data=await request('/api/audit?'+query);if(current!==generation)return;
-    el('rows').replaceChildren();clearDetail();
+    const data=await request('/api/audit?'+query);if(current!==generation||(background&&!ui.liveCanApply()))return false;
+    el('rows').replaceChildren();if(!background)clearDetail();
     for(const item of data.entries)el('rows').append(row(item));
-    if(data.entries.length)showDetail(data.entries[0]);
+    if(!background&&data.entries.length)showDetail(data.entries[0]);
     el('page').textContent='Page '+data.page;el('previous').disabled=data.page<=1;el('next').disabled=!data.hasMore;
-    el('audit-panel').hidden=false;message(data.entries.length?'Audit trail loaded.':'No audit entries match these filters.');
-  }catch(error){if(current===generation)handleError(error);}
+    el('audit-panel').hidden=false;if(!background)message(data.entries.length?'Audit trail loaded.':'No audit entries match these filters.');return true;
+  }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
 el('filters').addEventListener('submit',event=>{
   event.preventDefault();
@@ -96,3 +91,5 @@ el('logout').addEventListener('click',async()=>{
   catch(error){handleError(error);}
 });
 load();
+
+ui.startLiveUpdates(()=>load(true),()=>!document.getElementById('identity-panel').hidden&&!document.getElementById('audit-panel').hidden);

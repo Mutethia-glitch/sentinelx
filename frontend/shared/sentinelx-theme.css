@@ -456,3 +456,16 @@ body[data-page="access"] .user-card button{margin-top:.25rem}
   .sx-topbar-actions #logout{width:2.75rem;padding:0}
   .sx-topbar-actions #logout .sx-action-label{display:none}
 }
+
+/* Live, API-backed UTC trend. */
+body[data-page="dashboard"] .sx-trend-selector{max-width:14rem;margin-bottom:1.5rem}
+body[data-page="dashboard"] .sx-trend-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.75rem}
+body[data-page="dashboard"] .sx-trend-column{min-width:0;text-align:center}
+body[data-page="dashboard"] .sx-trend-plot{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:11rem;margin-top:1.5rem;border-bottom:1px solid var(--border)}
+body[data-page="dashboard"] .sx-trend-value{position:absolute;width:100%;margin-bottom:.5rem;color:var(--muted-foreground);font:.625rem var(--font-mono)}
+body[data-page="dashboard"] .sx-trend-bar{display:block;flex:none;border-radius:.25rem .25rem 0 0;background:var(--primary)}
+body[data-page="dashboard"] .sx-trend-column time{display:block;margin-top:.5rem;color:var(--muted-foreground);font-size:.625rem;overflow-wrap:anywhere}
+body[data-page="dashboard"] .sx-trend-details summary{padding:.75rem 1rem;border-top:1px solid var(--border);color:var(--muted-foreground);font-size:.75rem;cursor:pointer}
+.sx-live-status{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:400}
+.sx-live-status[data-state="stale"]{color:var(--warning)}
+@media(max-width:480px){body[data-page="dashboard"] .sx-trend-chart{gap:.375rem}}

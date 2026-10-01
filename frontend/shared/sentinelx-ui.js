@@ -6,6 +6,72 @@
   if(typeof document!=='undefined')api.init(document,typeof location!=='undefined'?location.pathname:'');
 })(typeof globalThis!=='undefined'?globalThis:this,()=> {
   const SVG='http://www.w3.org/2000/svg';
+  let pendingRequests=0,liveVersion=0,liveCycle=null,lastActivity=Date.now();
+  const dirtyForms=new Set();
+  function clearDrafts(){dirtyForms.clear();}
+  async function request(path,options={}){
+    pendingRequests++;
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
+    try{
+      const response=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,signal:controller.signal});
+      const body=response.status===204?null:await response.json();
+      if(!response.ok){
+        const error=new Error(body?.error||'Request failed.');error.status=response.status;
+        const retry=Number(response.headers.get('Retry-After'));
+        if(Number.isFinite(retry)&&retry>0)error.retryAfter=Math.min(retry*1000,300000);
+        throw error;
+      }
+      return body;
+    }finally{clearTimeout(timeout);pendingRequests--;}
+  }
+  function livePauseReason(doc=globalThis.document){
+    if(doc.hidden)return 'hidden tab';
+    if(globalThis.navigator?.onLine===false)return 'offline';
+    if(Date.now()-lastActivity>=60000)return 'inactive tab';
+    for(const form of dirtyForms){if(!form.isConnected)dirtyForms.delete(form);else if(!form.closest('[hidden]'))return 'unsaved edits';}
+    if(doc.activeElement?.matches('input,textarea,select,[contenteditable="true"]'))return 'editing';
+    return '';
+  }
+  function liveCanApply(){return !!liveCycle&&liveCycle.version===liveVersion&&!livePauseReason()&&!globalThis.document.getElementById('identity-panel')?.hidden;}
+  function startLiveUpdates(refresh,isReady,doc=globalThis.document){
+    const badge=doc.createElement('span');badge.className='sx-live-status';badge.textContent='Auto-refresh every 5s';
+    doc.querySelector('.sx-operational')?.append(badge);
+    let stopped=false,running=false,failures=0,nextAttempt=0,lastSuccess=null;
+    const status=(text,state='paused')=>{badge.textContent=text;badge.dataset.state=state;};
+    const activity=event=>{if(!event.isTrusted)return;lastActivity=Date.now();liveVersion++;};
+    const edited=event=>{if(event.target.form)dirtyForms.add(event.target.form);};
+    const resetDraft=event=>dirtyForms.delete(event.target);
+    for(const type of ['pointerdown','keydown','input','change','wheel'])doc.addEventListener(type,activity,true);
+    doc.addEventListener('input',edited,true);doc.addEventListener('change',edited,true);doc.addEventListener('reset',resetDraft,true);
+    const tick=async()=>{
+      if(stopped||running)return;
+      const clock=doc.querySelector('[data-sx-clock]');if(clock)clock.textContent=new Date().toISOString().slice(0,19).replace('T',' · ')+' UTC';
+      if(!isReady()){status('Auto-refresh waiting for access');return;}
+      const reason=livePauseReason(doc);
+      if(reason){status('Auto-refresh paused · '+reason+(lastSuccess?' · Updated '+lastSuccess:''),reason==='offline'?'stale':'paused');return;}
+      if(pendingRequests||Date.now()<nextAttempt)return;
+      running=true;liveCycle={version:liveVersion};
+      status('Refreshing'+(lastSuccess?' · Last updated '+lastSuccess:''),'refreshing');
+      try{
+        const applied=await refresh();
+        if(applied===true&&liveCanApply()){
+          failures=0;lastSuccess=new Date().toISOString().slice(11,19)+' UTC';status('Auto-refresh · 5s · Updated '+lastSuccess,'live');
+        }else status('Auto-refresh paused · '+(livePauseReason(doc)||'recent activity'));
+      }catch(error){
+        failures++;
+        const delay=Math.max(error.retryAfter||0,Math.min(60000,5000*2**Math.min(failures,4)));
+        nextAttempt=Date.now()+delay;
+        status(error.status===401||error.status===403?'Access expired · Sign in again':'Updates delayed · Retrying'+(lastSuccess?' · Last updated '+lastSuccess:''),'stale');
+      }finally{running=false;liveCycle=null;}
+    };
+    let timer=setInterval(tick,5000);
+    const resume=()=>{liveVersion++;if(!doc.hidden)void tick();};
+    doc.addEventListener('visibilitychange',resume);globalThis.addEventListener('online',resume);
+    const stop=()=>{stopped=true;clearInterval(timer);liveVersion++;};
+    globalThis.addEventListener('pagehide',stop);
+    globalThis.addEventListener('pageshow',event=>{if(event.persisted&&stopped){stopped=false;timer=setInterval(tick,5000);resume();}});
+    return {tick,stop};
+  }
   const TONES=new Map([
     ['LOW','tone-low'],['MEDIUM','tone-medium'],['HIGH','tone-high'],['CRITICAL','tone-critical'],
     ['NEW','tone-new'],['ACKNOWLEDGED','tone-acknowledged'],['INVESTIGATING','tone-investigating'],
@@ -55,7 +121,7 @@
   function links(doc){
     return doc&&typeof doc.querySelectorAll==='function'?[...doc.querySelectorAll('nav a[data-permission]')]:[];
   }
-  function clearAccess(doc=globalThis.document){for(const link of links(doc))link.hidden=true;}
+  function clearAccess(doc=globalThis.document){liveVersion++;clearDrafts();for(const link of links(doc))link.hidden=true;}
   function applyAccess(access,doc=globalThis.document){
     const permissions=new Set(Array.isArray(access?.permissions)?access.permissions:[]);
     for(const link of links(doc))link.hidden=!permissions.has(link.dataset.permission);
@@ -242,5 +308,5 @@
   function init(doc=globalThis.document,pathname=''){
     markCurrentPage(doc,pathname);setupChrome(doc);observePresentation(doc);
   }
-  return {clearAccess,applyAccess,loading,safeError,beginTwoFactor,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
+  return {request,startLiveUpdates,liveCanApply,clearDrafts,clearAccess,applyAccess,loading,safeError,beginTwoFactor,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
 });
