@@ -1,50 +1,50 @@
 :root{
-  color-scheme:dark;
+  color-scheme:light;
   --radius:.375rem;
-  --background:oklch(.145 .025 255);
-  --foreground:oklch(.92 .012 250);
-  --card:oklch(.185 .026 255);
-  --card-foreground:oklch(.92 .012 250);
-  --popover:oklch(.19 .028 255);
-  --popover-foreground:oklch(.92 .012 250);
-  --primary:oklch(.72 .13 225);
-  --primary-foreground:oklch(.14 .025 255);
-  --secondary:oklch(.24 .028 255);
-  --secondary-foreground:oklch(.9 .012 250);
-  --muted:oklch(.23 .025 255);
-  --muted-foreground:oklch(.71 .025 250);
-  --accent:oklch(.27 .04 240);
-  --accent-foreground:oklch(.94 .012 250);
-  --destructive:oklch(.68 .2 25);
-  --destructive-foreground:oklch(.98 .005 250);
-  --border:oklch(.31 .03 255);
-  --input:oklch(.36 .035 255);
-  --ring:oklch(.72 .13 225);
-  --sidebar:oklch(.12 .026 258);
-  --sidebar-foreground:oklch(.89 .015 250);
-  --sidebar-primary:oklch(.35 .085 230);
-  --sidebar-primary-foreground:oklch(.96 .01 245);
-  --sidebar-accent:oklch(.2 .035 255);
-  --sidebar-accent-foreground:oklch(.94 .01 250);
-  --sidebar-border:oklch(.25 .035 258);
-  --sidebar-ring:oklch(.72 .13 225);
-  --surface-raised:oklch(.205 .028 255);
-  --surface-subtle:oklch(.17 .024 255);
-  --table-header:oklch(.16 .026 255);
-  --code:oklch(.115 .02 258);
-  --code-foreground:oklch(.8 .05 220);
-  --severity-low:oklch(.73 .1 160);
-  --severity-medium:oklch(.8 .15 85);
-  --severity-high:oklch(.75 .17 55);
-  --severity-critical:oklch(.68 .2 25);
-  --status-new:oklch(.72 .13 225);
-  --status-investigating:oklch(.77 .14 70);
-  --status-contained:oklch(.72 .13 175);
-  --status-resolved:oklch(.71 .12 145);
-  --status-dismissed:oklch(.67 .035 255);
-  --success:oklch(.72 .13 155);
-  --warning:oklch(.8 .15 85);
-  --info:oklch(.72 .13 225);
+  --background:#f5f7fb;
+  --foreground:#182638;
+  --card:#ffffff;
+  --card-foreground:#182638;
+  --popover:#ffffff;
+  --popover-foreground:#182638;
+  --primary:#075985;
+  --primary-foreground:#ffffff;
+  --secondary:#e8edf4;
+  --secondary-foreground:#24364b;
+  --muted:#edf1f6;
+  --muted-foreground:#526174;
+  --accent:#e1edf5;
+  --accent-foreground:#163c55;
+  --destructive:#b42332;
+  --destructive-foreground:#ffffff;
+  --border:#ccd5e0;
+  --input:#a7b5c5;
+  --ring:#075985;
+  --sidebar:#eef2f7;
+  --sidebar-foreground:#24364b;
+  --sidebar-primary:#d9eaf5;
+  --sidebar-primary-foreground:#075078;
+  --sidebar-accent:#e1e7ef;
+  --sidebar-accent-foreground:#182638;
+  --sidebar-border:#ccd5e0;
+  --sidebar-ring:#075985;
+  --surface-raised:#ffffff;
+  --surface-subtle:#f0f3f8;
+  --table-header:#e8edf4;
+  --code:#edf3f8;
+  --code-foreground:#16405b;
+  --severity-low:#146744;
+  --severity-medium:#795300;
+  --severity-high:#a13c12;
+  --severity-critical:#b42332;
+  --status-new:#075985;
+  --status-investigating:#795300;
+  --status-contained:#11665f;
+  --status-resolved:#256430;
+  --status-dismissed:#526174;
+  --success:#146744;
+  --warning:#795300;
+  --info:#075985;
   --font-sans:"IBM Plex Sans","Segoe UI",sans-serif;
   --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
 }
@@ -64,9 +64,9 @@ button,a,input,select,textarea{outline:none}
 .sx-brand-mark{display:grid;width:2.25rem;height:2.25rem;flex:0 0 2.25rem;place-items:center;border:1px solid color-mix(in oklab,var(--primary) 40%,transparent);border-radius:var(--radius);background:color-mix(in oklab,var(--primary) 10%,transparent);color:var(--primary)}
 .sx-brand-copy{min-width:0}
 .sx-brand-name{margin:0;color:var(--sidebar-foreground);font-size:1rem;font-weight:700;line-height:1.2}
-.sx-brand-subtitle{margin:.12rem 0 0;color:color-mix(in oklab,var(--sidebar-foreground) 55%,transparent);font-size:.5625rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.sx-brand-subtitle{margin:.12rem 0 0;color:color-mix(in oklab,var(--sidebar-foreground) 85%,transparent);font-size:.5625rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .sx-nav{display:grid;gap:.25rem;padding:.5rem;overflow-y:auto}
-.sx-nav a{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.75rem;min-height:2.75rem;width:100%;padding:0 .75rem;border-radius:var(--radius);color:color-mix(in oklab,var(--sidebar-foreground) 75%,transparent);text-decoration:none;font-size:.875rem;font-weight:500;transition:background .15s ease,color .15s ease}
+.sx-nav a{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.75rem;min-height:2.75rem;width:100%;padding:0 .75rem;border-radius:var(--radius);color:color-mix(in oklab,var(--sidebar-foreground) 90%,transparent);text-decoration:none;font-size:.875rem;font-weight:500;transition:background .15s ease,color .15s ease}
 .sx-nav a:hover{background:var(--sidebar-accent);color:var(--sidebar-accent-foreground)}
 .sx-nav a[aria-current="page"]{background:var(--sidebar-primary);color:var(--sidebar-primary-foreground)}
 .sx-nav a svg{width:1rem;height:1rem;flex:none}
@@ -94,7 +94,7 @@ body.sx-sidebar-collapsed .sx-collapse{justify-content:center;padding:.5rem}
 .sx-user-copy #identity{max-width:19rem;color:var(--foreground);font-size:.75rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sx-user-role{color:var(--muted-foreground);font-size:.625rem}
 .sx-mobile-menu{display:none}
-.sx-icon-button{display:inline-grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:1px solid var(--input);border-radius:var(--radius);background:var(--background);color:var(--foreground);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.sx-icon-button{display:inline-grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:1px solid var(--input);border-radius:var(--radius);background:var(--background);color:var(--foreground);cursor:pointer;box-shadow:0 1px 2px rgba(24,38,56,.08)}
 .sx-icon-button:hover{background:var(--accent);color:var(--accent-foreground)}
 .sx-icon-button svg{width:1rem;height:1rem}
 .sx-content{width:100%;max-width:105rem;margin:0 auto;padding:1rem 1.5rem 2rem}
@@ -122,10 +122,10 @@ body.sx-sidebar-collapsed .sx-collapse{justify-content:center;padding:.5rem}
 .sx-section-subtitle{display:block;margin:.1rem 0 0;color:var(--muted-foreground);font-size:.625rem;font-weight:400}
 
 label{display:block;min-width:0;margin:0 0 .75rem;color:var(--muted-foreground);font-size:.6875rem;font-weight:600;letter-spacing:.035em;text-transform:uppercase}
-input,select,textarea{display:block;width:100%;margin-top:.375rem;border:1px solid var(--input);border-radius:var(--radius);background:transparent;color:var(--foreground);box-shadow:0 1px 2px rgba(0,0,0,.14);transition:border-color .15s ease,box-shadow .15s ease}
+input,select,textarea{display:block;width:100%;margin-top:.375rem;border:1px solid var(--input);border-radius:var(--radius);background:transparent;color:var(--foreground);box-shadow:0 1px 2px rgba(24,38,56,.06);transition:border-color .15s ease,box-shadow .15s ease}
 input,select{height:2.25rem;padding:.25rem .75rem}
 /* Native option popups need opaque colors; transparent controls can expose a white OS menu. */
-select{color-scheme:dark;background-color:var(--popover);color:var(--popover-foreground)}
+select{color-scheme:light;background-color:var(--popover);color:var(--popover-foreground)}
 select option,select optgroup{background-color:var(--popover);color:var(--popover-foreground)}
 select option:checked{background-color:var(--accent);color:var(--accent-foreground)}
 select option:disabled,select optgroup:disabled{color:var(--muted-foreground)}
@@ -137,7 +137,7 @@ fieldset{margin:0 0 .75rem;padding:.75rem;border:1px solid var(--border);border-
 fieldset legend{padding:0 .3rem;color:var(--muted-foreground);font-size:.6875rem;font-weight:700;text-transform:uppercase}
 fieldset label{margin:.5rem 0;text-transform:none;letter-spacing:0;color:var(--foreground)}
 
-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.25rem;padding:.5rem 1rem;border:1px solid transparent;border-radius:var(--radius);background:var(--primary);color:var(--primary-foreground);font-size:.875rem;font-weight:500;white-space:nowrap;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:background .15s ease,color .15s ease,border-color .15s ease}
+button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.25rem;padding:.5rem 1rem;border:1px solid transparent;border-radius:var(--radius);background:var(--primary);color:var(--primary-foreground);font-size:.875rem;font-weight:500;white-space:nowrap;cursor:pointer;box-shadow:0 1px 2px rgba(24,38,56,.08);transition:background .15s ease,color .15s ease,border-color .15s ease}
 button:hover:not(:disabled){background:color-mix(in oklab,var(--primary) 90%,black)}
 button:disabled{opacity:.5;cursor:not-allowed}
 button svg{width:1rem;height:1rem;flex:none}
@@ -164,7 +164,7 @@ td{padding:.75rem;border-bottom:1px solid color-mix(in oklab,var(--border) 70%,t
 tbody tr:hover{background:color-mix(in oklab,var(--muted) 40%,transparent)}
 tbody tr:last-child td{border-bottom:0}
 td:first-child{font-family:var(--font-mono)}
-table button{border-color:var(--input);background:var(--background);color:var(--foreground);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+table button{border-color:var(--input);background:var(--background);color:var(--foreground);box-shadow:0 1px 2px rgba(24,38,56,.06)}
 table button:hover:not(:disabled){background:var(--accent);color:var(--accent-foreground)}
 .pagination{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.75rem 1rem;color:var(--muted-foreground);font-size:.75rem}
 .pagination button{margin:0}
@@ -331,7 +331,7 @@ body[data-page="access"] #assigned-roles{color:var(--muted-foreground);font-size
   body.sx-sidebar-collapsed .sx-collapse-label{display:block}
   body.sx-sidebar-collapsed .sx-nav a{grid-template-columns:auto minmax(0,1fr);place-items:initial;padding:0 .75rem}
   body.sx-sidebar-collapsed .sx-collapse{justify-content:flex-start;padding:.5rem .75rem}
-  .sx-overlay{display:block;position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.8);opacity:0;pointer-events:none;transition:opacity .22s ease}
+  .sx-overlay{display:block;position:fixed;inset:0;z-index:35;background:rgba(24,38,56,.35);opacity:0;pointer-events:none;transition:opacity .22s ease}
   body.sx-nav-open .sx-overlay{opacity:1;pointer-events:auto}
   .sx-mobile-menu{display:inline-grid}
   .sx-topbar{grid-template-columns:auto minmax(0,1fr) auto;padding:.5rem .75rem}
