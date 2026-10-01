@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const FILES = {
+  '/company-signup': ['company-signup.html', 'text/html; charset=utf-8'],
   '/access': ['index.html', 'text/html; charset=utf-8'],
   '/access/': ['index.html', 'text/html; charset=utf-8'],
   '/access/access.js': ['access.js', 'text/javascript; charset=utf-8'],
@@ -13,6 +14,15 @@ function accessPage(req, res) {
       res.statusCode = 405; res.setHeader('Allow', 'GET, HEAD'); res.end(); return true;
     }
     res.statusCode = 302; res.setHeader('Location', '/access'); res.end(); return true;
+  }
+  if (req.url === '/company-signup' && process.env.COMPANY_SIGNUP_URL) {
+    let signup;
+    try { signup = new URL(process.env.COMPANY_SIGNUP_URL); } catch { signup = null; }
+    if (signup && signup.protocol === 'https:' && !signup.username && !signup.password) {
+      res.setHeader('Cache-Control', 'no-store');
+      if (req.method !== 'GET') { res.statusCode = 405; res.setHeader('Allow', 'GET'); res.end(); return true; }
+      res.statusCode = 302; res.setHeader('Location', signup.href); res.end(); return true;
+    }
   }
   if (!Object.hasOwn(FILES, req.url)) return false;
   const file = FILES[req.url];

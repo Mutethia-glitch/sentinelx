@@ -474,3 +474,17 @@ body[data-page="dashboard"] .sx-trend-details summary{padding:.75rem 1rem;border
 .sx-live-status{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:400}
 .sx-live-status[data-state="stale"]{color:var(--warning)}
 @media(max-width:480px){body[data-page="dashboard"] .sx-trend-chart{gap:.375rem}}
+
+/* Standalone email verification and invitation activation. */
+.sx-auth-centered{min-height:100dvh;display:grid;place-items:center;padding:clamp(1rem,4vw,2.5rem)}
+.sx-auth-centered .sx-auth-card{width:100%;max-width:32rem;display:grid;gap:1.5rem;margin:auto}
+.sx-auth-centered .sx-auth-intro{text-align:center}
+.sx-auth-centered .sx-auth-intro h1{font-size:clamp(1.5rem,4vw,2rem);line-height:1.25;margin:0 0 .75rem}
+.sx-auth-centered .sx-auth-intro p{color:var(--muted-foreground);line-height:1.6;margin:0}
+.sx-auth-centered .sx-auth-intro-mark{display:grid;place-items:center;width:3rem;height:3rem;margin:0 auto 1rem;border:1px solid var(--border);border-radius:var(--radius);color:var(--primary);background:var(--card)}
+.sx-auth-centered .sx-auth-points{list-style:none;padding:0;margin:1rem 0 0;color:var(--muted-foreground);font-size:.8rem;line-height:1.7}
+.sx-auth-centered .sx-panel-body{display:grid;gap:1rem}
+.sx-auth-centered .sx-panel-body label{margin:0}
+.sx-auth-centered #code{font-size:1.25rem;letter-spacing:.3em;text-align:center}
+.sx-auth-centered #resend{background:var(--secondary);color:var(--foreground)}
+.sx-auth-centered .hint{text-align:center;margin:0}

@@ -294,3 +294,5 @@ tenant.
 
 No production credentials or verification codes should be pasted into issue,
 chat, test output or source control.
+
+The tenant Access page includes a company-registration link. Set `COMPANY_SIGNUP_URL` to the deployed HTTPS onboarding signup page to enable its redirect. Until configured, the link displays registration availability rather than accepting credentials or creating accounts in the company database.
