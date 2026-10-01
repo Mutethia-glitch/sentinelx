@@ -38,6 +38,23 @@ The served frontend now follows the approved Lovable design:
 
 The real backend data replaces Lovable mock values. No fabricated production records are introduced.
 
+### Dashboard screenshot alignment — 2026-10-01
+
+The severity and workflow panels use Lovable's label/count rows with colored dots
+and thin full-width tracks below. Severity is displayed Critical to Low; bar widths
+represent each count's share of its own alert or incident group (zero stays empty).
+Threat categories use divided list rows with right-aligned counts, readable labels
+and the canonical code available on hover. Every category returned by the API is
+rendered, with no frontend top-ten cutoff.
+
+Recorded response outcomes use two large value-first cards: green successful
+containment and neutral reported unsuccessful. The API has no pending-validation
+metric, so the mock's pending label is not reused. Existing action-type details
+remain below the cards. Severity remains explicitly all-time, and alert/incident
+groups stay separate to preserve the existing API semantics. Panels stack below
+1280px, matching the Lovable reference breakpoint. All styling is dashboard-scoped
+in the shared stylesheet; the backend, API, migrations and taxonomy are unchanged.
+
 ## Screen mapping
 
 The existing SentinelX backend workflows are fitted into the approved design:

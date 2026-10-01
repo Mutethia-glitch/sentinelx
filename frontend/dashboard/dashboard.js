@@ -7,7 +7,7 @@ function message(value,error=false){el('message').textContent=error?'Error: '+va
 function reset(){ui.clearAccess();
  generation++;
  for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
-  'alert-threats','incident-threats','response-types','trend-rows'])el(id).replaceChildren();
+  'alert-threats','incident-threats','response-outcomes','response-types','trend-rows'])el(id).replaceChildren();
  el('login-panel').hidden=false;el('identity-panel').hidden=true;el('dashboard-panel').hidden=true;el('as-of').textContent='';
 }
 async function request(path,options={}){
@@ -22,25 +22,47 @@ function card(container,label,value){
  const dl=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');
  dl.className='card';dt.textContent=label;dd.textContent=number(value);dl.append(dt,dd);container.append(dl);
 }
+function displayLabel(value){return value.charAt(0)+value.slice(1).toLowerCase().replaceAll('_',' ');}
 function barRows(container,items){
  container.replaceChildren();
  if(!items.length){const p=document.createElement('p');p.className='empty';p.textContent='No records in this category.';container.append(p);return;}
- const max=Math.max(1,...items.map(item=>item.count));
+ const total=Math.max(1,items.reduce((sum,item)=>sum+item.count,0));
  const wrapper=document.createElement('div');wrapper.className='bars';
  for(const item of items){
   const row=document.createElement('div'),label=document.createElement('span'),value=document.createElement('span'),
    track=document.createElement('span'),fill=document.createElement('span');
   row.className='bar-row';
-  if(['LOW','MEDIUM','HIGH','CRITICAL'].includes(item.label))row.classList.add(item.label.toLowerCase());
-  label.className='bar-label';label.textContent=item.label;
+  if(['LOW','MEDIUM','HIGH','CRITICAL','NEW','ACKNOWLEDGED','INVESTIGATING','CONTAINED','RESOLVED','DISMISSED'].includes(item.label))row.classList.add(item.label.toLowerCase());
+  label.className='bar-label';label.textContent=displayLabel(item.label);
   value.className='bar-value';value.textContent=nf.format(item.count);
   track.className='bar-track';track.setAttribute('aria-hidden','true');
-  fill.className='bar-fill';fill.style.width=Math.max(0,Math.min(100,item.count/max*100))+'%';track.append(fill);
+  fill.className='bar-fill';fill.style.width=Math.max(0,Math.min(100,item.count/total*100))+'%';track.append(fill);
   row.append(label,value,track);wrapper.append(row);
  }
  container.append(wrapper);
 }
+function categoryRows(container,items){
+ container.replaceChildren();
+ if(!items.length){const p=document.createElement('p');p.className='empty';p.textContent='No records in this category.';container.append(p);return;}
+ const list=document.createElement('ul');list.className='sx-category-list';
+ for(const item of items){
+  const row=document.createElement('li'),label=document.createElement('span'),value=document.createElement('span');
+  label.className='sx-category-label';label.textContent=displayLabel(item.code);label.title=item.code;
+  value.className='sx-category-count';value.textContent=nf.format(item.count);
+  row.append(label,value);list.append(row);
+ }
+ container.append(list);
+}
+function responseOutcomes(totals){
+ const container=el('response-outcomes');container.replaceChildren();
+ for(const [label,value,success] of [['Successful containment',totals.successfulContainments,true],['Reported unsuccessful',totals.reportedFailedActions,false]]){
+  const group=document.createElement('div'),name=document.createElement('dt'),count=document.createElement('dd');
+  group.className='sx-outcome-card'+(success?' sx-outcome-success':'');
+  name.textContent=label;count.textContent=number(value);group.append(name,count);container.append(group);
+ }
+}
 function mapRows(object){return Object.entries(object).map(([label,count])=>({label,count}));}
+function severityRows(object){return ['CRITICAL','HIGH','MEDIUM','LOW'].map(label=>({label,count:object[label]}));}
 function trendCell(row,count,max){
  const td=document.createElement('td'),value=document.createElement('span'),track=document.createElement('div'),fill=document.createElement('div');
  value.className='trend-count';value.textContent=nf.format(count);
@@ -60,12 +82,13 @@ function render(d){
  for(const [label,value] of all)card(el('total-cards'),label,value);
  for(const [label,value] of [['Events received',r.eventsReceived],['Alerts created',r.alertsCreated],
   ['Incidents created',r.incidentsCreated],['Responses recorded',r.responsesRecorded]])card(el('recent-cards'),label,value);
- barRows(el('alert-severity'),mapRows(d.severity.alerts));
- barRows(el('incident-severity'),mapRows(d.severity.incidents));
+ barRows(el('alert-severity'),severityRows(d.severity.alerts));
+ barRows(el('incident-severity'),severityRows(d.severity.incidents));
  barRows(el('alert-status'),mapRows(d.status.alerts));
  barRows(el('incident-status'),mapRows(d.status.incidents));
- barRows(el('alert-threats'),d.threats.alerts.map(x=>({label:x.code,count:x.count})));
- barRows(el('incident-threats'),d.threats.incidents.map(x=>({label:x.code,count:x.count})));
+ categoryRows(el('alert-threats'),d.threats.alerts);
+ categoryRows(el('incident-threats'),d.threats.incidents);
+ responseOutcomes(t);
  barRows(el('response-types'),d.responses.map(x=>({label:x.action,count:x.total})));
  const keys=['events','alerts','incidents','responses'];
  const max=Object.fromEntries(keys.map(key=>[key,Math.max(1,...d.trend.map(day=>day[key]))]));
@@ -84,7 +107,7 @@ async function load(){
   el('identity').textContent=access.user.displayName+' · '+access.roles.join(', ');
   const result=await request('/api/dashboard');if(current!==generation)return;
   for(const id of ['total-cards','recent-cards','alert-severity','incident-severity','alert-status','incident-status',
-   'alert-threats','incident-threats','response-types','trend-rows'])el(id).replaceChildren();
+   'alert-threats','incident-threats','response-outcomes','response-types','trend-rows'])el(id).replaceChildren();
   render(result.dashboard);el('login-panel').hidden=true;el('identity-panel').hidden=false;
   message('Dashboard refreshed from PostgreSQL.');
  }catch(error){if(current===generation)handleError(error);}

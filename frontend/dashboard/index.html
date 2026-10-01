@@ -41,14 +41,14 @@
       <div class="sx-panel-body"><dl id="recent-cards" class="cards"></dl></div>
     </div>
   </section>
-  <div class="sx-grid-3">
+  <div class="sx-grid-3 sx-dashboard-distributions">
     <section class="sx-panel"><div class="sx-panel-head"><div><h2>Severity distribution</h2><p>Alerts and incidents · all time</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alerts</h3><div id="alert-severity"></div><h3 class="sx-section-title">Incidents</h3><div id="incident-severity"></div></div></section>
     <section class="sx-panel"><div class="sx-panel-head"><div><h2>Workflow state</h2><p>Current persisted alert and incident lifecycle</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alert status</h3><div id="alert-status"></div><h3 class="sx-section-title">Incident status</h3><div id="incident-status"></div></div></section>
-    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Threat categories</h2><p>Deterministic rule classifications</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alerts · leading 10</h3><div id="alert-threats"></div><h3 class="sx-section-title">Incidents · leading 10</h3><div id="incident-threats"></div><p class="hint">Unclassified incident assessments remain visible as UNCLASSIFIED.</p></div></section>
+    <section class="sx-panel sx-threat-panel"><div class="sx-panel-head"><div><h2>Threat categories</h2><p>Deterministic rule classifications</p></div></div><div class="sx-panel-body"><h3 class="sx-section-title">Alerts</h3><div id="alert-threats"></div><h3 class="sx-section-title">Incidents</h3><div id="incident-threats"></div><p class="hint">Unclassified incident assessments remain visible as UNCLASSIFIED.</p></div></section>
   </div>
-  <div class="sx-grid-2">
+  <div class="sx-grid-2 sx-dashboard-detail">
     <section class="sx-panel"><div class="sx-panel-head"><div><h2>Seven-day UTC trend</h2><p id="trend-explanation">The current UTC day is partial. Source timestamps: event received, alert/incident created, and response recorded.</p></div></div><div class="table-scroll"><table aria-describedby="trend-explanation"><thead><tr><th>UTC date</th><th>Events received</th><th>Alerts created</th><th>Incidents created</th><th>Responses recorded</th></tr></thead><tbody id="trend-rows"></tbody></table></div></section>
-    <section class="sx-panel"><div class="sx-panel-head"><div><h2>Recorded response outcomes</h2><p>Human-controlled, analyst-reported</p></div></div><div class="sx-panel-body"><p class="hint">Outcome flags are manual attestations from Task 22.</p><div id="response-types"></div></div></section>
+    <section class="sx-panel sx-response-panel"><div class="sx-panel-head"><div><h2>Recorded response outcomes</h2><p>Human-controlled, analyst-reported</p></div></div><div class="sx-panel-body"><dl id="response-outcomes" class="sx-outcome-grid"></dl><p class="hint">Response success is analyst-reported. It is not independently verified by SentinelX.</p><h3 class="sx-section-title">Recorded action types</h3><div id="response-types"></div></div></section>
   </div>
   <div class="sx-notice sx-notice-info"><span data-icon="circle-dot"></span><div><p class="sx-notice-title">Interpretation guidance</p><p class="sx-notice-copy">Risk is a documented score, not a probability. Values support prioritization and do not predict incident likelihood.</p></div></div>
 </div></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

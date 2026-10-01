@@ -55,7 +55,7 @@ test('dashboard shows persisted metrics and refresh updates after incident creat
   return Number(item?.querySelector('dd')?.textContent.replaceAll(',',''))===previous+1;
  },baseline);
  assert.equal(await count(viewer,'Incidents'),baseline+1);
- assert.ok((await analyst.locator('#incident-severity').textContent()).includes('CRITICAL'));
+ assert.ok((await analyst.locator('#incident-severity').textContent()).includes('Critical'));
  await viewer.setViewportSize({width:390,height:844});
  assert.equal(await viewer.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await viewer.getByRole('button',{name:'Sign out'}).click();

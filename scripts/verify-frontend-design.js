@@ -42,7 +42,7 @@ function main(){
   assert.ok(reference.includes('PanelLeftClose'));
   const accessHtml=fs.readFileSync(path.join(root,'access/index.html'),'utf8');
   assert.ok(accessHtml.includes('id="login-panel" class="sx-auth-screen"'));
-  assert.ok(accessHtml.includes('Self-service sign-up is not enabled.'));
+  assert.ok(accessHtml.includes('Self-service sign-up is not enabled inside a company tenant.'));
   assert.ok(!/>\s*Sign up\s*</i.test(accessHtml));
   const incident=fs.readFileSync(path.join(root,'incidents/incidents.js'),'utf8');
   assert.ok(incident.includes("message('Incident created.',false,true);"));
