@@ -495,3 +495,8 @@ body[data-page="access"] #users{display:grid;gap:1rem;margin-top:1.5rem}
 body[data-page="access"] .sx-user-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
 body[data-page="access"] .sx-user-actions button{margin:0}
 @media(max-width:480px){body[data-page="access"] .sx-user-actions button{flex:1 1 100%}}
+
+/* Incident handoff uses the existing theme button palette. */
+.sx-incident-link{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;min-height:2.5rem;padding:.6rem .9rem;border:1px solid var(--primary);border-radius:var(--radius);background:var(--accent);color:var(--primary);font-size:.875rem;font-weight:600;text-decoration:none;transition:background .15s ease,color .15s ease}
+.sx-incident-link:hover{background:var(--primary);color:var(--primary-foreground)}
+.sx-incident-link svg{width:1rem;height:1rem}

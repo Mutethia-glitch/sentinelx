@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 const { createServer } = require('../../src/api/server');
 const { configFromEnv } = require('../../src/auth/config');
-const { createInput } = require('../../src/incidents/model');
+const { statusInput, createInput } = require('../../src/incidents/model');
 const { statusUpdateInput } = require('../../src/alerts/model');
 
 test('real HTTP alert update and incident navigation preserve IDs, prefill and creation', async t => {
@@ -13,7 +13,7 @@ test('real HTTP alert update and incident navigation preserve IDs, prefill and c
   const other = { ...alert, id: otherId };
   const user = { id: otherId, displayName: 'Test administrator', email: 'test@example.invalid', active: true, roles: ['Administrator'] };
   const identity = { user, roles: user.roles, permissions: ['alerts.read', 'alerts.manage', 'incidents.read', 'incidents.manage', 'users.read'] };
-  let created;
+  let created, changedStatus;
   const config = configFromEnv({});
   const server = createServer({}, config, { me: async () => identity, users: async () => [user] }, null, null, null, null, {
     list: async () => ({ alerts: [alert, alert, other], page: 1, hasMore: false }),
@@ -23,6 +23,7 @@ test('real HTTP alert update and incident navigation preserve IDs, prefill and c
   }, {
     list: async () => ({ incidents: [], page: 1, hasMore: false }),
     authorizeWrite: async () => user,
+    updateStatus: async (_, id, body) => { changedStatus = statusInput(body); return { id }; },
     create: async (_, body) => { created = createInput(body); return { id: otherId }; },
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -54,5 +55,13 @@ test('real HTTP alert update and incident navigation preserve IDs, prefill and c
   assert.deepEqual(created.alertIds, [id]);
   assert.equal(created.assignedTo, otherId);
   assert.equal(created.reason, 'Five failed logins');
+  await page.goto(config.origin + '/incidents#fromAlert=' + id);
+  await page.reload();
+  await page.waitForFunction(id => document.querySelector('#create-alerts').value === id, id);
+  await page.locator('#create-status').selectOption('INVESTIGATING');
+  await page.getByRole('button', { name: 'Create incident', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#message').textContent === 'Incident created.');
+  assert.equal(changedStatus.status, 'INVESTIGATING');
+  assert.equal(await page.locator('#incident-status option[value=CONTAINED]').count(), 1);
   assert.deepEqual(errors, []);
 });
