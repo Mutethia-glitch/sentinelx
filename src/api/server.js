@@ -4,6 +4,7 @@ const {emailConfig,emailDelivery}=require('../email/delivery');
 const { frontendShared } = require('./frontend-shared');
 const { externalWebhook } = require('../integrations/webhook');
 const { collectorConfig, collectorHandler } = require('../integrations/collector');
+const { loginContainmentRepository } = require('../integrations/login-containment');
 const { auditRepository }=require('../data/audit-repository');
 const { auditService }=require('../audit/service');
 const { auditHandler }=require('./audit-handler');
@@ -129,6 +130,7 @@ async function main() {
     const integration = externalWebhook();
     const connector = collectorConfig(process.env, config.tenant);
     if (connector) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
+    if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
     const server = createServer(service, config, access,
       ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))), integration),
       eventViewService(eventRepository(pool), access),
@@ -142,7 +144,7 @@ async function main() {
       dashboardService(dashboardRepository(pool), access),
       reportService(reportRepository(pool), access),
       auditService(auditRepository(pool), access), null,
-      collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool)))));
+      collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {

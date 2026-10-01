@@ -1,5 +1,9 @@
 # Company application connector — first implementation
 
+The later opt-in bounded password-login control is documented in
+`docs/LOGIN_CONTAINMENT.md`. The limitations below describe this initial collector;
+enabling the control requires migration 018 and separate flags on both hosts.
+
 This is an opt-in server-to-server security event collector. It does not grant
 monitoring or blocking merely because a company supplied a URL. Task 41 email
 acceptance remains pending; Tasks 42–44 are not marked complete by this work.

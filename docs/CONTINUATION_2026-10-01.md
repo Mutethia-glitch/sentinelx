@@ -153,3 +153,24 @@ Collector implementation committed to SentinelX main as
 `7fde5f17fcfe6f6878aa0810f37ad81238526838`. Iphyn reporting is proposed in
 draft PR `https://github.com/Mutethia-glitch/iphyn/pull/23`; not merged/deployed.
 Local validation: 227 SentinelX tests; Iphyn type check, build and 36 tests.
+
+## Live connector and bounded-control continuation
+
+The user applied migration 017 to the existing Iphyn tenant. Its checksum error
+was confirmed as Windows CRLF vs Linux LF: stored checksum matched canonical LF.
+They normalized local migration SQL line endings and migration succeeded without
+rewriting ledger hashes. Connector credentials were configured privately in both
+hosts. Iphyn PR 23 and then Vercel-IP attribution PR 24 were merged/deployed by the
+user. They confirmed three real failed-login events, then an attributed IP/account
+pseudonym event. An Administrator-created source/host-scoped five-failure rule
+with non-null IP/user requirements produced an alert in live Iphyn SentinelX.
+This establishes event/alert delivery, not containment or full cross-tenant/RBAC
+acceptance. Other-recipient email still awaits the purchased/verified domain.
+
+The user authorized the next bounded-control step. Implementation prepares an
+opt-in central five-minute password-login restriction for the same IP/pseudonymous
+account after five failures received within five minutes. Iphyn checks that scope
+before credentials and reports actual rejection with a decision ID. Preparation
+is distinct from confirmed enforcement; no automatic incident resolution or claim
+the entire attack stopped. See docs/LOGIN_CONTAINMENT.md. Migration 018, both opt-in
+flags and live expiry/non-renewal/enforcement acceptance remain pending.
