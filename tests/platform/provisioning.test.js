@@ -51,7 +51,7 @@ test('provisioner HTTP endpoint authenticates before parsing or invoking provide
  const url='http://127.0.0.1:'+server.address().port+'/provision';
  assert.equal((await fetch(url,{method:'POST',body:'bad'})).status,401);assert.equal(calls,0);
  const response=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+config.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
- assert.equal(response.status,202);assert.equal(response.headers.get('Retry-After'),'60');assert.equal(calls,1);
+ assert.equal(response.status,202);assert.equal(response.headers.get('Retry-After'),'10');assert.equal(calls,1);
  assert.equal(authorized('Bearer short',config.token),false);
 });
 test('provisioner config requires ownership, secrets and valid host port',()=>{
@@ -74,4 +74,32 @@ test('database connection retrieval strips unsupported parameters and rejects no
  const url=await clients.databaseUrl({projectId:'p',branchId:'b'});assert.equal(new URL(url).search,'?sslmode=require');
  const invalid=providerClients(config,async()=>({ok:true,status:200,json:async()=>({uri:'postgresql://owner:private@localhost/neondb'})}));
  await assert.rejects(()=>invalid.databaseUrl({projectId:'p',branchId:'b'}),e=>!e.message.includes('private'));
+});
+test('enqueue acknowledges without waiting for provider creation and continues setup without browser step delays',async()=>{
+ const f=fixture();let release;const wait=new Promise(resolve=>{release=resolve;});let started=false;
+ const original=f.providers.createProject;f.providers.createProject=async t=>{started=true;await wait;return original(t);};
+ const response=await f.service.enqueue(body);assert.equal(response.status,'PROVISIONING');assert.equal(response.stage,'NEW');assert.equal(started,false);
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(started,true);
+ assert.equal((await f.service.enqueue(body)).status,'PROVISIONING');assert.equal(f.calls.length,0);
+ release();
+ for(let i=0;i<20&&f.job().stage!=='WAITING_HTTPS';i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(f.job().stage,'WAITING_HTTPS');assert.deepEqual(f.calls,['database','bootstrap','service','origin','deploy']);
+ f.setReady();assert.equal((await f.service.enqueue(body)).status,'PROVISIONING');
+ for(let i=0;i<20&&f.job().stage!=='READY';i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal((await f.service.enqueue(body)).origin,'https://synthetic.onrender.com');assert.equal(f.calls.length,5);
+});
+test('new process resumes safe persisted checkpoints without recreating company resources',async()=>{
+ const f=fixture();await f.service.provision(body);assert.equal(f.job().stage,'DATABASE_CREATED');
+ await f.service.enqueue(body);
+ for(let i=0;i<20&&f.job().stage!=='WAITING_HTTPS';i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(f.calls.filter(x=>x==='database').length,1);assert.equal(f.job().stage,'WAITING_HTTPS');
+});
+test('progress checks have a separate bounded budget and do not consume signup login attempts',async t=>{
+ const {createPlatformServer}=require('../../src/platform/server');const {loginLimiter}=require('../../src/auth/rate-limit');let now=0;
+ const cfg={origin:'http://placeholder.invalid'};
+ const server=createPlatformServer({async verify(){return{status:'PROVISIONING'};},async signup(){return{registrationId:'synthetic'};}},cfg,{limiter:loginLimiter({now:()=>now}),verificationLimiter:loginLimiter({now:()=>now,windowMs:60000})});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeAllConnections();}));
+ const origin='http://127.0.0.1:'+server.address().port;cfg.origin=origin;
+ for(let i=0;i<30;i++){now=i*10000;const r=await fetch(origin+'/api/company-signup/verify',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({registrationId:'synthetic',code:'123456'})});assert.equal(r.status,202);}
+ const r=await fetch(origin+'/api/company-signup',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{}'});assert.equal(r.status,201);
 });

@@ -13,6 +13,7 @@ test('company signup renders on mobile, displays errors and guards verification/
  const page=await browser.newPage({viewport:{width:390,height:844}});await page.clock.install();
  let signupFails=true,verifyFails=true,verifyPending=true,resendCalls=0,release;
  const pending=new Promise(resolve=>{release=resolve;});
+ await page.route('https://synthetic.example.com/access',route=>route.fulfill({contentType:'text/html',body:'<h1>Company sign-in</h1>'}));
  await page.route('**/api/company-signup**',async route=>{
   const path=new URL(route.request().url()).pathname;
   let status=200,body={};
@@ -47,11 +48,13 @@ test('company signup renders on mobile, displays errors and guards verification/
  await page.locator('#code').fill('123456');await page.locator('#verify-form button[type="submit"]').click();
  await page.waitForFunction(()=>document.querySelector('#message').textContent.includes('temporarily unavailable'));
  assert.equal(await page.locator('#code').inputValue(),'123456');
+ await page.reload();await page.locator('#verify-form').waitFor({state:'visible'});
+ assert.equal(await page.locator('#code').inputValue(),'');assert.equal(await page.locator('#password').inputValue(),'');
+ await page.locator('#code').fill('123456');
  verifyFails=false;await page.locator('#verify-form button[type="submit"]').click();
  await page.waitForFunction(()=>document.querySelector('#message').textContent.includes('being prepared'));
  assert.equal(await page.locator('#complete').isVisible(),false);assert.equal(await page.locator('#code').isDisabled(),true);
- verifyPending=false;await page.clock.fastForward(60000);
- await page.locator('#complete').waitFor({state:'visible'});
- assert.equal(await page.locator('#tenant-link').getAttribute('href'),'https://synthetic.example.com');
- assert.equal(await page.locator('#code').inputValue(),'');
+ verifyPending=false;await page.clock.fastForward(10000);
+ await page.waitForURL('https://synthetic.example.com/access');
+ assert.match(await page.locator('h1').textContent(),/Company sign-in/);
 });

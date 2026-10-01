@@ -30,7 +30,7 @@ function platformService(repository,config,mailer,provisioner){
     try{result=await provisioner.provision({tenantId:verified.tenant_id,companyName:verified.company_name,slug:verified.slug,
       origin:expectedOrigin,admin:{email:verified.admin_email,name:verified.admin_name,passwordHash:verified.admin_password_hash}});}
     catch(error){throw error;}
-    if(result.status==='PROVISIONING')return{status:'PROVISIONING',retryAfterSeconds:60};
+    if(result.status==='PROVISIONING')return{status:'PROVISIONING',stage:result.stage||'PREPARING',retryAfterSeconds:10};
     if(config.originMode==='render'?!/^https:\/\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.onrender\.com$/.test(result.origin):result.origin!==expectedOrigin)throw new AuthError(503,'Company provisioning returned an invalid tenant origin.');
     const activated=await repository.activate(row.id,result.origin);
     if(!activated)throw new AuthError(503,'Company provisioning could not be finalized.');

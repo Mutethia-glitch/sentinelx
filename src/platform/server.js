@@ -18,7 +18,7 @@ const FILES=new Map([
   ['/signup/signup.js',['signup/signup.js','text/javascript; charset=utf-8']],
   ['/ui/sentinelx-theme.css',['shared/sentinelx-theme.css','text/css; charset=utf-8']],
 ]);
-function createPlatformServer(service,config,{limiter=loginLimiter(),security=null}={}){
+function createPlatformServer(service,config,{limiter=loginLimiter(),verificationLimiter=loginLimiter({windowMs:60000}),security=null}={}){
   const boundary=security||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   return http.createServer({maxHeaderSize:16384},async(req,res)=>{
     if(req.url==='/healthz'){
@@ -42,7 +42,7 @@ function createPlatformServer(service,config,{limiter=loginLimiter(),security=nu
     try{
       if(req.method!=='POST'){res.setHeader('Allow','POST');return send(405,{error:'Method not allowed.'});}
       if(req.headers.origin!==config.origin){req.resume();throw new AuthError(403,'Request origin rejected.');}
-      const client=req.sentinelxClientAddress||req.socket.remoteAddress||'unknown';limiter.ip(client);
+      const client=req.sentinelxClientAddress||req.socket.remoteAddress||'unknown';if(req.url==='/api/company-signup/verify')verificationLimiter.ip(client);else limiter.ip(client);
       const body=await readJson(req);
       if(req.url==='/api/company-signup'){
         if(body&&typeof body.adminEmail==='string')limiter.account(body.adminEmail.trim().toLowerCase());

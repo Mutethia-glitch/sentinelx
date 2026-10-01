@@ -15,7 +15,7 @@ function createProvisioningServer(service,config){
   if(req.url!=='/provision')return send(404,{error:'Not found.'});
   if(req.method!=='POST'){res.setHeader('Allow','POST');return send(405,{error:'Method not allowed.'});}
   if(!authorized(req.headers.authorization,config.token)){req.resume();return send(401,{error:'Unauthorized.'});}
-  try{const result=await service.provision(await readJson(req));if(result.status==='PROVISIONING')res.setHeader('Retry-After','60');send(result.status==='PROVISIONING'?202:200,result);}
+  try{const result=await (service.enqueue||service.provision)(await readJson(req));if(result.status==='PROVISIONING')res.setHeader('Retry-After','10');send(result.status==='PROVISIONING'?202:200,result);}
   catch(error){send(error instanceof AuthError?error.status:503,{error:error instanceof AuthError?error.message:'Provisioning temporarily unavailable.'});}
  });
 }

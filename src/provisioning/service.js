@@ -14,7 +14,8 @@ function validTenant(body,config){
 }
 function authorized(header,token){const supplied=Buffer.from(header||''),expected=Buffer.from('Bearer '+token);return supplied.length===expected.length&&timingSafeEqual(supplied,expected);}
 function provisioningService(repository,providers,initialize,config){
- return{async provision(body){
+ const running=new Set(),failures=new Map();
+ const service={async provision(body){
   const tenant=validTenant(body,config);
   const fingerprint=createHmac('sha256',config.token).update(JSON.stringify(tenant)).digest('hex');
   return repository.withTenant(tenant.tenantId,async repo=>{
@@ -45,8 +46,36 @@ function provisioningService(repository,providers,initialize,config){
    }else if(job.stage==='WAITING_HTTPS'){
     if(await providers.ready(job.renderUrl,tenant.tenantId)){await save('READY');return{origin:job.renderUrl};}
    }
-   return{status:'PROVISIONING',retryAfterSeconds:60};
+   return{status:'PROVISIONING',stage:job.stage,retryAfterSeconds:10};
   });
  }};
+ service.enqueue=async body=>{
+  const tenant=validTenant(body,config),fingerprint=createHmac('sha256',config.token).update(JSON.stringify(tenant)).digest('hex');
+  let start=false;
+  const result=await repository.withTenant(tenant.tenantId,async repo=>{
+   const r=repo.registration;
+   if(!r||!['VERIFIED','ACTIVE'].includes(r.status)||r.slug!==tenant.slug||r.company_name!==tenant.companyName||r.admin_email!==tenant.admin.email||r.admin_name!==tenant.admin.name||(r.status==='VERIFIED'&&r.admin_password_hash!==tenant.admin.passwordHash))throw new AuthError(403,'Company is not verified for provisioning.');
+   let job=await repo.get();
+   if(!job){if(r.status==='ACTIVE')throw new AuthError(409,'Active company has no provisioning record.');await repo.create(fingerprint);job={stage:'NEW',fingerprint};}
+   if(job.fingerprint!==fingerprint)throw new AuthError(409,'Provisioning identity does not match the existing request.');
+   if(job.stage==='READY')return{origin:job.renderUrl};
+   if(!running.has(tenant.tenantId)){
+    if(['CREATING_DATABASE','CREATING_SERVICE','DEPLOYING','REVIEW_REQUIRED'].includes(job.stage))throw new AuthError(503,'Provisioning requires operator review before retry.');
+    if(failures.has(tenant.tenantId)){const error=failures.get(tenant.tenantId);failures.delete(tenant.tenantId);throw error;}
+    running.add(tenant.tenantId);start=true;
+   }
+   return{status:'PROVISIONING',stage:job.stage,retryAfterSeconds:10};
+  });
+  if(start){
+   // Acknowledge before provider work; PostgreSQL checkpoints survive process restarts.
+   setImmediate(async()=>{
+    try{for(let step=0;step<6;step++){const progress=await service.provision(body);if(progress.origin||progress.stage==='WAITING_HTTPS'||!progress.stage)break;}}
+    catch(error){failures.set(tenant.tenantId,error instanceof AuthError?error:new AuthError(503,'Company provisioning is temporarily unavailable.'));}
+    finally{running.delete(tenant.tenantId);}
+   });
+  }
+  return result;
+ };
+ return service;
 }
 module.exports={validTenant,authorized,provisioningService};

@@ -32,10 +32,11 @@ test('frontend source avoids unsafe HTML/script sinks and browser credential sto
   const forbidden=[/\.innerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\beval\s*\(/,/localStorage\b/,/sessionStorage\b/];
   for(const file of files){
     let source=fs.readFileSync(file,'utf8');
-    // Permit only the non-secret resend deadline in these two files.
+    // Permit only non-secret resend deadlines and the signup registration ID.
     const relative=path.relative(root,file).split(path.sep).join('/');
     if(relative==='shared/sentinelx-ui.js')source=source.replace("globalThis.sessionStorage.setItem('sentinelx-resend-after',String(Date.now()+60000))",'');
     if(relative==='verify/verify.js')source=source.replace("sessionStorage.getItem('sentinelx-resend-after')",'').replace("sessionStorage.setItem('sentinelx-resend-after',String(resendAfter))",'');
+    if(relative==='signup/signup.js')source=source.replace("sessionStorage.getItem('sentinelx-signup-registration')",'').replace("sessionStorage.setItem('sentinelx-signup-registration',registrationId)",'').replace("sessionStorage.removeItem('sentinelx-signup-registration')",'');
     for(const pattern of forbidden)assert.doesNotMatch(source,pattern,relative+' uses unsafe frontend API');
   }
 });

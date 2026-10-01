@@ -385,11 +385,13 @@ own-account test restriction.
 
 The provisioning adapter returns HTTP 202 while preparation is incomplete. The
 signup page checks again each minute, using the code still in browser memory;
-no password, hash, code or provider key is stored in browser storage. Keep that
+no password, hash, code or provider key is stored in browser storage. Only the
+non-secret registration UUID is kept in sessionStorage to resume after reload. Keep that
 page open during preparation. The original ten-minute verification expiry and
 failed-attempt limits remain enforced. If preparation outlasts code validity,
-request a fresh code and retry; it resumes the same recorded resources. Closing
-the page pauses progress until verified requests resume. On completion the
+request a fresh code and retry; it resumes the same recorded resources. Already queued initialization continues if the page is closed while the process
+is running. Readiness checks and recovery after process restarts resume on verified
+requests. In-flight ambiguous creation stages still require operator review. On completion the
 platform erases temporary password/code material as before.
 
 Free Render services can sleep and share workspace usage limits, so these
@@ -409,3 +411,13 @@ the company-registration link. Existing services must be updated separately.
 Changing TENANT_PROVISIONER_TOKEN changes request fingerprints; finish or carefully
 reconcile pending jobs before token rotation. Provider keys may be rotated without
 changing those fingerprints.
+
+Provisioning responses include a non-secret stage for progress display. Verification
+progress has a separate IP budget of twenty requests per minute; signup/resend
+retain the original login limiter. The database's five wrong-code attempts and
+ten-minute code expiry remain enforced. On successful activation the signup page
+clears the code/registration ID and opens the company's `/access` page. Cloud
+startup, cold starts and provider limits can still take minutes; the background
+acknowledgement removes deliberate step delays and is not a three-second
+infrastructure-creation guarantee. No new schema migration is needed for this
+background-processing change.
