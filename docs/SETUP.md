@@ -88,3 +88,29 @@ restart the server and open `http://localhost:3000/access`. Initial setup requir
 local database credentials; later role assignments use protected Administrator
 APIs. See `docs/ACCESS_CONTROL.md` for the exact permission matrix, secure Windows
 prompts, browser checks and denied-access verification.
+
+
+## Task 41 production deployment
+
+Local development instructions above remain valid. Production is different:
+SentinelX is deployed behind HTTPS as an isolated company tenant and production
+email 2FA is mandatory.
+
+Use `deploy/tenant.env.example` and `deploy/platform.env.example` only as
+variable-name templates. Real deployment files under `deploy/*.env` are ignored
+and must come from a secret manager or protected host configuration.
+
+The onboarding/control plane uses its own `PLATFORM_DATABASE_URL` and migration:
+
+`npm run db:migrate:platform`
+
+A newly created company database uses the normal migration chain, including
+append-only migration 016, then the trusted provisioner runs:
+
+`npm run db:migrate`
+`npm run tenant:bootstrap`
+
+Do not expose PostgreSQL publicly. Do not run integration tests against either
+the onboarding database or an operational tenant database. Full production
+configuration, reverse-proxy requirements and acceptance are in
+`docs/DEPLOYMENT.md`.

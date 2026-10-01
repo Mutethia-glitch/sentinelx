@@ -187,3 +187,30 @@ Task 06 adds the role policy and protected access-management APIs; see `docs/ACC
 - [OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
 - [Node crypto API](https://nodejs.org/docs/latest-v22.x/api/crypto.html)
 - [node-postgres parameterized queries](https://node-postgres.com/features/queries)
+
+
+## Task 41 production email 2FA extension
+
+Task 41 preserves the Task 05 password/session model and inserts an email
+second-factor state before production session issuance.
+
+Production login now returns HTTP 202 after a correct password, creates a
+short-lived HttpOnly challenge cookie and sends a cryptographically random
+six-digit code. No authenticated session is created at that point. The client
+must POST the code to `/api/auth/verify-2fa`; only a valid unexpired code can
+create the ordinary SentinelX session cookie.
+
+Codes expire after ten minutes, allow at most five failed attempts, have a
+60-second resend cooldown, are single-use, and are stored only as scoped
+HMAC-SHA256 digests. A resend does not erase failed-attempt history. Production
+requires an independent `AUTH_OTP_SECRET` and an HTTPS transactional-email
+adapter. Codes, passwords and tokens are never written to audit context.
+
+Task 41 also adds invitation activation at `/activate` /
+`POST /api/auth/activate`. Activation creates a user only after the invited
+email's six-digit code and a new 15+ character password are accepted. Subsequent
+logins still require a fresh email second factor.
+
+Local development remains capable of the original direct password/session flow
+when email 2FA is not enabled, preserving earlier development and regression
+workflows. Production always enables email 2FA.

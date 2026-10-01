@@ -71,6 +71,11 @@
   function safeError(error,fallback='Unable to reach SentinelX. Try again.'){
     return Number.isInteger(error?.status)&&typeof error.message==='string'&&error.message?error.message:fallback;
   }
+  function beginTwoFactor(result,pathname=globalThis.location?.pathname||'/dashboard'){
+    if(!result?.requiresTwoFactor)return false;
+    const allowed=/^\/(?:access|dashboard|events|alerts|incidents|notifications|audit)(?:\/)?$/.test(pathname)?pathname:'/dashboard';
+    globalThis.location?.assign('/verify?continue='+encodeURIComponent(allowed));return true;
+  }
   function markCurrentPage(doc=globalThis.document,pathname=''){
     if(!doc||typeof doc.querySelectorAll!=='function')return;
     const normalized=pathname==='/'?'/dashboard':pathname.replace(/\/$/,'');
@@ -237,5 +242,5 @@
   function init(doc=globalThis.document,pathname=''){
     markCurrentPage(doc,pathname);setupChrome(doc);observePresentation(doc);
   }
-  return {clearAccess,applyAccess,loading,safeError,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
+  return {clearAccess,applyAccess,loading,safeError,beginTwoFactor,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
 });

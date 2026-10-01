@@ -255,3 +255,29 @@ The Task 29 JSONL fixture mirrors selected normalized event fields and adds only
 `label` and `scenario` research metadata. It contains no production keys or
 foreign-key relationships and creates no database tables. Provenance and class
 counts are stored in the accompanying manifest.
+
+
+## Task 41 isolated tenant identity and email-auth tables
+
+Append-only migration 016 adds three tenant-local tables without modifying
+migrations 001–015:
+
+- `tenant_profile`: singleton immutable deployment identity containing tenant
+  UUID, company name and routing slug;
+- `auth_email_challenges`: short-lived login-email challenges with HMAC code
+  digest, bounded attempts, expiry, consumption and revocation state;
+- `user_invitations`: Administrator-created pending users with invited email,
+  display name, one approved initial role, HMAC activation-code digest, bounded
+  attempts, reason and lifecycle timestamps.
+
+Operational security tables remain unmodified by a tenant/company foreign key.
+Tenant separation is the dedicated database/runtime boundary.
+
+The onboarding/control-plane database is separate and has its own migration
+ledger under `platform/db/migrations`. Its `tenants` and `company_signups`
+tables contain provisioning metadata only. Temporary signup password hashes and
+code digests are nulled after successful provisioning and are not security-domain
+event/incident storage.
+
+Every tenant provisioner applies migrations 001–016, so all fifteen canonical
+threat categories remain present in each new company environment.

@@ -14,4 +14,4 @@
 | Validation | 38–40 | Automated testing, security testing, controlled end-to-end scenarios |
 | Delivery | 41–44 | Deployment, observability/recovery, final validation, handoff |
 
-The core implementation and validation work is complete through Task 40. Task 41 Deployment is next and remains Not Started; do not start it without explicit instruction.
+The core implementation and validation work is complete through Task 40. Task 41 Deployment is Implemented — awaiting local and live deployment acceptance. Task 42 Observability and Recovery remains Not Started.

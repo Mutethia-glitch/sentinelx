@@ -1,3 +1,70 @@
+# Task 41 implementation checkpoint — 2026-10-01
+
+Task 41 is **Implemented — awaiting local and live deployment acceptance**.
+Tasks 01–40 remain Complete. Task 42 has not started.
+
+User-approved production behavior now implemented in the repository:
+
+- public company signup using company name, first Administrator name/email and
+  password;
+- random six-digit email verification before infrastructure provisioning;
+- a separate onboarding/control-plane database with no tenant security events,
+  alerts, incidents or investigations;
+- one isolated SentinelX runtime + PostgreSQL database per company;
+- append-only tenant migration 016 for tenant identity, login challenges and
+  company-user invitations; migrations 001–015 remain unchanged;
+- production password → six-digit email code → session authentication;
+- ten-minute single-use email challenges, maximum five failed attempts,
+  60-second resend cooldown, HMAC-only code storage, no readable code logging;
+- company Administrator invitation of users with one approved initial role;
+- user activation by invited email + six-digit code + new password;
+- Administrator role changes and user disable/re-enable with session revocation
+  and last-active-Administrator protection;
+- exact tenant-profile/runtime identity verification at startup;
+- host-only `__Host-` cookies so tenant subdomains do not share sessions;
+- explicit trusted reverse-proxy IP configuration rather than trusting arbitrary
+  forwarding headers;
+- provider-independent HTTPS email delivery and tenant-provisioner boundaries;
+- Docker/reference Compose/Nginx artifacts, production environment templates,
+  liveness endpoints, deployment verifier and online HTTPS/HSTS smoke test;
+- tenant provisioning continues to install all fifteen canonical SentinelX
+  threat categories and preserves the intentionally partial Task 28 ATT&CK mapping.
+
+The infrastructure provisioner must be idempotent by immutable tenant UUID. The
+onboarding control plane temporarily retains only a salted scrypt Administrator
+password hash and HMAC verification digest; those are nulled after successful
+tenant activation.
+
+No real cloud account/domain/email/provider credentials have been supplied in
+this chat. Therefore the live internet deployment has **not** yet been accepted
+and Task 41 must not be marked Complete.
+
+Local implementation acceptance required:
+- `npm.cmd run quality`
+- `npm.cmd run verify:deployment`
+- on a disposable PostgreSQL database with `SENTINELX_TEST_DATABASE=1`:
+  `npm.cmd run db:migrate`
+- `npm.cmd run test:tenant-auth:integration`
+- `npm.cmd run test:platform-signup:integration`
+
+After real infrastructure is configured, live acceptance additionally requires:
+- `npm.cmd run db:migrate:platform` on the real platform database;
+- normal migrations + `npm.cmd run tenant:bootstrap` for a provisioned tenant;
+- HTTPS/HSTS edge and exact trusted-proxy configuration;
+- `DEPLOYMENT_PLATFORM_ORIGIN` and `DEPLOYMENT_TENANT_ORIGIN` followed by
+  `npm.cmd run smoke:online`;
+- one controlled real-email company signup, six-digit verification, tenant
+  provisioning, Administrator password + fresh six-digit login 2FA, invited
+  synthetic user activation/role/login, and proof that the user cannot
+  authenticate to a different company's tenant.
+
+Do not start Task 42 until Task 41 is fully accepted.
+
+See `docs/DEPLOYMENT.md`, `docs/MULTI_COMPANY_TENANCY.md`, and
+`tasks/41-deployment.md`.
+
+---
+
 # Task 40 accepted — 2026-10-01
 
 Task 40 is **Complete**. Tasks 01–40 are Complete; Task 41 has not started.

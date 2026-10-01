@@ -1,4 +1,6 @@
-const { apiSecurityBoundary } = require('./security');
+const { apiSecurityBoundary,clientAddress } = require('./security');
+const {authPages}=require('./auth-pages');
+const {emailConfig,emailDelivery}=require('../email/delivery');
 const { frontendShared } = require('./frontend-shared');
 const { externalWebhook } = require('../integrations/webhook');
 const { auditRepository }=require('../data/audit-repository');
@@ -56,7 +58,8 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = apiSecurityBoundary()) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null) {
+  const security=apiSecurity||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
   const dashboardMetrics = dashboard ? dashboardHandler(dashboard, config) : null;
@@ -72,7 +75,12 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
-    if (apiSecurity(req, res)) return;
+    if(req.url==='/healthz'){
+      res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');
+      if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');return res.end(JSON.stringify({error:'Method not allowed.'}));}
+      res.statusCode=200;return res.end(JSON.stringify({status:'ok'}));
+    }
+    if (security(req, res)) return;
     if (auditing && req.url.startsWith('/api/audit')) return auditing(req, res);
     if (reporting && req.url.startsWith('/api/reports')) return reporting(req, res);
     if (dashboardMetrics && req.url.startsWith('/api/dashboard')) return dashboardMetrics(req, res);
@@ -84,6 +92,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
     if (ruleManagement && req.url.startsWith('/api/rules')) return ruleManagement(req, res);
     if (taxonomy && req.url.startsWith('/api/threat-categories')) return taxonomy(req, res);
     if (frontendShared(req, res)) return;
+    if (authPages(req, res)) return;
     if (auditPage(req, res)) return;
     if (dashboardPage(req, res)) return;
     if (notificationPage(req, res)) return;
@@ -108,8 +117,13 @@ async function main() {
     const config = configFromEnv();
     pool = createPool();
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
-    const service = authService(authRepository(pool), config);
-    const access = accessService(accessRepository(pool), service);
+    if(config.tenant){
+      const profiles=await pool.query('SELECT tenant_id,company_name,slug FROM tenant_profile');
+      if(profiles.rows.length!==1||profiles.rows[0].tenant_id!==config.tenant.id||profiles.rows[0].company_name!==config.tenant.name||profiles.rows[0].slug!==config.tenant.slug)throw new Error('Tenant identity mismatch.');
+    }
+    const mailer=emailDelivery(emailConfig());
+    const service = authService(authRepository(pool), config,mailer);
+    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds});
     const integration = externalWebhook();
     const server = createServer(service, config, access,
       ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))), integration),
@@ -125,7 +139,7 @@ async function main() {
       reportService(reportRepository(pool), access),
       auditService(auditRepository(pool), access));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
-    server.listen(config.port, '127.0.0.1', () => console.log(`SentinelX authentication API listening on loopback port ${config.port}.`));
+    server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
       server.close(() => pool.end());
     });

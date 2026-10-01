@@ -7,8 +7,8 @@ This document maps the approved requirements baseline to the numbered implementa
 | Requirement IDs | Requirement Area | Primary Tasks |
 |---|---|---:|
 | NFR-002 | Project foundation and secret handling | 01, 35, 41 |
-| FR-026 | Authentication | 05 |
-| FR-027, FR-028, NFR-003 | Role-based access control and protected operations | 05–06, 35 |
+| FR-026 | Authentication | 05, 41 |
+| FR-027, FR-028, NFR-003 | Role-based access control and protected operations | 05–06, 35, 41 |
 | FR-001–FR-004, FR-029–FR-030 | Security events, authorized sources, ingestion, normalization, persistence | 07–10 |
 | FR-011 | Threat levels/categories | 11, 19–20, 40 |
 | FR-005–FR-007, NFR-006 | Detection rules and deterministic detection | 12–14 |
@@ -31,7 +31,7 @@ This document maps the approved requirements baseline to the numbered implementa
 | NFR-007 | Automated verification | 38–40, 43 |
 | NFR-008–NFR-009 | Authorized/synthetic security testing | 39–40 |
 | FR-036 | End-to-end core workflow validation | 40, 43 |
-| NFR-001, NFR-002 | Deployment/configuration constraints | 04, 41 |
+| NFR-001, NFR-002 | Deployment/configuration constraints, tenant isolation and production secrets | 04, 41 |
 | NFR-007 | Observability/recovery verification where defined | 42–43 |
 | NFR-016 | One-semester core-first scope | 01–44 |
 | NFR-015, NFR-018 | Data-access boundary and separation of security domain concepts | 03–04, 07, 15, 18–22, 27 |

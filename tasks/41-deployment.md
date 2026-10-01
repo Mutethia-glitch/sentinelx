@@ -1,7 +1,7 @@
 # Task 41: Deployment
 
 ## Status
-Not Started
+Implemented — awaiting local and live deployment acceptance
 
 ## Objective
 Deploy the stable application with secure environment variables, migrations, HTTPS, and documented configuration.
@@ -50,6 +50,38 @@ Do not mark this task complete until:
 - Existing functionality is not knowingly broken.
 - Required documentation is updated.
 - No out-of-scope feature was introduced.
+
+## User-authorized production expansion — 2026-10-01
+
+The user explicitly approved implementing Task 41 as an online multi-company
+SentinelX deployment rather than a developer-local server.
+
+The accepted production design uses one isolated SentinelX runtime and one
+PostgreSQL database per company. A separate onboarding/control plane accepts
+company name, initial Administrator email/name and password; verifies that email
+with a six-digit code; and hands the verified tenant to an authenticated HTTPS
+infrastructure provisioner.
+
+Production tenant login is password plus a fresh six-digit email code before a
+session is issued. Company Administrators can invite users, assign one of the
+existing Administrator / Security Analyst / Viewer/Management roles, and
+disable/re-enable tenant users. Tenant data and tenant user/RBAC records are
+isolated from every other company by the database/runtime boundary.
+
+Task 41 adds append-only tenant migration 016, a separate platform migration
+ledger, provider-independent email/provisioner adapters, trusted reverse-proxy
+configuration, health endpoints, container/reference reverse-proxy artifacts,
+deployment verification and online smoke checks. Migrations 001–015 remain
+unchanged, and every provisioned tenant receives the same fifteen-category
+taxonomy.
+
+See `docs/DEPLOYMENT.md` and `docs/MULTI_COMPANY_TENANCY.md`.
+
+The implementation is not yet a live internet deployment. Task 41 must remain
+open until repository/local gates pass **and** a real HTTPS domain, email relay,
+platform PostgreSQL database, isolated tenant PostgreSQL/database runtime and
+infrastructure provisioner have been configured and the live signup/2FA/user-
+isolation acceptance flow has passed. Task 42 must not start before that.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

@@ -6,6 +6,9 @@ node_modules/
 .env
 .env.*
 !.env.example
+# Deployment secret files; only *.env.example templates are versioned.
+deploy/*.env
+!deploy/*.env.example
 
 # Build output
 dist/

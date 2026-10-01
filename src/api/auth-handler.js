@@ -1,6 +1,7 @@
 const { AuthError } = require('../auth/errors');
-const { loginInput } = require('../auth/validation');
+const { loginInput,activationInput } = require('../auth/validation');
 const { loginLimiter } = require('../auth/rate-limit');
+
 function cookieToken(header, name) {
   if (!header) return null;
   const matches = header.split(';').map(part => part.trim()).filter(part => part.startsWith(`${name}=`));
@@ -9,6 +10,10 @@ function cookieToken(header, name) {
 }
 function sessionCookie(token, config, clear = false) {
   return `${config.cookieName}=${clear ? '' : token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${clear ? 0 : config.sessionSeconds}${config.secureCookie ? '; Secure' : ''}`;
+}
+function challengeCookie(id,config,clear=false){
+  const name=config.challengeCookieName||'sentinelx_2fa',seconds=Number.isInteger(config.otpSeconds)?config.otpSeconds:600;
+  return `${name}=${clear?'':id}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${clear?0:seconds}${config.secureCookie?'; Secure':''}`;
 }
 function readJson(req) {
   if (!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(req.headers['content-type'] || '') || req.headers['content-encoding']) {
@@ -35,6 +40,7 @@ function readJson(req) {
   });
 }
 function authHandler(service, config, limiter = loginLimiter()) {
+  const routes=new Set(['/api/auth/login','/api/auth/verify-2fa','/api/auth/resend-2fa','/api/auth/activate','/api/auth/logout','/api/auth/me']);
   return async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -42,43 +48,64 @@ function authHandler(service, config, limiter = loginLimiter()) {
     const send = (status, body) => { res.statusCode = status; res.end(body ? JSON.stringify(body) : undefined); };
     const path = req.url;
     try {
-      if (!['/api/auth/login', '/api/auth/logout', '/api/auth/me'].includes(path)) {
-        return send(404, { error: 'Not found.' });
+      if (!routes.has(path)) return send(404, { error: 'Not found.' });
+      const get=path==='/api/auth/me';
+      if((get&&req.method!=='GET')||(!get&&req.method!=='POST')){
+        res.setHeader('Allow',get?'GET':'POST');return send(405,{error:'Method not allowed.'});
       }
-      if ((path === '/api/auth/me' && req.method !== 'GET') ||
-          (path !== '/api/auth/me' && req.method !== 'POST')) {
-        res.setHeader('Allow', path === '/api/auth/me' ? 'GET' : 'POST');
-        return send(405, { error: 'Method not allowed.' });
+      if(req.method==='POST'&&req.headers.origin!==config.origin){
+        req.resume();throw new AuthError(403,'Request origin rejected.');
       }
-      // Fail closed for mutation origins, including missing/null origins; no CORS.
-      if (req.method === 'POST' && req.headers.origin !== config.origin) {
-        req.resume();
-        throw new AuthError(403, 'Request origin rejected.');
+      const token=cookieToken(req.headers.cookie,config.cookieName);
+      const challenge=cookieToken(req.headers.cookie,config.challengeCookieName);
+      const client=req.sentinelxClientAddress||req.socket.remoteAddress||'unknown';
+
+      if(path==='/api/auth/login'){
+        limiter.ip(client);
+        const input=loginInput(await readJson(req));limiter.account(input.email);
+        const login=await service.login(input);
+        if(login.requiresTwoFactor){
+          res.setHeader('Set-Cookie',challengeCookie(login.challengeId,config));
+          return send(202,{requiresTwoFactor:true,expiresInSeconds:login.expiresInSeconds});
+        }
+        res.setHeader('Set-Cookie',sessionCookie(login.token,config));
+        return send(200,{user:login.user});
       }
-      const token = cookieToken(req.headers.cookie, config.cookieName);
-      if (path === '/api/auth/login') {
-        limiter.ip(req.socket.remoteAddress || 'unknown'); // Do not trust forwarding headers.
-        const input = loginInput(await readJson(req));
-        limiter.account(input.email);
-        const login = await service.login(input);
-        res.setHeader('Set-Cookie', sessionCookie(login.token, config));
-        return send(200, { user: login.user });
+      if(path==='/api/auth/verify-2fa'){
+        limiter.ip(client);
+        const verified=await service.verifyTwoFactor(challenge,await readJson(req));
+        res.setHeader('Set-Cookie',[sessionCookie(verified.token,config),challengeCookie('',config,true)]);
+        return send(200,{user:verified.user});
       }
-      if (path === '/api/auth/me') return send(200, { user: await service.currentUser(token) });
-      const body = await readJson(req);
-      if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).length) {
-        throw new AuthError(400, 'Logout requires an empty JSON object.');
+      if(path==='/api/auth/resend-2fa'){
+        limiter.ip(client);
+        const body=await readJson(req);
+        if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).length)throw new AuthError(400,'Resend requires an empty JSON object.');
+        const result=await service.resendTwoFactor(challenge);
+        res.setHeader('Set-Cookie',challengeCookie(challenge,config));
+        return send(200,result);
       }
+      if(path==='/api/auth/activate'){
+        limiter.ip(client);
+        const input=activationInput(await readJson(req));limiter.account(input.email);
+        const activated=await service.activate(input);
+        return send(200,{user:activated.user,activated:true});
+      }
+      if(path==='/api/auth/me')return send(200,{user:await service.currentUser(token)});
+      const body=await readJson(req);
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).length)throw new AuthError(400,'Logout requires an empty JSON object.');
       await service.logout(token);
-      res.setHeader('Set-Cookie', sessionCookie('', config, true));
+      res.setHeader('Set-Cookie',[sessionCookie('',config,true),challengeCookie('',config,true)]);
       return send(204);
     } catch (error) {
-      const expected = error instanceof AuthError;
-      const status = expected ? error.status : 503;
-      if (status === 401 && path !== '/api/auth/login') res.setHeader('Set-Cookie', sessionCookie('', config, true));
-      if (status === 429) res.setHeader('Retry-After', '900');
-      return send(status, { error: expected ? error.message : 'Authentication temporarily unavailable.' });
+      const expected=error instanceof AuthError;
+      const status=expected?error.status:503;
+      if(status===401&&!['/api/auth/login','/api/auth/verify-2fa','/api/auth/resend-2fa'].includes(path)){
+        res.setHeader('Set-Cookie',[sessionCookie('',config,true),challengeCookie('',config,true)]);
+      }
+      if(status===429)res.setHeader('Retry-After','60');
+      return send(status,{error:expected?error.message:'Authentication temporarily unavailable.'});
     }
   };
 }
-module.exports = { authHandler, cookieToken, sessionCookie, readJson };
+module.exports={authHandler,cookieToken,sessionCookie,challengeCookie,readJson};

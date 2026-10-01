@@ -253,3 +253,44 @@ Existing endpoint contracts remain unchanged. Route/service layers continue to e
 Task 36 adds no public API endpoint. Existing consoles consume `GET /api/access/me` to tailor navigation and controls to the authenticated user's current grants. This is presentation-only: all protected API calls continue to authenticate and authorize independently on the backend.
 
 Frontend code does not persist passwords, cookies, roles, permissions, or security records in Web Storage. API-derived text is rendered through safe DOM/text operations. Loading, permission-denied, authentication-reset, empty, and error states remain visible without inventing backend capability. See [FRONTEND_SECURITY_UX.md](FRONTEND_SECURITY_UX.md).
+
+
+## Task 41 company onboarding, 2FA and tenant-user APIs
+
+### Public onboarding/control plane
+
+- `POST /api/company-signup` — exact JSON
+  `{companyName,adminName,adminEmail,password}`; creates a pending registration,
+  hashes the password and sends a six-digit Administrator email-verification code.
+- `POST /api/company-signup/verify` — exact
+  `{registrationId,code}`; verifies email and invokes the isolated tenant
+  provisioner. Success returns the ACTIVE tenant identity/origin.
+- `POST /api/company-signup/resend` — exact `{registrationId}`; sends a new
+  six-digit code subject to cooldown/attempt limits.
+
+These routes are hosted by the separate onboarding service, not a tenant runtime.
+
+### Tenant authentication
+
+- `POST /api/auth/login` — unchanged password body. In production, correct
+  credentials return HTTP 202 `{requiresTwoFactor:true,expiresInSeconds}` and
+  set only the temporary HttpOnly 2FA challenge cookie.
+- `POST /api/auth/verify-2fa` — exact `{code}`; valid challenge/code returns
+  the user and sets the normal authenticated session cookie.
+- `POST /api/auth/resend-2fa` — exact empty object; subject to cooldown.
+- `POST /api/auth/activate` — exact `{email,code,password}`; consumes a
+  company invitation and creates that tenant user/initial role.
+- `GET /api/auth/me` and `POST /api/auth/logout` retain their existing
+  authenticated-session semantics.
+
+### Tenant access administration
+
+- `POST /api/access/invitations` — Administrator `users.manage`; exact
+  `{email,displayName,role,reason}`.
+- `PATCH /api/access/users/{uuid}/active` — Administrator `users.manage`;
+  exact `{active,reason}`.
+- Existing role/list routes remain unchanged.
+
+All mutations retain exact-Origin, bounded JSON, no-CORS and backend authorization
+requirements. Public and tenant services also expose credential-free GET
+`/healthz` liveness.

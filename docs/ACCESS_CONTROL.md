@@ -211,3 +211,21 @@ Administrator and Security Analyst now have events.ingest for the controlled ing
 
 ## Task 11 catalog permissions
 All three approved roles have categories.read for the shared threat catalog. Only Administrator has categories.manage for audited label/description/availability configuration. Security Analyst manages rule selection in its later task rather than changing the global taxonomy.
+
+
+## Task 41 company user administration extension
+
+Task 41 adds Administrator-only `users.manage` while preserving the three
+existing role names and all prior permission boundaries.
+
+- `POST /api/access/invitations` creates a pending company user invitation with
+  one approved initial role and an auditable reason, then sends a six-digit
+  activation code.
+- `PATCH /api/access/users/{uuid}/active` disables/re-enables a tenant user.
+  Disablement revokes active sessions.
+- Existing role changes continue to revoke sessions.
+- The last active Administrator may neither be demoted nor disabled.
+
+These operations are tenant-local because the Access service is connected only
+to that company's PostgreSQL database. A company Administrator has no platform
+administrator authority and cannot enumerate or mutate another tenant's users.

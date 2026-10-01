@@ -6,7 +6,7 @@
   "scripts": {
     "check:foundation": "node scripts/check-foundation.js",
     "lint": "node scripts/lint.js",
-    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js tests/integrations/*.test.js tests/security/*.test.js tests/frontend/*.test.js tests/automated/*.test.js tests/system/*.test.js",
+    "test": "npm run check:foundation && node --test tests/auth/*.test.js tests/access/*.test.js tests/events/*.test.js tests/threats/*.test.js tests/rules/*.test.js tests/alerts/*.test.js tests/correlation/*.test.js tests/incidents/*.test.js tests/risk/*.test.js tests/investigations/*.test.js tests/responses/*.test.js tests/notifications/*.test.js tests/dashboard/*.test.js tests/search/*.test.js tests/reports/*.test.js tests/audit/*.test.js tests/mitre/*.test.js tests/ml/*.test.js tests/integrations/*.test.js tests/security/*.test.js tests/frontend/*.test.js tests/automated/*.test.js tests/system/*.test.js tests/deployment/*.test.js tests/platform/*.test.js",
     "quality": "npm run lint && npm test",
     "db:migrate": "node scripts/migrate.js",
     "test:database": "node scripts/test-database.js",
@@ -80,7 +80,14 @@
     "test:security:application": "node --test tests/security/application-security.test.js",
     "verify:end-to-end": "node scripts/verify-end-to-end-scenarios.js",
     "test:end-to-end:integration": "node --test tests/integration/end-to-end-scenarios.test.js",
-    "test:taxonomy:ui": "node --test tests/integration/taxonomy-ui.test.js"
+    "test:taxonomy:ui": "node --test tests/integration/taxonomy-ui.test.js",
+    "start:platform": "node src/platform/server.js",
+    "db:migrate:platform": "node scripts/migrate-platform.js",
+    "tenant:bootstrap": "node scripts/bootstrap-tenant.js",
+    "verify:deployment": "node scripts/verify-deployment.js",
+    "smoke:online": "node scripts/smoke-online.js",
+    "test:tenant-auth:integration": "node --test tests/integration/tenant-authentication.test.js",
+    "test:platform-signup:integration": "node --test tests/integration/platform-signup.test.js"
   },
   "engines": {
     "node": ">=20"

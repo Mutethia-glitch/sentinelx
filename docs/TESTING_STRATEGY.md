@@ -48,3 +48,24 @@ Task 40 adds three complementary layers:
 - `scripts/verify-end-to-end-scenarios.js` / `tests/integration/end-to-end-scenarios.test.js` use controlled synthetic PostgreSQL data to verify the full operational path for all fifteen categories, the required Task 40 scenario set, one persisted correlation case and a zero-alert benign control.
 
 The verifier restores temporary taxonomy availability and deletes all generated evidence after execution. It does not test real external systems or alter existing detection-rule policy.
+
+
+## Task 41 deployment and tenant-isolation validation
+
+Task 41 adds normal quality regressions for six-digit OTP/HMAC behavior,
+production configuration, trusted-proxy identity, HTTP 2FA session issuance,
+Administrator-only invitations and company signup/provisioning behavior.
+
+Separate disposable-PostgreSQL tests validate:
+- company Administrator password + email 2FA;
+- tenant-local user invitation, six-digit activation and initial role assignment;
+- employee password + email 2FA;
+- disablement/session revocation;
+- platform signup persistence, provisioning handoff and erasure of temporary
+  signup password/code material.
+
+`verify:deployment` is credential-free source/configuration validation.
+`smoke:online` is a later live HTTPS/HSTS gate and requires real deployed
+onboarding and tenant origins. Live acceptance also includes one controlled
+real-mailbox signup/login/user-isolation workflow; automated tests never print
+or persist real verification codes.

@@ -458,3 +458,31 @@ Task 37 adds a shared native presentation layer and consistent semantic shell ar
 The Node.js API/application boundary, backend RBAC, HttpOnly session model, safe DOM rendering, PostgreSQL data-access boundary, deterministic detection foundation, and human-controlled response workflow are unchanged. No Lovable React/Tailwind runtime, Supabase integration, frontend database, authentication implementation, or external runtime dependency is introduced.
 
 See [FRONTEND_VISUAL_DESIGN.md](FRONTEND_VISUAL_DESIGN.md).
+
+
+## Task 41 production deployment and tenant boundary
+
+Task 41 turns the original single-organization database architecture into a
+**database-per-company deployment template**. It does not add `company_id`
+predicates to every security-domain table.
+
+A separate public onboarding/control plane stores only tenant identity,
+Administrator email, provisioning status and short-lived signup material. After
+six-digit email verification it invokes an authenticated HTTPS infrastructure
+provisioner. The provisioner creates one isolated SentinelX runtime and
+PostgreSQL database, applies the normal migration chain and bootstraps the first
+company Administrator. Operational tenant data never lives in the onboarding
+database.
+
+Tenant startup requires `TENANT_ID`, `TENANT_NAME` and `TENANT_SLUG` to
+match the database's singleton `tenant_profile`. Production authentication is
+password plus six-digit email 2FA; a password check alone does not create a
+session. Company Administrators may invite/disable users and assign the existing
+three roles only inside that tenant.
+
+The public TLS/reverse-proxy edge terminates HTTPS/HSTS. SentinelX trusts a
+forwarded client address only when the socket peer is explicitly listed in
+`TRUSTED_PROXY_IPS`; otherwise forwarding headers remain untrusted as in
+Tasks 35/39.
+
+See `DEPLOYMENT.md` and `MULTI_COMPANY_TENANCY.md`.

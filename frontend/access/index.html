@@ -30,7 +30,7 @@
     <div class="sx-auth-intro">
       <span class="sx-auth-intro-mark" data-icon="shield"></span>
       <h2>Secure access to SentinelX</h2>
-      <p>Sign in with an administrator-provisioned account to access the security operations workspace. SentinelX does not expose public self-service registration.</p>
+      <p>Sign in with your company-provisioned SentinelX account. Production sign-in requires your password and a six-digit code sent to your email address.</p>
       <ul class="sx-auth-points">
         <li data-icon="shield-check">Backend role-based authorization remains authoritative.</li>
         <li data-icon="lock-keyhole">Sessions use protected server-issued cookies.</li>
@@ -43,7 +43,7 @@
         <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" placeholder="name@example.com" required></label>
         <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
         <button type="submit" data-icon="key-round">Sign in</button>
-        <p class="hint">Need an account? Contact a SentinelX Administrator. Self-service sign-up is not enabled.</p>
+        <p class="hint">Invited by your company? <a href="/activate">Activate your account</a>. Company registration is handled by the SentinelX onboarding service. Self-service sign-up is not enabled inside a company tenant.</p>
       </form>
     </div>
   </section>
@@ -51,13 +51,13 @@
   <section id="access-overview" class="sx-panel" hidden aria-labelledby="access-overview-heading">
     <div class="sx-panel-head"><div><h2 id="access-overview-heading">Your access</h2><p>Live roles and permissions are enforced by the backend.</p></div></div>
     <div class="sx-panel-body">
-      <p id="assigned-roles"></p>
+      <p id="tenant-name"></p><p id="assigned-roles"></p>
       <div class="sx-notice sx-notice-info"><span data-icon="lock-keyhole"></span><div><p class="sx-notice-title">Session protection</p><p class="sx-notice-copy">Role changes invalidate the affected user's session. Updated privileges apply only after a fresh backend authorization check.</p></div></div>
     </div>
   </section>
 
   <section id="users-panel" hidden class="sx-panel" aria-labelledby="users-heading">
     <div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Administrator-only role assignment. Every change requires a reason, and at least one active Administrator must remain.</p></div></div>
-    <div id="users" class="sx-panel-body"></div>
+    <div class="sx-panel-body"><form id="invite-form"><h3>Invite company user</h3><label>Name<input id="invite-name" maxlength="120" required></label><label>Email<input id="invite-email" type="email" maxlength="254" required></label><label>Initial role<select id="invite-role"><option>Security Analyst</option><option>Viewer/Management</option><option>Administrator</option></select></label><label>Reason<input id="invite-reason" maxlength="500" required></label><button type="submit" data-icon="send">Send 6-digit activation code</button></form><div id="users"></div></div>
   </section>
 </main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>
