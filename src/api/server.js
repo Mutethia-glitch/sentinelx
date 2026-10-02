@@ -43,6 +43,7 @@ const { detectionEngine } = require('../detection/engine');
 const { ruleRepository } = require('../data/rule-repository');
 const { ruleService } = require('../rules/service');
 const { ruleHandler } = require('./rule-handler');
+const { rulePage } = require('./rule-page');
 const { categoryRepository } = require('../data/category-repository');
 const { categoryService } = require('../threats/service');
 const { categoryHandler } = require('./category-handler');
@@ -113,6 +114,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
     if (dashboardPage(req, res)) return;
     if (notificationPage(req, res)) return;
     if (incidentPage(req, res)) return;
+    if (rulePage(req, res)) return;
     if (alertPage(req, res)) return;
     if (eventPage(req, res)) return;
     if (reading && req.method === 'GET' && req.url.startsWith('/api/events') && !req.url.startsWith('/api/events/raw')) return reading(req, res);
