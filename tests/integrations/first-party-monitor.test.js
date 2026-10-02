@@ -86,3 +86,36 @@ test('bounded per-source sampling, null unverified IP and failed persistence do 
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(res.statusCode,401);
 });
+
+test('actual tenant HTTP routing feeds self observations without changing response codes',async t=>{
+ const {createServer}=require('../../src/api/server');
+ const {AuthError}=require('../../src/auth/errors');
+ const received=[];
+ const repo={async create(event,actor,after){
+  received.push(event);
+  await after({id:'observed',event},{});
+  return{id:'observed'};
+ }};
+ const config={...cfg,origin:'http://127.0.0.1:45678',
+  cookieName:'sentinelx_session',challengeCookieName:'sentinelx_2fa',
+  trustedProxyIps:[],sessionSeconds:3600,secureCookie:false};
+ const monitor=firstPartyMonitor(repo,null,config);
+ const args=Array(21).fill(null);
+ args[0]={async login(){throw new AuthError(401,'Invalid email or password.');}};
+ args[1]=config;args[20]=monitor;
+ const server=createServer(...args);
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeAllConnections();}));
+ const base='http://127.0.0.1:'+server.address().port;
+ const missed=await fetch(base+'/api/.git/config?secret=must-not-leak');
+ assert.equal(missed.status,404);
+ const rejected=await fetch(base+'/api/auth/login',{
+  method:'POST',headers:{Origin:config.origin,'Content-Type':'application/json'},
+  body:JSON.stringify({email:'private@example.test',password:'must-not-leak'})});
+ assert.equal(rejected.status,401);
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.deepEqual(received.map(e=>e.rawData.signal),
+  ['known_probe_route_rejected','password_login_rejected']);
+ assert.ok(received.every(e=>!JSON.stringify(e).includes('must-not-leak')));
+ assert.ok(received.every(e=>!JSON.stringify(e).includes('private@example.test')));
+});
