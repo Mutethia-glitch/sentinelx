@@ -70,8 +70,8 @@ test('only tenant Administrators issue/revoke one-time site keys, and applicatio
  const siteHandler=siteCollectorHandler(website,receiptRepo,{async evaluate(saved){
   detections++;assert.equal(saved.event.type,'reconnaissance');
  }},uuid);
- const args=Array(19).fill(null);
- args[0]=auth;args[1]=config;args[2]=service;args[18]=siteHandler;
+ const args=Array(20).fill(null);
+ args[0]=auth;args[1]=config;args[2]=service;args[19]=siteHandler;
  server=createServer(...args);
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const base='http://127.0.0.1:'+server.address().port;
