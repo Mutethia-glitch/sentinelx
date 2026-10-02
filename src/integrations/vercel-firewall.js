@@ -1,5 +1,5 @@
 'use strict';
-const {createHmac,timingSafeEqual}=require('node:crypto');
+const {createHmac,createHash,timingSafeEqual}=require('node:crypto');
 const {AuthError}=require('../auth/errors');
 const {securityEvent}=require('../events/model');
 
@@ -81,7 +81,12 @@ function selectFirewallEvent(log,config,now=Date.now()){
     classificationBasis:'operator-approved-specific-waf-rule',
     ipRedacted:true}
  });
- return{event,externalId:config.projectId+':'+log.id};
+ // Connector receipts use UUID; derive a deterministic namespaced ID for retries.
+ const digest=createHash('sha256').update('vercel-firewall:'+config.projectId+':'+log.id).digest();
+ digest[6]=(digest[6]&15)|64;digest[8]=(digest[8]&63)|128;
+ const hex=digest.toString('hex');
+ const externalId=hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20,32);
+ return{event,externalId};
 }
 function vercelFirewallHandler(config,repository,detector){
  return async(req,res)=>{
