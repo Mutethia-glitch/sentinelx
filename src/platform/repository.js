@@ -8,8 +8,8 @@ function platformRepository(pool){
   return{
     async create(input){
       return transaction(pool,async client=>{
-        await client.query(`INSERT INTO tenants(id,company_name,slug,admin_email,status)
-          VALUES($1,$2,$3,$4,'PENDING_EMAIL')`,[input.tenantId,input.companyName,input.slug,input.adminEmail]);
+        await client.query(`INSERT INTO tenants(id,company_name,slug,admin_email,status,requested_website_origin)
+          VALUES($1,$2,$3,$4,'PENDING_EMAIL',$5)`,[input.tenantId,input.companyName,input.slug,input.adminEmail,input.websiteOrigin]);
         await client.query(`INSERT INTO company_signups(id,tenant_id,admin_name,admin_password_hash,code_digest,expires_at)
           VALUES($1,$2,$3,$4,$5,clock_timestamp()+$6*interval '1 second')`,
           [input.registrationId,input.tenantId,input.adminName,input.passwordHash,input.codeDigest,input.expiresInSeconds]);
@@ -25,7 +25,7 @@ function platformRepository(pool){
       return rows.rows;
     },
     async registration(id){
-      const row=(await pool.query(`SELECT s.*,t.company_name,t.slug,t.admin_email,t.status,t.origin,t.verified_at
+      const row=(await pool.query(`SELECT s.*,t.company_name,t.slug,t.admin_email,t.status,t.origin,t.verified_at,t.requested_website_origin
         FROM company_signups s JOIN tenants t ON t.id=s.tenant_id WHERE s.id=$1`,[id])).rows[0];
       return row||null;
     },
@@ -38,7 +38,7 @@ function platformRepository(pool){
     },
     async markVerified(id,maxAttempts){
       return transaction(pool,async client=>{
-        const row=(await client.query(`SELECT s.*,t.company_name,t.slug,t.admin_email,t.status,t.origin,t.verified_at
+        const row=(await client.query(`SELECT s.*,t.company_name,t.slug,t.admin_email,t.status,t.origin,t.verified_at,t.requested_website_origin
           FROM company_signups s JOIN tenants t ON t.id=s.tenant_id WHERE s.id=$1 FOR UPDATE OF s,t`,[id])).rows[0];
         if(!row||row.attempts>=maxAttempts||row.expires_at<=new Date()||!['PENDING_EMAIL','VERIFIED'].includes(row.status))return null;
         if(row.status==='PENDING_EMAIL'){

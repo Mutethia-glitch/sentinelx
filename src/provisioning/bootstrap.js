@@ -10,7 +10,8 @@ async function run(script,env){
 }
 async function initializeDatabase(tenant,databaseUrl){
  const env={DATABASE_URL:databaseUrl,TENANT_ID:tenant.tenantId,TENANT_NAME:tenant.companyName,TENANT_SLUG:tenant.slug,
-  TENANT_ADMIN_EMAIL:tenant.admin.email,TENANT_ADMIN_NAME:tenant.admin.name,TENANT_ADMIN_PASSWORD_HASH:tenant.admin.passwordHash};
+  TENANT_ADMIN_EMAIL:tenant.admin.email,TENANT_ADMIN_NAME:tenant.admin.name,TENANT_ADMIN_PASSWORD_HASH:tenant.admin.passwordHash,
+  ...(tenant.websiteOrigin?{TENANT_WEBSITE_ORIGIN:tenant.websiteOrigin}:{})};
  await run('migrate.js',env);await run('bootstrap-tenant.js',env);
 }
 module.exports={initializeDatabase};

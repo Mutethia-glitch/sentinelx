@@ -1,5 +1,6 @@
 const {createHmac,timingSafeEqual}=require('node:crypto');
 const {AuthError}=require('../auth/errors');
+const {websiteOrigin}=require('../platform/website');
 function validTenant(body,config){
  const t=body?.tenant;
  if(body?.schemaVersion!==1||body.type!=='sentinelx.tenant.provision'||!t||
@@ -10,7 +11,10 @@ function validTenant(body,config){
   typeof t.admin?.email!=='string'||!/^\S+@\S+\.\S+$/.test(t.admin.email)||t.admin.email.length>254||
   typeof t.admin?.passwordHash!=='string'||!/^scrypt\$131072\$8\$1\$[0-9a-f]{32}\$[0-9a-f]{128}$/.test(t.admin.passwordHash)||
   t.origin!==null)throw new AuthError(400,'Invalid provisioning request.');
- return{tenantId:t.tenantId,slug:t.slug,companyName:t.companyName,origin:t.origin,admin:{name:t.admin.name,email:t.admin.email,passwordHash:t.admin.passwordHash}};
+ let requestedWebsite=null;
+ try{requestedWebsite=websiteOrigin(t.websiteOrigin);}catch{throw new AuthError(400,'Invalid provisioning request.');}
+ return{tenantId:t.tenantId,slug:t.slug,companyName:t.companyName,origin:t.origin,admin:{name:t.admin.name,email:t.admin.email,passwordHash:t.admin.passwordHash},
+  ...(requestedWebsite?{websiteOrigin:requestedWebsite}:{})};
 }
 function authorized(header,token){const supplied=Buffer.from(header||''),expected=Buffer.from('Bearer '+token);return supplied.length===expected.length&&timingSafeEqual(supplied,expected);}
 function provisioningService(repository,providers,initialize,config){
@@ -20,7 +24,7 @@ function provisioningService(repository,providers,initialize,config){
   const fingerprint=createHmac('sha256',config.token).update(JSON.stringify(tenant)).digest('hex');
   return repository.withTenant(tenant.tenantId,async repo=>{
    const registration=repo.registration;
-   if(!registration||!['VERIFIED','ACTIVE'].includes(registration.status)||registration.slug!==tenant.slug||registration.company_name!==tenant.companyName||registration.admin_email!==tenant.admin.email||registration.admin_name!==tenant.admin.name||
+   if(!registration||!['VERIFIED','ACTIVE'].includes(registration.status)||registration.slug!==tenant.slug||registration.company_name!==tenant.companyName||registration.admin_email!==tenant.admin.email||registration.admin_name!==tenant.admin.name||(registration.requested_website_origin||null)!==(tenant.websiteOrigin||null)||
      (registration.status==='VERIFIED'&&registration.admin_password_hash!==tenant.admin.passwordHash))throw new AuthError(403,'Company is not verified for provisioning.');
    let job=await repo.get();
    if(!job){if(registration.status==='ACTIVE')throw new AuthError(409,'Active company has no provisioning record.');await repo.create(fingerprint);job={stage:'NEW',fingerprint};}
@@ -54,7 +58,7 @@ function provisioningService(repository,providers,initialize,config){
   let start=false;
   const result=await repository.withTenant(tenant.tenantId,async repo=>{
    const r=repo.registration;
-   if(!r||!['VERIFIED','ACTIVE'].includes(r.status)||r.slug!==tenant.slug||r.company_name!==tenant.companyName||r.admin_email!==tenant.admin.email||r.admin_name!==tenant.admin.name||(r.status==='VERIFIED'&&r.admin_password_hash!==tenant.admin.passwordHash))throw new AuthError(403,'Company is not verified for provisioning.');
+   if(!r||!['VERIFIED','ACTIVE'].includes(r.status)||r.slug!==tenant.slug||r.company_name!==tenant.companyName||r.admin_email!==tenant.admin.email||r.admin_name!==tenant.admin.name||(r.requested_website_origin||null)!==(tenant.websiteOrigin||null)||(r.status==='VERIFIED'&&r.admin_password_hash!==tenant.admin.passwordHash))throw new AuthError(403,'Company is not verified for provisioning.');
    let job=await repo.get();
    if(!job){if(r.status==='ACTIVE')throw new AuthError(409,'Active company has no provisioning record.');await repo.create(fingerprint);job={stage:'NEW',fingerprint};}
    if(job.fingerprint!==fingerprint)throw new AuthError(409,'Provisioning identity does not match the existing request.');
