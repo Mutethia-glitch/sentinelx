@@ -26,6 +26,19 @@ test('company signup verifies a six-digit email code before handing an isolated 
  assert.equal(provisioned.admin.passwordHash,stored.passwordHash===null?provisioned.admin.passwordHash:stored.passwordHash);
  assert.equal(verified.tenant.origin,'https://'+stored.slug+'.example.com');assert.ok(activated);
 });
+test('website field is optional and strictly a pending HTTPS origin, not an ownership proof',()=>{
+ const {signupInput}=require('../../src/platform/validation');
+ const original={companyName:'ACME Ltd',adminName:'Admin',adminEmail:'admin@acme.com',
+   password:'Synthetic password 123456'};
+ assert.equal(signupInput(original).websiteOrigin,null);
+ assert.equal(signupInput({...original,websiteUrl:''}).websiteOrigin,null);
+ assert.equal(signupInput({...original,websiteUrl:'https://www.acme.com'}).websiteOrigin,'https://www.acme.com');
+ for(const value of ['http://www.acme.com','https://127.0.0.1','https://localhost','https://www.acme.com/path',
+ 'https://www.acme.com?secret=x','https://admin@www.acme.com']){
+  assert.throws(()=>signupInput({...original,websiteUrl:value}),{status:400},value);
+ }
+ assert.throws(()=>signupInput({...original,websiteUrl:'https://www.acme.com',role:'Administrator'}),{status:400});
+});
 test('company resend accepts standard registration UUIDs and preserves cooldown and code delivery',async()=>{
  const {resendInput}=require('../../src/platform/validation');
  const id='9528daaa-1798-49ca-80d2-4729409cdee5';
