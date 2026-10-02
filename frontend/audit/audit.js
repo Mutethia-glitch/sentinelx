@@ -71,6 +71,31 @@ async function load(background=false){background=background===true;if(!backgroun
     el('audit-panel').hidden=false;if(!background)message(visibleEntries.length?'Audit trail loaded.':'No audit entries match these filters.');return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
+
+function auditCsvCell(value){
+  let text=String(value??'');
+  if(/^[\s]*[=+@-]/.test(text)||/^[\t\r\n]/.test(text))text="'"+text;
+  return '"'+text.replaceAll('"','""')+'"';
+}
+el('download-audit').addEventListener('click',async()=>{
+  const button=el('download-audit');if(button.disabled)return;button.disabled=true;
+  const query=new URLSearchParams(filters),cutoff=new Date().toISOString();
+  if(!query.get('to')||query.get('to')>cutoff)query.set('to',cutoff);
+  const rows=[['Audit ID','Occurred at (UTC)','Actor ID','Actor','Action','Target type','Target ID','Context']];
+  try{
+    for(let batch=1;batch<=2000;batch++){
+      query.set('page',String(batch));const data=await request('/api/audit?'+query);
+      for(const item of data.entries)rows.push([item.id,item.occurredAt,item.actor?.id,item.actor?.displayName||item.actorContext||'System',item.action,item.target.type,item.target.id,JSON.stringify(item.context)]);
+      message('Preparing audit download: '+(rows.length-1)+' entries…');
+      if(!data.hasMore)break;
+    }
+    const csv='\uFEFF'+rows.map(row=>row.map(auditCsvCell).join(',')).join('\r\n')+'\r\n';
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    const link=document.createElement('a');link.href=url;link.download='sentinelx-audit-'+cutoff.replace(/[:.]/g,'-')+'.csv';document.body.append(link);link.click();link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+    message('Audit downloaded: '+(rows.length-1)+' entries matching the applied filters'+(rows.length-1>=100000?' (export limit: 100,000 entries)':'')+'.');
+  }catch(error){handleError(error);}finally{button.disabled=false;}
+});
+
 el('filters').addEventListener('submit',event=>{
   event.preventDefault();
   try{
