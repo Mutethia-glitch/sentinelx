@@ -73,6 +73,8 @@ jobs:
         run: node --test tests/integration/search.test.js
       - name: Isolated managed issuer-feed API, token, receipt and revocation regression
         run: node --test tests/integration/managed-evidence-feeds.test.js
+      - name: Website receiver HTTP to real reconnaissance alert, replay and revocation
+        run: node --test tests/integration/website-recon-alert-e2e.test.js
       - name: Real alert persistence for all 15 source-attested categories
         run: node --test tests/integration/15-category-alerts.test.js
       - name: Create second isolated tenant test database
