@@ -90,6 +90,34 @@
         <p class="hint">The status REPORTING confirms that a registered key sent an authenticated event; it does not independently prove domain ownership or protection of all traffic.</p>
       </section>
       <div id="sites-list"></div>
+      <section id="managed-feed-panel" hidden aria-labelledby="managed-feed-heading">
+        <h3 id="managed-feed-heading">Additional provider evidence feeds</h3>
+        <p class="hint">Optional company-owned server-to-server evidence feeds for the 15-category integrations. Only register a genuine provider that can substantiate its selected issuer's verdicts. A key authorizes source-attested submissions; it does not verify the external vendor or enable an alert rule.</p>
+        <p class="hint">Provider receiver (your company only): <code id="managed-feed-endpoint"></code></p>
+        <form id="managed-feed-form">
+          <label>Unique source name<input id="managed-feed-name" pattern="[a-z][a-z0-9-]{2,49}" maxlength="50" required placeholder="approved-idp"></label>
+          <label>Issuer / provider class
+            <select id="managed-feed-issuer" required>
+              <option value="application">Application backend</option>
+              <option value="identity">Identity and role audit</option>
+              <option value="network">Network / firewall</option>
+              <option value="mail">Mail security</option>
+              <option value="endpoint">Endpoint / EDR</option>
+              <option value="storage">Storage / egress</option>
+              <option value="analyst">Reviewed analyst evidence</option>
+              <option value="ci">Build / CI integrity</option>
+            </select>
+          </label>
+          <label>Actual provider hostname (not a URL)<input id="managed-feed-host" maxlength="253" required placeholder="identity.company.com"></label>
+          <button type="submit">Issue one-time provider key</button>
+        </form>
+        <section id="managed-feed-secret-panel" hidden>
+          <h3>One-time provider key — store on approved provider backend only</h3>
+          <pre id="managed-feed-secret" class="sx-site-secret"></pre>
+          <p class="hint">Send a valid issuer-specific security verdict to the provider receiver using this key as a Bearer token. Key is shown once, never stored in browser storage, and must not be exposed publicly. Losing it requires revocation and issuing a new source name.</p>
+        </section>
+        <div id="managed-feed-list"></div>
+      </section>
       <section aria-labelledby="integration-heading">
         <h3 id="integration-heading">15-category integration readiness</h3>
         <p class="hint">A category's evidence contract being available does not mean an external provider is installed or that a real attack has been detected. Observed counts are source-attested tenant records, not live coverage certification. Additional identity, network, mail, endpoint, storage, analyst and CI feeds require separately approved server-side credentials.</p>
