@@ -75,6 +75,8 @@ jobs:
         run: node --test tests/integration/managed-evidence-feeds.test.js
       - name: Website receiver HTTP to real reconnaissance alert, replay and revocation
         run: node --test tests/integration/website-recon-alert-e2e.test.js
+      - name: Actual Iphyn access-denial connector to persisted HIGH unauthorized-access alert
+        run: node --test tests/integration/iphyn-unauthorized-access-alert-e2e.test.js
       - name: Real alert persistence for all 15 source-attested categories
         run: node --test tests/integration/15-category-alerts.test.js
       - name: Create second isolated tenant test database
