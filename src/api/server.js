@@ -146,12 +146,12 @@ async function main() {
     startupStage = 'service initialization';
     const service = authService(authRepository(pool), config,mailer);
     const websites=websiteRepository(pool);
-     const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage});
     const integration = externalWebhook();
     const connector = collectorConfig(process.env, config.tenant);
     const firewall = vercelFirewallConfig(process.env, config.tenant);
     const feeds = evidenceFeedsConfig(process.env, config.tenant);
     const coverage=config.tenant?integrationCoverage(pool,websites,feeds,config):null;
+    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage});
     startupStage = 'connector schema';
     if (connector||firewall||feeds) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
     if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
