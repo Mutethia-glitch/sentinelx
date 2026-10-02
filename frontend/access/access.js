@@ -11,7 +11,8 @@ const siteEndpoint=()=>window.location.origin+'/api/connectors/site-events';
 function showSiteSetup(){
  const endpoint=siteEndpoint();
  element('site-setup-endpoint').value=endpoint;
- element('site-env-template').textContent='SENTINELX_SITE_CONNECTOR_URL='+endpoint+'\\nSENTINELX_SITE_CONNECTOR_KEY=<issued-private-key>';
+ element('site-env-template').textContent=`SENTINELX_SITE_CONNECTOR_URL=${endpoint}
+SENTINELX_SITE_CONNECTOR_KEY=<issued-private-key>`;
 }
 element('copy-site-endpoint').addEventListener('click',async()=>{
  const value=element('site-setup-endpoint').value;
