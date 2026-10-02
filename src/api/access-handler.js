@@ -11,10 +11,11 @@ function accessHandler(service, config) {
       const activeMutation=/^\/api\/access\/users\/([^/]+)\/active$/.exec(req.url);
       const invitation=req.url==='/api/access/invitations';
       const sites=req.url==='/api/access/sites';
+      const integrations=req.url==='/api/access/integrations';
       const siteRevoke=/^\/api\/access\/sites\/([a-f0-9-]{36})\/revoke$/i.exec(req.url);
       const read=['/api/access/me','/api/access/roles','/api/access/users'].includes(req.url);
-      if(!rolesMutation&&!activeMutation&&!invitation&&!read&&!sites&&!siteRevoke)return send(404,{error:'Not found.'});
-      const allowed=sites?'GET, POST':rolesMutation?'PUT':activeMutation?'PATCH':siteRevoke?'POST':invitation?'POST':'GET';
+      if(!rolesMutation&&!activeMutation&&!invitation&&!read&&!sites&&!siteRevoke&&!integrations)return send(404,{error:'Not found.'});
+      const allowed=integrations?'GET':sites?'GET, POST':rolesMutation?'PUT':activeMutation?'PATCH':siteRevoke?'POST':invitation?'POST':'GET';
       if(!(sites?['GET','POST'].includes(req.method):req.method===allowed)){
         res.setHeader('Allow',allowed);return send(405,{error:'Method not allowed.'});
       }
@@ -25,6 +26,7 @@ function accessHandler(service, config) {
       if(activeMutation)return send(200,await service.setActive(token,activeMutation[1],await readJson(req)));
       if(invitation)return send(201,{invitation:await service.inviteUser(token,await readJson(req))});
       if(sites)return req.method==='GET'?send(200,await service.sites(token)):send(201,await service.addSite(token,await readJson(req)));
+      if(integrations)return send(200,await service.integrationReadiness(token));
       if(siteRevoke)return send(200,await service.revokeSite(token,siteRevoke[1],await readJson(req)));
       if(req.url==='/api/access/me')return send(200,await service.me(token));
       if(req.url==='/api/access/roles')return send(200,{roles:await service.roles(token)});
