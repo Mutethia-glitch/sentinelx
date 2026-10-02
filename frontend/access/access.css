@@ -1,1 +1,18 @@
 /* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */
+
+/* Task 41: compact administrative overview with individually expandable tools. */
+.sx-access-shortcuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.65rem;margin:.4rem 0 1.25rem}
+.sx-access-shortcuts a{display:flex;align-items:center;min-height:3rem;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-raised);color:var(--primary);font-size:.875rem;font-weight:600;text-decoration:none;overflow-wrap:anywhere}
+.sx-access-shortcuts a:hover,.sx-access-shortcuts a:focus-visible{background:var(--accent);text-decoration:underline}
+.sx-access-workspaces{display:grid;gap:.85rem;padding-top:.9rem;padding-bottom:1.2rem}
+.sx-access-fold{min-width:0;scroll-margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-raised);overflow:visible}
+.sx-access-fold>summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.45rem;cursor:pointer;padding:1rem 1.15rem;font-size:.95rem;font-weight:650;color:var(--foreground)}
+.sx-access-fold>summary:hover{background:var(--accent)}
+.sx-access-fold[open]>summary{border-bottom:1px solid var(--border)}
+.sx-access-summary{font-weight:400;font-size:.79rem;color:var(--muted-foreground)}
+.sx-access-fold-body{display:grid;gap:.9rem;padding:1rem 1.15rem;min-width:0}
+#users-panel>.sx-panel-body{padding:1rem 1.15rem}
+.sx-access-fold .sx-panel-body{min-width:0}
+.sx-access-fold pre,.sx-access-fold code{max-width:100%;overflow-wrap:anywhere;white-space:pre-wrap}
+.sx-access-fold .user-card{margin-top:.55rem}
+@media(max-width:680px){.sx-access-shortcuts{grid-template-columns:1fr}.sx-access-fold>summary{display:block}.sx-access-summary{display:block;margin-top:.3rem}.sx-access-fold-body{padding:.75rem}}
