@@ -28,6 +28,7 @@ function reset(){generation++;ui.clearAccess();element('login-panel').hidden=fal
   element('users-panel').hidden=true;element('access-overview').hidden=true;element('users').replaceChildren();
   element('identity').textContent='';element('assigned-roles').textContent='';element('tenant-name').textContent='';
   element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('site-secret-panel').hidden=true;element('site-secret').textContent='';
+  element('integration-rows').replaceChildren();element('integration-status').textContent='';
 }
 function handleError(error){if(error.status===401||error.status===403)reset();message(error.status?error.message:'Unable to reach SentinelX. Try again.',true);}
 function userCard(user,roles){
@@ -59,10 +60,31 @@ async function refresh(background=false){background=background===true;if(!backgr
   element('tenant-name').textContent=access.tenant?`Company: ${access.tenant.name}`:'Local development tenant';
   element('assigned-roles').textContent=access.roles.length?`Roles: ${access.roles.join(', ')}`:'No role assigned. Ask an Administrator to configure your access.';
   if(access.permissions.includes('users.read')&&access.permissions.includes('users.roles.manage')){
-    const [users,roles,sites]=await Promise.all([request('/api/access/users'),request('/api/access/roles'),request('/api/access/sites')]);
-    if(current!==generation||(background&&!ui.liveCanApply()))return false;element('users').replaceChildren(...users.users.map(user=>userCard(user,roles.roles)));element('users-panel').hidden=false;renderSites(sites);element('sites-panel').hidden=false;
-  }else{element('users-panel').hidden=true;element('users').replaceChildren();element('sites-panel').hidden=true;element('sites-list').replaceChildren();}
+    const [users,roles,sites,integration]=await Promise.all([request('/api/access/users'),request('/api/access/roles'),request('/api/access/sites'),request('/api/access/integrations').catch(()=>null)]);
+    if(current!==generation||(background&&!ui.liveCanApply()))return false;element('users').replaceChildren(...users.users.map(user=>userCard(user,roles.roles)));element('users-panel').hidden=false;renderSites(sites);renderIntegration(integration);element('sites-panel').hidden=false;
+  }else{element('users-panel').hidden=true;element('users').replaceChildren();element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('integration-rows').replaceChildren();}
   return true;
+}
+function renderIntegration(data){
+ const body=element('integration-rows');body.replaceChildren();
+ if(!data||!Array.isArray(data.categories)){
+  element('integration-status').textContent='Integration readiness temporarily unavailable. Existing website management is unaffected.';
+  return;
+ }
+ element('integration-status').textContent=data.purpose||'Recorded evidence is not proof of complete threat coverage.';
+ const states={
+  SOURCE_REQUIRED:'Trusted source required',
+  SOURCE_CONFIGURED_CATEGORY_UNVERIFIED:'Eligible feed configured; category not observed',
+  EVIDENCE_OBSERVED_NOT_LIVE_ACCEPTED:'Source-attested evidence recorded; live acceptance pending'
+ };
+ for(const item of data.categories){
+  const tr=document.createElement('tr');
+  for(const value of [item.categoryCode,(item.providers||[]).join(', '),
+   String(item.eligibleSources),String(item.observedEventCount),states[item.state]||'Review required']){
+   const td=document.createElement('td');td.textContent=value;tr.append(td);
+  }
+  body.append(tr);
+ }
 }
 function renderSites(data){
  element('requested-site').textContent=data.requestedWebsite
