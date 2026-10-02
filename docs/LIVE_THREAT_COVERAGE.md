@@ -1,0 +1,70 @@
+# SentinelX live threat coverage — 15-category evidence register
+
+**Recorded 2026-10-02 (UTC). Scope:** Iphyn Network company runtime unless otherwise indicated. This is a complete 15-row *tracking matrix*, not a claim that all fifteen attacks are monitored in production. Tasks 11/14/40 provided taxonomy, disabled core rule definitions and controlled synthetic end-to-end tests; those do not substitute for a deployed source and a live positive/benign pair. Other companies require their own isolated source enablement and acceptance.
+
+## Evidentiary status
+
+- PARTIALLY LIVE: a specific user-observed production pathway, with named acceptance gaps.
+- DEPLOYED NORMALIZER: source-to-event code runs in the tenant, but an enabled matching live alert and downstream outcome are not recorded.
+- SYNTHETIC ONLY: controlled fixtures exercised the generic core pipeline, not a real signed-up company feed.
+- Connector event severity is separate from core-rule alert severity. No current Iphyn connector signal supports CRITICAL; null means Unknown and is not harmless.
+
+## Fifteen-category register
+
+| # | Stable category | Actual source / required evidence | Core rule alert severity (when enabled) | Current live state | Next positive + benign acceptance / evidence gap |
+|---:|---|---|---|---|---|
+| 01 | BRUTE_FORCE | Iphyn login_failed: authentication/login/failed, bounded IP/account; connector severity LOW | HIGH | PARTIALLY LIVE — positive alert and five-minute block user-confirmed | Record benign single typo/no alert, block expiry, unrelated account, enforced-vs-prepared audit and tenant isolation. |
+| 02 | CREDENTIAL_ATTACK | No trusted spray/stuffing classifier; ordinary login_failed is insufficient | HIGH | SYNTHETIC ONLY | Integrate identity-provider pattern evidence; validate spray/stuff positive and ordinary typo negative. |
+| 03 | PRIVILEGE_ESCALATION | No successful role elevation/administrator grant evidence; privileged_access_denied is only a rejected action | CRITICAL | SYNTHETIC ONLY | Add authoritative identity/role-change audit with actor, target, before/after and outcome; include authorized admin-change negative. |
+| 04 | SUSPICIOUS_ACCOUNT_ACTIVITY | No verified account/session anomaly feed | HIGH | SYNTHETIC ONLY | Integrate account/session evidence with explicit source decision and benign account maintenance control. |
+| 05 | UNAUTHORIZED_ACCESS | Iphyn access_denied now normalized access/access_denied/denied in SentinelX commit 64556c3; MEDIUM event; PR #28 adds signed-in pseudonymous subject | HIGH | DEPLOYED NORMALIZER; ALERT NOT ACCEPTED | Vetted source/host + sourceIp-exists tenant rule, three real denials within 300s, one/two benign denials negative, scoped grouping, HIGH alert, incident and audit. |
+| 06 | RECONNAISSANCE | No trusted proxy/WAF/network scan or discovery feed | MEDIUM | SYNTHETIC ONLY | Onboard bounded source/destination/probe evidence; repeated source-scoped positive and normal crawler negative. |
+| 07 | SUSPICIOUS_NETWORK_ACTIVITY | No verified network-flow or proxy suspicious classification | HIGH | SYNTHETIC ONLY | Require real connection/egress evidence and source verdict; exclude normal service-to-service traffic. |
+| 08 | PHISHING_SOCIAL_ENGINEERING | No mail-security or approved analyst-report feed | HIGH | SYNTHETIC ONLY | Receive provider evidence or an attributed analyst report, with benign training-mail control. |
+| 09 | MALWARE | No EDR/endpoint agent verdict feed | HIGH | SYNTHETIC ONLY | Trusted endpoint detection or block verdict; test sanitized vendor fixture and clean software negative. |
+| 10 | RANSOMWARE | No endpoint/file-behaviour ransomware verdict feed | CRITICAL | SYNTHETIC ONLY | Verified ransomware-specific verdict/activity, benign batch-file change negative; no destructive live tests. |
+| 11 | DENIAL_OF_SERVICE | Iphyn rate_limit_blocked exists but is MEDIUM rejection evidence, not DoS/DDoS proof | CRITICAL | SYNTHETIC ONLY | Add aggregate WAF/proxy request-rate and availability evidence; benign peak-traffic control; never equate one 429 with DoS. |
+| 12 | DATA_EXFILTRATION | No trusted application/storage transfer/egress evidence | CRITICAL | SYNTHETIC ONLY | Approved export/egress policy or vendor verdict with user, target, volume and result; authorized export negative. |
+| 13 | WEB_APPLICATION_ATTACK | No signed WAF/application security verdict for injection, XSS, traversal or command injection | HIGH | SYNTHETIC ONLY; NEXT SOURCE CONTRACT | Add a bounded server-side WAF/block decision, proof of sanitization and false-positive controls; never classify arbitrary request text as an attack. |
+| 14 | INSIDER_THREAT | No evidence-led source verdict or attributable analyst finding | HIGH | SYNTHETIC ONLY | Require correlated approved account/data audit plus explicit analyst/source classification; routine staff work negative. |
+| 15 | SUPPLY_CHAIN_COMPROMISE | No CI/dependency/build provenance or integrity incident feed | CRITICAL | SYNTHETIC ONLY | Integrate verified build/integrity advisory and affected artifact; routine dependency bump negative. |
+
+All fifteen SX-CORE-001 through SX-CORE-015 definitions start disabled. The Iphyn-specific brute-force tenant rule has been enabled and its event/alert/temporary-block behaviour was confirmed by the user. No source automatically gains monitoring when a company supplies only a URL.
+
+## Required gate for EACH category (not interchangeable)
+
+| Gate | Concrete acceptance record |
+|---|---|
+| 1. Source | Signed/secret-bound source, scope, supported event kind and provenance recorded; unknown origins rejected. |
+| 2. Contract | Server-side normalization, allowed privacy-preserving fields, deduplication and timestamp boundary verified. |
+| 3. Rule | Tenant Administrator explicitly enables a vetted source/host-scoped rule; correct threshold/window/grouping and evidence fields. |
+| 4. Positive | Authorized disposable/staging scenario produces a genuine source event and expected normalized severity. |
+| 5. Benign negative | Comparable non-attack operation does not make the rule alert; unknown/missing attribution does not silently aggregate distinct users. |
+| 6. Detection/alert | Trigger event, independent rule-derived severity, correlation, correct recipient/read state and no duplicate alert verified. |
+| 7. Incident/investigation | Controlled alert-to-incident handoff, ownership, chronological evidence, category and analyst notes verified. |
+| 8. Response/closure | Record only a response actually supported by that source; distinguish manual recorded action, preparation and confirmed technical enforcement. |
+| 9. Audit/report | Attributed immutable operations, alert and incident history, incident report and filtered audit download verified. |
+| 10. Isolation | An unrelated company's credentials, connector token, event data, user session and incident must not cross the tenant database/runtime boundary. |
+
+Never mark a category LIVE COMPLETE until all applicable gates have an evidence reference, tested timestamp, source version/commit, expected result and observed result. Where no real containment exists, record NOT SUPPORTED with a manual response option rather than inventing automation. No production payload attacks, arbitrary external scanning or destructive tests.
+
+## First controlled rollout: repeated access denial
+
+1. SentinelX 64556c3 maps allowed Iphyn access_denied to type=access, action=access_denied and status=denied. The individual event stays MEDIUM. login_failed, rate_limit_blocked and privileged_access_denied retain their own categories/severities; a failed admin-only request is not successful escalation.
+2. Iphyn PR #28 is separate, unmerged as this register is written. Once reviewed/merged/deployed, signed-in generic denials supply only an email subject that the existing reporter HMACs; anonymous denials still have null user. Neither branch sends credentials, request body, raw email or cookie.
+3. Existing production SX-CORE-005 remains disabled until the Administrator reviews its persisted definition. Create a *scoped* version or explicitly update it with required conditions: source equals iphyn-app; host equals iphyn.vercel.app; type equals access; status equals denied; sourceIp exists true. Use threshold=3, windowSeconds=300 and groupBy=[sourceIp,user] (or document a deliberate alternative). Do NOT blindly import source-code seed changes as deployed DB rule state.
+4. Test with approved disposable accounts only: one/two natural authorization denials are the benign below-threshold control; three controlled denials from the same attributable IP/user are a positive; repeat with different subject or absent IP and confirm no unintended shared grouping; admin-only denial and rate-limit block must not match. Record event IDs, rule ID, alert ID, time, and screenshots/sanitized audit; finish incident, manual response and tenant isolation gates separately.
+
+## Integration priority after that rollout
+
+WEB_APPLICATION_ATTACK requires a trusted Iphyn or Vercel WAF/app-security verdict, not raw pattern matching on a user-supplied string. Define a minimal allowlist, signed source ownership, decision outcome and safe metadata first. Reconnaissance, DoS, network and data-exfiltration require separate telemetry. Malware/ransomware require endpoint findings; phishing requires mail or analyst evidence; privilege/account/insider need trustworthy identity/data audit; supply chain requires CI/integrity evidence. Add each source as a separate reviewed contract and test both false positives and cross-tenant rejection.
+
+## Live evidence and limitations
+
+- User confirmed: live brute-force alert, temporary login rejection and retry countdown; visual shield logo confirmed 2026-10-02.
+- Render: Iphyn tenant commit 22887ceb and normalization commit 64556c3 both reached LIVE; deployment proof alone is not a live access-denial/alert test.
+- Iphyn: PR #27 merged 2026-10-02; its Vercel commit checks were successful. PR #28 is separate and requires review/merge before production live testing.
+- Render/Vercel request logs are not a substitute for tenant security-event, rule, alert, incident and audit rows. Direct Vercel team-scope runtime inspection returned a 403 on 2026-10-02; reauthorize the connected Vercel account for mutethia-glitchs-projects if direct inspection is desired.
+- Full brute-force expiry, independent account, backend enforcement audit and two-company negative isolation still require recorded controlled tests.
+
+See docs/TASK41_LIVE_ACCEPTANCE_2026-10-02.md for the cross-company and email-delivery gates.
