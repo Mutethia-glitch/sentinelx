@@ -155,7 +155,7 @@ async function main() {
     startupStage = 'managed evidence schema';
     if(managed)await pool.query('SELECT id FROM managed_evidence_feeds LIMIT 0');
     const coverage=config.tenant?integrationCoverage(pool,websites,feeds,config,managed):null;
-    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage,managedEvidence:managed});
+    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage,managedEvidence:managed,configuredFeeds:feeds});
     startupStage = 'connector schema';
     if (connector||firewall||feeds) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
     if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
