@@ -13,7 +13,7 @@ function accessHandler(service, config) {
       const sites=req.url==='/api/access/sites';
       const integrations=req.url==='/api/access/integrations';
       const managedFeeds=req.url==='/api/access/evidence-feeds';
-      const revokeFeed=/^\\/api\\/access\\/evidence-feeds\\/([a-f0-9-]{36})\\/revoke$/i.exec(req.url);
+      const revokeFeed=/^\/api\/access\/evidence-feeds\/([a-f0-9-]{36})\/revoke$/i.exec(req.url);
       const siteRevoke=/^\/api\/access\/sites\/([a-f0-9-]{36})\/revoke$/i.exec(req.url);
       const read=['/api/access/me','/api/access/roles','/api/access/users'].includes(req.url);
       if(!rolesMutation&&!activeMutation&&!invitation&&!read&&!sites&&!siteRevoke&&!integrations&&!managedFeeds&&!revokeFeed)return send(404,{error:'Not found.'});
