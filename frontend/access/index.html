@@ -66,6 +66,17 @@
       <p>Administrator-only, server-to-server links. Registering a URL alone never enables monitoring.</p></div></div>
     <div class="sx-panel-body">
       <p id="requested-site" class="hint"></p>
+      <section aria-labelledby="site-setup-heading" class="sx-panel-body">
+        <h3 id="site-setup-heading">Website backend setup</h3>
+        <p class="hint">Every company has its own receiver. Copy the full URL below into your WEBSITE SERVER'S environment; it is not the public onboarding URL. The private connector key is issued separately, shown once, and must never enter browser code or public environment variables.</p>
+        <label for="site-setup-endpoint">Your company connector URL</label>
+        <input id="site-setup-endpoint" type="text" readonly aria-label="Company website connector URL">
+        <button id="copy-site-endpoint" type="button">Copy connector URL</button>
+        <p class="hint">Suggested private website backend variable names (these are examples; your integration must explicitly read them):</p>
+        <pre id="site-env-template" class="sx-site-secret"></pre>
+        <p class="hint">Your backend must send a valid JSON POST to the receiver using Authorization: Bearer [private key] when it makes an actual supported security decision. Installing only the key and URL does not install a security reporter or automatically enable monitoring. No browser Origin header is accepted.</p>
+        <p class="hint">Connection lifecycle: ISSUED = key created, no authenticated evidence yet; REPORTING = authenticated event received; REVOKED = key disabled. REPORTING is not domain ownership verification or confirmation of all 15 threat categories.</p>
+      </section>
       <form id="site-form">
         <label>Company website HTTPS origin<input id="site-origin" type="url" maxlength="300" autocomplete="url" placeholder="https://your-company.com" required></label>
         <button type="submit" data-icon="link">Issue private website connector key</button>
@@ -75,6 +86,7 @@
         <p class="hint">Copy this key into your website's server-only environment. It will not be displayed again. Never put it in HTML, client JavaScript, analytics or a public repository.</p>
         <pre id="site-secret" class="sx-site-secret"></pre>
         <p id="site-endpoint" class="hint"></p>
+        <p class="hint">Copy the key securely now. Refreshing or closing this page will not reveal it again; if lost, revoke and reissue the connection.</p>
         <p class="hint">The status REPORTING confirms that a registered key sent an authenticated event; it does not independently prove domain ownership or protection of all traffic.</p>
       </section>
       <div id="sites-list"></div>
