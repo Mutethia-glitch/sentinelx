@@ -24,11 +24,14 @@ element('copy-site-endpoint').addEventListener('click',async()=>{
   message('Select and copy the connector URL shown above.');}
 });
 showSiteSetup();
+element('managed-feed-endpoint').textContent=window.location.origin+'/api/connectors/evidence';
 function reset(){generation++;ui.clearAccess();element('login-panel').hidden=false;element('identity-panel').hidden=true;
   element('users-panel').hidden=true;element('access-overview').hidden=true;element('users').replaceChildren();
   element('identity').textContent='';element('assigned-roles').textContent='';element('tenant-name').textContent='';
   element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('site-secret-panel').hidden=true;element('site-secret').textContent='';
   element('integration-rows').replaceChildren();element('integration-status').textContent='';
+  element('managed-feed-panel').hidden=true;element('managed-feed-list').replaceChildren();
+  element('managed-feed-secret-panel').hidden=true;element('managed-feed-secret').textContent='';
 }
 function handleError(error){if(error.status===401||error.status===403)reset();message(error.status?error.message:'Unable to reach SentinelX. Try again.',true);}
 function userCard(user,roles){
@@ -60,11 +63,58 @@ async function refresh(background=false){background=background===true;if(!backgr
   element('tenant-name').textContent=access.tenant?`Company: ${access.tenant.name}`:'Local development tenant';
   element('assigned-roles').textContent=access.roles.length?`Roles: ${access.roles.join(', ')}`:'No role assigned. Ask an Administrator to configure your access.';
   if(access.permissions.includes('users.read')&&access.permissions.includes('users.roles.manage')){
-    const [users,roles,sites,integration]=await Promise.all([request('/api/access/users'),request('/api/access/roles'),request('/api/access/sites'),request('/api/access/integrations').catch(()=>null)]);
-    if(current!==generation||(background&&!ui.liveCanApply()))return false;element('users').replaceChildren(...users.users.map(user=>userCard(user,roles.roles)));element('users-panel').hidden=false;renderSites(sites);renderIntegration(integration);element('sites-panel').hidden=false;
-  }else{element('users-panel').hidden=true;element('users').replaceChildren();element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('integration-rows').replaceChildren();}
+    const [users,roles,sites,integration,managedFeeds]=await Promise.all([request('/api/access/users'),request('/api/access/roles'),request('/api/access/sites'),request('/api/access/integrations').catch(()=>null),request('/api/access/evidence-feeds').catch(()=>null)]);
+    if(current!==generation||(background&&!ui.liveCanApply()))return false;element('users').replaceChildren(...users.users.map(user=>userCard(user,roles.roles)));element('users-panel').hidden=false;renderSites(sites);renderIntegration(integration);renderManagedFeeds(managedFeeds);element('sites-panel').hidden=false;
+  }else{element('users-panel').hidden=true;element('users').replaceChildren();element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('integration-rows').replaceChildren();element('managed-feed-panel').hidden=true;element('managed-feed-list').replaceChildren();}
   return true;
 }
+function renderManagedFeeds(data){
+ const panel=element('managed-feed-panel'),list=element('managed-feed-list');list.replaceChildren();
+ panel.hidden=!data||!Array.isArray(data.feeds);
+ if(panel.hidden)return;
+ for(const feed of data.feeds){
+  const card=document.createElement('section');card.className='user-card';
+  const title=document.createElement('h4');
+  title.textContent=feed.name+' — '+feed.issuer+' — '+feed.status;
+  const info=document.createElement('p');info.className='hint';
+  info.textContent='Declared host: '+feed.host+
+   (feed.lastEventAt?' · Last authenticated evidence: '+feed.lastEventAt:' · No authenticated evidence reported yet');
+  card.append(title,info);
+  if(feed.status!=='REVOKED'){
+   const form=document.createElement('form');
+   const label=document.createElement('label');label.textContent='Revocation reason';
+   const reason=document.createElement('input');reason.required=true;reason.maxLength=500;label.append(reason);
+   const button=document.createElement('button');button.type='submit';button.textContent='Revoke provider feed';
+   form.append(label,button);
+   form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;
+    try{
+     await request('/api/access/evidence-feeds/'+encodeURIComponent(feed.id)+'/revoke',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:reason.value})});
+     element('managed-feed-secret-panel').hidden=true;element('managed-feed-secret').textContent='';
+     renderManagedFeeds(await request('/api/access/evidence-feeds'));
+     message('Provider feed revoked; its key can no longer submit security evidence.');
+    }catch(error){handleError(error);}finally{button.disabled=false;}
+   });
+   card.append(form);
+  }
+  list.append(card);
+ }
+}
+element('managed-feed-form').addEventListener('submit',async event=>{
+ event.preventDefault();const form=event.currentTarget,button=form.querySelector('button');button.disabled=true;
+ element('managed-feed-secret-panel').hidden=true;element('managed-feed-secret').textContent='';
+ try{
+  const response=await request('/api/access/evidence-feeds',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({name:element('managed-feed-name').value,
+    issuer:element('managed-feed-issuer').value,host:element('managed-feed-host').value})});
+  element('managed-feed-secret').textContent=response.feed.token;
+  element('managed-feed-secret-panel').hidden=false;
+  renderManagedFeeds(await request('/api/access/evidence-feeds'));
+  form.reset();
+  message('One-time provider key issued. Configure the correct authorized source backend before reporting.');
+ }catch(error){handleError(error);}finally{button.disabled=false;}
+});
 function renderIntegration(data){
  const body=element('integration-rows');body.replaceChildren();
  if(!data||!Array.isArray(data.categories)){

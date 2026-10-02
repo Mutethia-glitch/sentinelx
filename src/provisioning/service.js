@@ -39,7 +39,7 @@ function provisioningService(repository,providers,initialize,config){
     const url=await providers.databaseUrl(job);await initialize(tenant,url);await save('DATABASE_READY');
    }else if(job.stage==='DATABASE_READY'){
     const databaseUrl=await providers.databaseUrl(job);
-    const env={NODE_ENV:'production',BIND_HOST:'0.0.0.0',DATABASE_URL:databaseUrl,APP_ORIGIN:'https://unconfigured.invalid',TENANT_ID:tenant.tenantId,TENANT_NAME:tenant.companyName,TENANT_SLUG:tenant.slug,AUTH_EMAIL_2FA:'1',
+    const env={NODE_ENV:'production',BIND_HOST:'0.0.0.0',DATABASE_URL:databaseUrl,APP_ORIGIN:'https://unconfigured.invalid',TENANT_ID:tenant.tenantId,TENANT_NAME:tenant.companyName,TENANT_SLUG:tenant.slug,AUTH_EMAIL_2FA:'1',MANAGED_EVIDENCE_FEEDS:'1',
      AUTH_OTP_SECRET:createHmac('sha256',config.otpKey).update('sentinelx-tenant-otp:'+tenant.tenantId).digest('hex'),
      EMAIL_DELIVERY_URL:config.email.url,EMAIL_DELIVERY_TOKEN:config.email.token,EMAIL_FROM:config.email.from,...(config.signupUrl?{COMPANY_SIGNUP_URL:config.signupUrl}:{})};
     await save('CREATING_SERVICE');

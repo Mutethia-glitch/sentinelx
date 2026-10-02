@@ -21,12 +21,12 @@ const REQUIREMENTS=Object.freeze(CATEGORY_CODES.map(categoryCode=>{
 }));
 const supported=Object.freeze(REQUIREMENTS.map(c=>c.categoryCode));
 
-function integrationCoverage(pool,websites,feeds=[],config={}){
+function integrationCoverage(pool,websites,feeds=[],config={},managed=null){
  if(!config.tenant?.id)throw new Error('Integration readiness requires an isolated tenant.');
  const configured=Array.isArray(feeds)?feeds.map(({issuer,name})=>({issuer,name})):[];
  return{
   async list(){
-   const [siteInfo,activity]=await Promise.all([
+   const [siteInfo,activity,managedFeeds]=await Promise.all([
     websites.list(),
     pool.query(`SELECT normalized_data->'metadata'->>'categoryCode' AS category_code,
       count(*)::int AS total, max(occurred_at) AS latest
@@ -35,16 +35,18 @@ function integrationCoverage(pool,websites,feeds=[],config={}){
       AND (source LIKE 'site.%' OR source LIKE 'evidence.%' OR source='sentinelx-internal')
       AND normalized_data->'metadata'->>'categoryCode'=ANY($2::text[])
       GROUP BY normalized_data->'metadata'->>'categoryCode'`,
-     [config.tenant.id,supported])
+     [config.tenant.id,supported]),
+    managed?managed.list():Promise.resolve([])
    ]);
    const observations=new Map(activity.rows.map(row=>[row.category_code,row]));
+   const available=[...configured,...managedFeeds.filter(feed=>['ISSUED','REPORTING'].includes(feed.status))];
    const activeSites=(siteInfo.sites||[]).filter(site=>['ISSUED','REPORTING'].includes(site.status));
    return{
     purpose:'Integration planning only. Observations do not by themselves establish live attack-detection acceptance.',
     categories:REQUIREMENTS.map(item=>{
      const observed=observations.get(item.categoryCode),count=Number(observed?.total||0);
      const eligibleSources=item.issuers.reduce((n,issuer)=>n+
-       configured.filter(feed=>feed.issuer===issuer).length+
+       available.filter(feed=>feed.issuer===issuer).length+
        (issuer==='application'?activeSites.length:0),0)+
        (config.selfMonitorEnabled&&firstPartyCategories.has(item.categoryCode)?1:0);
      return{...item,eligibleSources,observedEventCount:count,

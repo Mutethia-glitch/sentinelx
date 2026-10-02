@@ -33,6 +33,28 @@ function accessService(repository, authentication, options={}) {
       if(!options.integrationCoverage)throw new AuthError(503,'Integration readiness unavailable.');
       return options.integrationCoverage.list();
     },
+    async managedFeeds(token){
+      await authorize(token,'users.manage');
+      if(!options.managedEvidence)throw new AuthError(503,'Managed evidence feeds are not enabled.');
+      return{feeds:await options.managedEvidence.list()};
+    },
+    async issueManagedFeed(token,body){
+      const actor=await authorize(token,'users.manage');
+      if(!options.managedEvidence)throw new AuthError(503,'Managed evidence feeds are not enabled.');
+      if(Array.isArray(options.configuredFeeds)&&options.configuredFeeds.some(feed=>feed.source==='evidence.'+body?.name))
+       throw new AuthError(409,'Provider feed name is reserved by an existing tenant integration.');
+      const id=randomUUID(),key=randomBytes(32).toString('hex');
+      const feed=await options.managedEvidence.issue(actor.id,id,body,key);
+      return{...feed,endpoint:'/api/connectors/evidence',token:key,shownOnce:true,
+       providerIdentityVerified:false,sourceAttestation:'administrator-declared'};
+    },
+    async revokeManagedFeed(token,id,body){
+      const actor=await authorize(token,'users.manage');
+      if(!options.managedEvidence)throw new AuthError(503,'Managed evidence feeds are not enabled.');
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).join(',')!=='reason')
+       throw new AuthError(400,'A reason is required to revoke the provider feed.');
+      return options.managedEvidence.revoke(actor.id,id,body.reason);
+    },
     async addSite(token,body){
       const actor=await authorize(token,'users.manage');
       if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
