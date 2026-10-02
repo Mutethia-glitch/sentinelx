@@ -9,7 +9,8 @@ const CONNECTOR_SEVERITY = Object.freeze({
   access_denied: {severity:'MEDIUM',reason:'The application rejected access to a protected operation.'},
   rate_limit_blocked: {severity:'MEDIUM',reason:'The application rejected a request after its rate limit was exceeded; this alone does not establish DoS.'},
   login_containment_blocked: {severity:'HIGH',reason:'A sign-in was blocked under a verified repeated-login containment decision.'},
-  privileged_access_denied: {severity:'HIGH',reason:'A signed-in non-administrator was denied an administrator-only operation; no privilege gain is established.'}
+  privileged_access_denied: {severity:'HIGH',reason:'A signed-in non-administrator was denied an administrator-only operation; no privilege gain is established.'},
+  reconnaissance_probe: {severity:'LOW',reason:'An Iphyn application router rejected a nonexistent API procedure. This is not proof of a scan until a scoped rule correlates repeated activity.'}
 });
 function collectorConfig(env, tenant) {
   if (env.CONNECTOR_LOGIN_CONTAINMENT !== undefined && !['0','1'].includes(env.CONNECTOR_LOGIN_CONTAINMENT)) throw new Error('Invalid login containment policy.');
@@ -32,11 +33,14 @@ function connectorEvent(body, config, now = Date.now()) {
   if (Math.abs(now - Date.parse(occurred)) > 10 * 60 * 1000) fail();
   const contained=body.kind==='login_containment_blocked';
   if (contained ? (!body.sourceIp || !body.subject || typeof body.containmentId!=='string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(body.containmentId)) : body.containmentId!==undefined) fail();
-  const login = body.kind === 'login_failed', privileged=body.kind==='privileged_access_denied', denied=body.kind==='access_denied';
+  const login = body.kind === 'login_failed', privileged=body.kind==='privileged_access_denied', denied=body.kind==='access_denied',
+    recon=body.kind==='reconnaissance_probe';
+  if(recon&&!body.sourceIp)fail();
   const classification=CONNECTOR_SEVERITY[body.kind];
   return { timestamp: occurred, source: config.source, host: config.host,
-    type: login || contained ? 'authentication' : privileged ? 'authorization' : denied ? 'access' : 'application', action: login ? 'login' : contained ? 'login_throttled' : body.kind,
-    status: login ? 'failed' : privileged || denied ? 'denied' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
+    type: recon ? 'reconnaissance' : login || contained ? 'authentication' : privileged ? 'authorization' : denied ? 'access' : 'application',
+    action: recon ? 'probe' : login ? 'login' : contained ? 'login_throttled' : body.kind,
+    status: recon ? 'detected' : login ? 'failed' : privileged || denied ? 'denied' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
     user: body.subject || null, severity: classification.severity, rawData: { kind: body.kind },
     metadata: { severityPolicy:'connector-v1',severityReason:classification.reason,connector: config.source, tenantId: config.tenantId, externalId: body.eventId,...(contained?{containmentId:body.containmentId}:{}) } };
 }

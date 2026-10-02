@@ -1,0 +1,47 @@
+{
+  "name": "IPHYN repeated instrumented API discovery probes",
+  "description": "Three authentic Iphyn backend unknown-procedure rejections from one verified source IP over two minutes.",
+  "enabled": false,
+  "severity": "MEDIUM",
+  "categoryCode": "RECONNAISSANCE",
+  "conditions": [
+    {
+      "field": "source",
+      "operator": "equals",
+      "value": "iphyn-app"
+    },
+    {
+      "field": "host",
+      "operator": "equals",
+      "value": "iphyn.vercel.app"
+    },
+    {
+      "field": "type",
+      "operator": "equals",
+      "value": "reconnaissance"
+    },
+    {
+      "field": "action",
+      "operator": "equals",
+      "value": "probe"
+    },
+    {
+      "field": "status",
+      "operator": "equals",
+      "value": "detected"
+    },
+    {
+      "field": "sourceIp",
+      "operator": "exists",
+      "value": true
+    }
+  ],
+  "threshold": 3,
+  "windowSeconds": 120,
+  "groupBy": [
+    "sourceIp",
+    "host"
+  ],
+  "mitreTechniqueIds": [],
+  "reason": "Disabled: accept only observed application-routed probes after approved source rollout; static/edge traffic remains outside scope."
+}

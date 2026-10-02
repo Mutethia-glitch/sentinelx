@@ -72,6 +72,20 @@ test('connector severity is evidence-based and cannot be supplied by callers',()
   assert.throws(()=>connectorEvent({...input(),kind:'ransomware'},config));
 });
 
+
+test('a real instrumented unknown Iphyn API procedure can provide bounded reconnaissance evidence',()=>{
+ const {INITIAL_RULES}=require('../../src/rules/initial-rules');
+ const {eventMatches}=require('../../src/detection/engine');
+ const scope=INITIAL_RULES.find(rule=>rule.categoryCode==='RECONNAISSANCE');
+ const evidence=connectorEvent({...input(),kind:'reconnaissance_probe',sourceIp:'192.0.2.25'},config);
+ assert.equal(evidence.type,'reconnaissance');assert.equal(evidence.action,'probe');
+ assert.equal(evidence.status,'detected');assert.equal(evidence.severity,'LOW');
+ assert.equal(eventMatches(evidence,scope.definition),true);
+ assert.equal(scope.enabled,false);
+ assert.throws(()=>connectorEvent({...input(),kind:'reconnaissance_probe',sourceIp:null},config),{status:400});
+ assert.equal(eventMatches(connectorEvent({...input(),kind:'rate_limit_blocked',sourceIp:'192.0.2.25'},config),scope.definition),false);
+});
+
 test('Iphyn denied access has accurate unauthorized-access normalization without promoting unrelated signals',()=>{
   const {eventMatches}=require('../../src/detection/engine');
   const {INITIAL_RULES}=require('../../src/rules/initial-rules');
