@@ -7,21 +7,26 @@ const FILES = {
   '/access/access.js': ['access.js', 'text/javascript; charset=utf-8'],
   '/access/access.css': ['access.css', 'text/css; charset=utf-8'],
 };
+function platformLink(destination){
+  const source=process.env.COMPANY_SIGNUP_URL||'';
+  let url;try{url=new URL(source);}catch{return null;}
+  if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash||url.port)return null;
+  return url.origin+destination;
+}
 function accessPage(req, res) {
-  if (req.url === '/') {
+  if (req.url === '/' || req.url === '/company-login') {
     res.setHeader('Cache-Control', 'no-store');
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.statusCode = 405; res.setHeader('Allow', 'GET, HEAD'); res.end(); return true;
     }
-    res.statusCode = 302; res.setHeader('Location', '/access'); res.end(); return true;
+    res.statusCode = 302; res.setHeader('Location',platformLink('/login')||'/access'); res.end(); return true;
   }
-  if (req.url === '/company-signup' && process.env.COMPANY_SIGNUP_URL) {
-    let signup;
-    try { signup = new URL(process.env.COMPANY_SIGNUP_URL); } catch { signup = null; }
-    if (signup && signup.protocol === 'https:' && !signup.username && !signup.password) {
-      res.setHeader('Cache-Control', 'no-store');
-      if (req.method !== 'GET') { res.statusCode = 405; res.setHeader('Allow', 'GET'); res.end(); return true; }
-      res.statusCode = 302; res.setHeader('Location', signup.href); res.end(); return true;
+  if (req.url === '/company-signup') {
+    const signup=platformLink('/signup');
+    if(signup){
+      res.setHeader('Cache-Control','no-store');
+      if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');res.end();return true;}
+      res.statusCode=302;res.setHeader('Location',signup);res.end();return true;
     }
   }
   if (!Object.hasOwn(FILES, req.url)) return false;

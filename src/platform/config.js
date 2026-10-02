@@ -1,5 +1,6 @@
 const {isIP}=require('node:net');
 const {otpSecret}=require('../auth/otp');
+const {legacyRoutesFromEnv}=require('./directory');
 function platformConfig(env=process.env){
   const production=env.NODE_ENV==='production',port=Number(env.PLATFORM_PORT||env.PORT||3100);
   if(!Number.isInteger(port)||port<1||port>65535)throw new Error('Invalid PLATFORM_PORT.');
@@ -17,6 +18,6 @@ function platformConfig(env=process.env){
   if(trustedProxyIps.length>16||trustedProxyIps.some(v=>!isIP(v)))throw new Error('Invalid TRUSTED_PROXY_IPS.');
   return{production,port,bindHost,origin:origin.origin,databaseUrl:env.PLATFORM_DATABASE_URL,
     otpSecret:otpSecret(env.PLATFORM_OTP_SECRET),otpSeconds:600,otpMaxAttempts:5,otpResendSeconds:60,
-    baseDomain,originMode,trustedProxyIps:Object.freeze(trustedProxyIps)};
+    baseDomain,originMode,legacyRoutes:legacyRoutesFromEnv(env,baseDomain),trustedProxyIps:Object.freeze(trustedProxyIps)};
 }
 module.exports={platformConfig};

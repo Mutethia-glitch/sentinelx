@@ -12,7 +12,10 @@ const {loginLimiter}=require('../auth/rate-limit');
 const {AuthError}=require('../auth/errors');
 
 const FILES=new Map([
-  ['/',['signup/index.html','text/html; charset=utf-8']],
+  ['/',['company-login/index.html','text/html; charset=utf-8']],
+  ['/login',['company-login/index.html','text/html; charset=utf-8']],
+  ['/login/',['company-login/index.html','text/html; charset=utf-8']],
+  ['/login/login.js',['company-login/login.js','text/javascript; charset=utf-8']],
   ['/signup',['signup/index.html','text/html; charset=utf-8']],
   ['/signup/',['signup/index.html','text/html; charset=utf-8']],
   ['/signup/signup.js',['signup/signup.js','text/javascript; charset=utf-8']],
@@ -35,15 +38,18 @@ function createPlatformServer(service,config,{limiter=loginLimiter(),verificatio
       res.setHeader('Content-Type',asset[1]);
       try{return res.end(fs.readFileSync(path.join(__dirname,'../../frontend',asset[0])));}catch{res.statusCode=503;return res.end('Signup page unavailable.');}
     }
-    const routes=new Set(['/api/company-signup','/api/company-signup/verify','/api/company-signup/resend']);
+    const routes=new Set(['/api/company-signup','/api/company-signup/verify','/api/company-signup/resend','/api/company-login/resolve']);
     if(!routes.has(req.url)){res.statusCode=404;res.setHeader('Content-Type','application/json; charset=utf-8');return res.end(JSON.stringify({error:'Not found.'}));}
     res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Content-Type','application/json; charset=utf-8');
     const send=(status,body)=>{res.statusCode=status;res.end(JSON.stringify(body));};
     try{
       if(req.method!=='POST'){res.setHeader('Allow','POST');return send(405,{error:'Method not allowed.'});}
       if(req.headers.origin!==config.origin){req.resume();throw new AuthError(403,'Request origin rejected.');}
-      const client=req.sentinelxClientAddress||req.socket.remoteAddress||'unknown';if(req.url==='/api/company-signup/verify')verificationLimiter.ip(client);else limiter.ip(client);
+      const client=req.sentinelxClientAddress||req.socket.remoteAddress||'unknown';
+      if(req.url==='/api/company-signup/verify')verificationLimiter.ip(client);
+      else limiter.ip(client);
       const body=await readJson(req);
+      if(req.url==='/api/company-login/resolve')return send(200,await service.resolveCompany(body));
       if(req.url==='/api/company-signup'){
         if(body&&typeof body.adminEmail==='string')limiter.account(body.adminEmail.trim().toLowerCase());
         const result=await service.signup(body);return send(201,result);

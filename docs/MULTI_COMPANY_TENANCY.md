@@ -73,3 +73,13 @@ Company B's subdomain.
 Backend authorization still reads current roles from the connected tenant
 PostgreSQL database on protected operations. Client role headers/UI state are
 never authoritative.
+
+## Central company finder
+
+The company locator stores no tenant-user credentials. Company name/sign-in
+code resolves only to a registered ACTIVE tenant HTTPS origin (plus optional
+operator-verified pre-onboarding route metadata). It does not authenticate
+an email address, infer which companies an email belongs to, or issue sessions.
+Multiple companies may invite the same email address; selecting the company
+first is intentional. Every user, including an invited employee, completes
+password and emailed six-digit 2FA on that one company's own origin.

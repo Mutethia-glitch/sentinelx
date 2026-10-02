@@ -421,3 +421,38 @@ startup, cold starts and provider limits can still take minutes; the background
 acknowledgement removes deliberate step delays and is not a three-second
 infrastructure-creation guarantee. No new schema migration is needed for this
 background-processing change.
+
+## Central company sign-in and tenant routing
+
+The root URL of a tenant with `COMPANY_SIGNUP_URL` configured redirects to the separate
+onboarding control plane's `/login` company locator. A direct company URL's
+`/access` remains its normal tenant-specific login. The locator asks **only**
+for company name or immutable sign-in code; do not enter a password on the
+shared control plane. It checks ACTIVE registry entries and responds with the
+pre-registered, validated HTTPS tenant origin. The browser then navigates to
+`/access` on that tenant, where the existing password + emailed six-digit code,
+host-only session cookies, and database-local roles are enforced. This is a
+two-stage routing/authentication flow, not central password authentication.
+
+The platform lookup is `POST /api/company-login/resolve` with an exact JSON
+object `{"company":"<company name or code>"}`, exact Origin, no CORS, no-store
+response and per-client attempt limit. Responses cannot accept arbitrary URLs
+from the user. Names matching multiple ACTIVE tenants must be resolved by
+their unique company code instead. An invited employee uses their company's
+name/code just like its first Administrator; the control plane does not
+receive or query invited staff emails or their tenant password hashes.
+
+Company signup still lives at `/signup`; after verification it provides the
+company slug and origin. Operators may include one or more independently
+verified pre-onboarding tenants by configuring `COMPANY_LOGIN_LEGACY_ROUTES`
+on the onboarding service (at most eight non-secret records, fields exactly
+`companyName`, `slug`, `origin`; origin must be validated HTTPS onrender.com
+or exact registered custom tenant hostname). No existing production tenant
+is inserted into a signup ledger or its user database rewritten. If an
+existing-company mapping conflicts with an ACTIVE registry entry, resolution
+must fail closed rather than direct someone to the wrong organization.
+
+For the original SentinelX entry URL set `COMPANY_SIGNUP_URL` to the HTTPS
+onboarding origin or its `/signup` page. This setting changes only its root
+entry routing; direct `/access` remains functional for its own tenant. Do not
+configure any Vercel variables for this SentinelX control-plane change.

@@ -3,12 +3,14 @@ const {hashPassword}=require('../auth/passwords');
 const {generateCode,digestCode,equalDigest}=require('../auth/otp');
 const {AuthError}=require('../auth/errors');
 const {signupInput,verifyInput,resendInput}=require('./validation');
+const {resolveCompany}=require('./directory');
 function slugFor(name){
   const base=name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48)||'company';
   return(base+'-'+randomBytes(4).toString('hex')).slice(0,63).replace(/-+$/,'');
 }
 function platformService(repository,config,mailer,provisioner){
  return{
+  async resolveCompany(body){return resolveCompany(repository,config,body);},
   async signup(body){
     const input=signupInput(body),registrationId=randomUUID(),tenantId=randomUUID(),slug=slugFor(input.companyName),code=generateCode();
     const passwordHash=await hashPassword(input.password);

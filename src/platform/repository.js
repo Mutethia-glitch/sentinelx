@@ -16,6 +16,14 @@ function platformRepository(pool){
         return{registrationId:input.registrationId,tenantId:input.tenantId,slug:input.slug};
       });
     },
+    async findActiveCompanies(key){
+      const rows=await pool.query(`SELECT company_name,slug,origin FROM tenants
+        WHERE status='ACTIVE' AND origin IS NOT NULL
+          AND (slug=$1 OR lower(btrim(company_name))=$1)
+        ORDER BY CASE WHEN slug=$1 THEN 0 ELSE 1 END,slug
+        LIMIT 20`,[key]);
+      return rows.rows;
+    },
     async registration(id){
       const row=(await pool.query(`SELECT s.*,t.company_name,t.slug,t.admin_email,t.status,t.origin,t.verified_at
         FROM company_signups s JOIN tenants t ON t.id=s.tenant_id WHERE s.id=$1`,[id])).rows[0];
