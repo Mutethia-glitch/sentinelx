@@ -34,7 +34,7 @@ subject to each tenant's own data and rules.
 All events use source `sentinelx-internal`, the runtime's configured tenant ID
 and its own APP_ORIGIN hostname. The reporter never trusts a caller-supplied
 company/host/event classification. Source IP comes from the existing trusted
-proxy/connection address resolution, otherwise null. Per IP/signal, at most ten
+proxy/connection address resolution; private/loopback ingress proxy addresses\nare suppressed to null instead of grouping unrelated visitors together. Per IP/signal, at most ten
 observations per minute are submitted from one process; the map is capped at
 2,048 keys and memory-bounded. This is not a distributed or durable detector.
 
