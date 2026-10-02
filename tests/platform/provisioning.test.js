@@ -22,6 +22,18 @@ test('provisioning persists stages, initializes DB before runtime and activates 
  assert.equal(JSON.stringify(f.job()).includes('password'),false);
  await assert.rejects(()=>f.service.provision({...body,tenant:{...tenant,companyName:'Changed'}}),e=>e.status===403);
 });
+test('requested signup website is bound to verified provisioning identity, not caller-selected telemetry',async()=>{
+ const {validTenant}=require('../../src/provisioning/service');
+ const origin='https://www.acme.com',t={...tenant,websiteOrigin:origin};
+ assert.equal(validTenant({...body,tenant:t},config).websiteOrigin,origin);
+ for(const invalid of ['http://www.acme.com','https://127.0.0.1','https://www.acme.com/admin','https://www.acme.com?token=x']){
+  assert.throws(()=>validTenant({...body,tenant:{...tenant,websiteOrigin:invalid}},config),{status:400});
+ }
+ const fixtureWithPendingSite=fixture();
+ fixtureWithPendingSite.repo.registration.requested_website_origin=origin;
+ await assert.rejects(()=>fixtureWithPendingSite.service.provision(body),{status:403});
+ assert.equal((await fixtureWithPendingSite.service.provision({...body,tenant:t})).status,'PROVISIONING');
+});
 test('uncertain resource creation pauses for review and never automatically creates another resource',async()=>{
  const f=fixture();let attempts=0;f.providers.createProject=async()=>{attempts++;throw new Error('credential-containing provider error');};
  await assert.rejects(()=>f.service.provision(body),e=>e.status===503&&!e.message.includes('credential'));
