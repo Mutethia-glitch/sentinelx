@@ -52,6 +52,19 @@ shared null IP. No runtime traffic, actual WAF verdict or production
 alert acceptance has been observed here. Full instructions and no-secret
 manual Vercel steps: `docs/IPHYN_VERCEL_FIREWALL_INTEGRATION.md`.
 
+## Fifteen normalized evidence contracts available, providers not yet connected
+
+`src/integrations/evidence-catalog.js` now maps issuer-bound source signals
+across all fifteen stable categories. `/api/connectors/evidence` is absent
+until the tenant operator explicitly configures its per-provider server secrets.
+The catalog and generic rule matching have passed controlled regression tests;
+no extra Iphyn provider streams or new live alerts are implied. The only
+currently proposed additional Iphyn direct source is a narrowly scoped
+application-router reconnaissance reporter in **draft Iphyn PR #29**, and its
+three-event fixture remains disabled. See `docs/SECURITY_EVIDENCE_FEEDS.md`.
+Website self-service registration and one-time application keys are staged
+separately in SentinelX **draft PR #1**, pending platform and tenant migrations.
+
 ## Required gate for EACH category (not interchangeable)
 
 | Gate | Concrete acceptance record |
