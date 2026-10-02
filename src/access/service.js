@@ -1,4 +1,5 @@
-const {randomUUID}=require('node:crypto');
+const {randomUUID,randomBytes}=require('node:crypto');
+const {websiteOrigin}=require('../platform/website');
 const { ROLE_NAMES, ROLE_PERMISSIONS, accessForRoles, requirePermission, roleUpdateInput,invitationInput,activeInput,validateUserId } = require('./policy');
 const {generateCode,digestCode}=require('../auth/otp');
 const {AuthError}=require('../auth/errors');
@@ -21,6 +22,28 @@ function accessService(repository, authentication, options={}) {
     async users(token) {
       await authorize(token, 'users.read');
       return repository.listUsers();
+    },
+    async sites(token){
+      await authorize(token,'users.manage');
+      if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
+      return options.websites.list();
+    },
+    async addSite(token,body){
+      const actor=await authorize(token,'users.manage');
+      if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).join(',')!=='origin')
+        throw new AuthError(400,'Provide the website HTTPS origin.');
+      const origin=websiteOrigin(body.origin,false),secret=randomBytes(32).toString('hex');
+      const row=await options.websites.register(actor.id,randomUUID(),origin,secret);
+      return{id:row.id,origin:row.origin,host:row.host,status:row.status,
+        token:secret,endpoint:'/api/connectors/site-events',shownOnce:true,domainOwnershipVerified:false};
+    },
+    async revokeSite(token,id,body){
+      const actor=await authorize(token,'users.manage');
+      if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).join(',')!=='reason')
+        throw new AuthError(400,'A reason is required to revoke this website connector.');
+      return options.websites.revoke(actor.id,id,body.reason);
     },
     async inviteUser(token,body){
       const actor=await authorize(token,'users.manage'),input=invitationInput(body);
