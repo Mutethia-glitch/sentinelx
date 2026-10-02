@@ -32,3 +32,19 @@ test('no-transaction evaluation lets repositories use their default pool', async
   };
   assert.deepEqual(await detectionEngine(repo).evaluate({ id: '3', event: event() }), []);
 });
+
+test('multi-event aggregation cannot combine null grouping identities',async()=>{
+ let queries=0,alerts=0;
+ const repo={
+  enabledRules:async()=>[{id:'core-001',name:'Core brute force',categoryCode:'BRUTE_FORCE',
+   severity:'HIGH',definition:{...definition,threshold:5,groupBy:['user']}}],
+  matchingEvents:async()=>{queries++;return Array.from({length:5},(_,i)=>({id:String(i)}));},
+  createAlert:async()=>{alerts++;return{id:'alert'};}
+ };
+ const unknown=event({sourceIp:null,user:null});
+ assert.deepEqual(await detectionEngine(repo).evaluate({id:'unknown',event:unknown}),[]);
+ assert.equal(queries,0);assert.equal(alerts,0);
+ const privateAccount=event({sourceIp:null,user:'a'.repeat(64)});
+ const observed=await detectionEngine(repo).evaluate({id:'private-account',event:privateAccount});
+ assert.equal(observed.length,1);assert.equal(queries,1);assert.equal(alerts,1);
+});
