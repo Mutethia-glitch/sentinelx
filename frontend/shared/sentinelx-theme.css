@@ -289,7 +289,7 @@ body[data-page="notifications"] #inbox-panel #filters label{flex:1;margin:0}
 body[data-page="notifications"] #send-panel form{padding:1rem}
 body[data-page="notifications"] #send-panel>p{padding:0 1rem;color:var(--muted-foreground);font-size:.75rem}
 
-.sx-audit-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(20.625rem,.7fr);gap:1rem}
+.sx-audit-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
 body[data-page="audit"] #audit-panel #filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.5rem .75rem}
 body[data-page="audit"] #audit-panel #filters button{align-self:end}
 body[data-page="audit"] #audit-detail-panel dl{padding:1rem}
@@ -502,3 +502,8 @@ body[data-page="access"] .sx-user-actions button{margin:0}
 .sx-incident-link svg{width:1rem;height:1rem}
 
 .sx-alert-incident-action{padding-top:.75rem}
+
+body[data-page="audit"] .sx-audit-layout>.sx-panel{min-width:0}
+body[data-page="audit"] #rows td:first-child{white-space:nowrap}
+body[data-page="audit"] #rows td:nth-child(4),body[data-page="audit"] #rows td:nth-child(5){overflow-wrap:anywhere}
+body[data-page="audit"] #audit-panel .sx-panel-head>div:last-child{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
