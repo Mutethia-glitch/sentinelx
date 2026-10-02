@@ -32,11 +32,11 @@ function connectorEvent(body, config, now = Date.now()) {
   if (Math.abs(now - Date.parse(occurred)) > 10 * 60 * 1000) fail();
   const contained=body.kind==='login_containment_blocked';
   if (contained ? (!body.sourceIp || !body.subject || typeof body.containmentId!=='string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(body.containmentId)) : body.containmentId!==undefined) fail();
-  const login = body.kind === 'login_failed', privileged=body.kind==='privileged_access_denied';
+  const login = body.kind === 'login_failed', privileged=body.kind==='privileged_access_denied', denied=body.kind==='access_denied';
   const classification=CONNECTOR_SEVERITY[body.kind];
   return { timestamp: occurred, source: config.source, host: config.host,
-    type: login || contained ? 'authentication' : privileged ? 'authorization' : 'application', action: login ? 'login' : contained ? 'login_throttled' : body.kind,
-    status: login ? 'failed' : privileged ? 'denied' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
+    type: login || contained ? 'authentication' : privileged ? 'authorization' : denied ? 'access' : 'application', action: login ? 'login' : contained ? 'login_throttled' : body.kind,
+    status: login ? 'failed' : privileged || denied ? 'denied' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
     user: body.subject || null, severity: classification.severity, rawData: { kind: body.kind },
     metadata: { severityPolicy:'connector-v1',severityReason:classification.reason,connector: config.source, tenantId: config.tenantId, externalId: body.eventId,...(contained?{containmentId:body.containmentId}:{}) } };
 }

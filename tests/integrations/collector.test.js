@@ -71,3 +71,29 @@ test('connector severity is evidence-based and cannot be supplied by callers',()
   }
   assert.throws(()=>connectorEvent({...input(),kind:'ransomware'},config));
 });
+
+test('Iphyn denied access has accurate unauthorized-access normalization without promoting unrelated signals',()=>{
+  const {eventMatches}=require('../../src/detection/engine');
+  const {INITIAL_RULES}=require('../../src/rules/initial-rules');
+  const rule=INITIAL_RULES.find(item=>item.categoryCode==='UNAUTHORIZED_ACCESS');
+  assert.ok(rule);
+  assert.equal(rule.enabled,false,'the tenant administrator must explicitly enable a vetted rule');
+  assert.equal(rule.definition.threshold,3);
+  assert.equal(rule.definition.windowSeconds,300);
+  const body={...input(),kind:'access_denied',sourceIp:'192.0.2.88',subject:'b'.repeat(64)};
+  const denied=connectorEvent(body,config);
+  assert.equal(denied.source,'iphyn-app');
+  assert.equal(denied.host,'iphyn.vercel.app');
+  assert.equal(denied.type,'access');
+  assert.equal(denied.action,'access_denied');
+  assert.equal(denied.status,'denied');
+  assert.equal(denied.severity,'MEDIUM');
+  assert.equal(denied.user,body.subject);
+  assert.equal(eventMatches(denied,rule.definition),true);
+  for (const kind of ['login_failed','rate_limit_blocked','privileged_access_denied']){
+    assert.equal(eventMatches(connectorEvent({...body,kind},config),rule.definition),false,
+      kind+' must not masquerade as repeated unauthorized access');
+  }
+  assert.throws(()=>connectorEvent({...body,kind:'web_attack'},config),
+    'unsupported attack labels are not accepted as evidence');
+});
