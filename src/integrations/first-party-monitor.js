@@ -67,12 +67,17 @@ function firstPartyMonitor(repository,detector,config,{now=Date.now,limit=10,win
    const verdict=classify(req,res);
    if(!verdict)return;
    const sourceIp=reliableIp(req);
-   if(!sample((sourceIp||'unknown')+':'+verdict.signal))return;
+   const subject=verdict.signal==='password_login_rejected' &&
+      typeof req.sentinelxAuthSubject==='string' &&
+      /^[0-9a-f]{64}$/.test(req.sentinelxAuthSubject)?req.sentinelxAuthSubject:null;
+   // Preserve honest null IP behind unverified proxies. A private per-account
+   // identifier prevents unrelated clients from sharing the unknown-IP bucket.
+   if(!sample((sourceIp||subject||'unknown')+':'+verdict.signal))return;
    const evidenceRef='sentinelx.response:'+randomUUID();
    const event={
     timestamp:new Date(now()).toISOString(),
     source:'sentinelx-internal',type:verdict.type,sourceIp,destinationIp:null,
-    user:null,host,action:verdict.action,status:verdict.status,severity:verdict.severity,
+    user:subject,host,action:verdict.action,status:verdict.status,severity:verdict.severity,
     rawData:{signal:verdict.signal,evidenceRef},
     metadata:{issuer:'sentinelx-runtime',tenantId:config.tenant.id,
       ...(verdict.categoryCode?{categoryCode:verdict.categoryCode}:{}),

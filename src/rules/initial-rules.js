@@ -1,7 +1,7 @@
 const INITIAL_RULES = Object.freeze([
   {
     name: 'SX-CORE-001 Brute force authentication failures',
-    description: 'Detects five failed login events from the same source IP against the same user within five minutes.',
+    description: 'Detects five failed logins against the same pseudonymous target account within five minutes; unverified client IPs remain null.',
     enabled: false,
     severity: 'HIGH',
     categoryCode: 'BRUTE_FORCE',
@@ -9,7 +9,7 @@ const INITIAL_RULES = Object.freeze([
       { field: 'type', operator: 'equals', value: 'authentication' },
       { field: 'action', operator: 'equals', value: 'login' },
       { field: 'status', operator: 'equals', value: 'failed' },
-    ], threshold: 5, windowSeconds: 300, groupBy: ['sourceIp', 'user'] },
+    ], threshold: 5, windowSeconds: 300, groupBy: ['user'] },
     mitreTechniqueIds: ['T1110'],
   },
   {
@@ -52,26 +52,26 @@ const INITIAL_RULES = Object.freeze([
   },
   {
     name: 'SX-CORE-005 Repeated unauthorized access attempts',
-    description: 'Detects three denied access events from the same source IP against the same user within five minutes.',
+    description: 'Detects three denied access events attributed to the same source IP within five minutes.',
     enabled: false,
     severity: 'HIGH',
     categoryCode: 'UNAUTHORIZED_ACCESS',
     definition: { schemaVersion: 1, conditions: [
       { field: 'type', operator: 'equals', value: 'access' },
       { field: 'status', operator: 'equals', value: 'denied' },
-    ], threshold: 3, windowSeconds: 300, groupBy: ['sourceIp', 'user'] },
+    ], threshold: 3, windowSeconds: 300, groupBy: ['sourceIp'] },
     mitreTechniqueIds: [],
   },
   {
     name: 'SX-CORE-006 Reconnaissance activity',
-    description: 'Detects repeated events explicitly classified as reconnaissance scans, probes, or discovery activity from one source toward one destination.',
+    description: 'Detects three source-attested reconnaissance probes from the same source IP against the same registered application host.',
     enabled: false,
     severity: 'MEDIUM',
     categoryCode: 'RECONNAISSANCE',
     definition: { schemaVersion: 1, conditions: [
       { field: 'type', operator: 'equals', value: 'reconnaissance' },
       { field: 'action', operator: 'in', value: ['scan', 'probe', 'discovery'] },
-    ], threshold: 3, windowSeconds: 120, groupBy: ['sourceIp', 'destinationIp'] },
+    ], threshold: 3, windowSeconds: 120, groupBy: ['sourceIp', 'host'] },
     mitreTechniqueIds: [],
   },
   {

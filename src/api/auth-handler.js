@@ -1,6 +1,7 @@
 const { AuthError } = require('../auth/errors');
 const { loginInput,activationInput } = require('../auth/validation');
 const { loginLimiter } = require('../auth/rate-limit');
+const {pseudonymousLoginSubject}=require('../auth/subject');
 
 function cookieToken(header, name) {
   if (!header) return null;
@@ -63,6 +64,8 @@ function authHandler(service, config, limiter = loginLimiter()) {
       if(path==='/api/auth/login'){
         limiter.ip(client);
         const input=loginInput(await readJson(req));limiter.account(input.email);
+      // The response monitor may observe HTTP 401, but must never store an email.
+      req.sentinelxAuthSubject=pseudonymousLoginSubject(config.otpSecret,input.email);
         const login=await service.login(input);
         if(login.requiresTwoFactor){
           res.setHeader('Set-Cookie',challengeCookie(login.challengeId,config));
