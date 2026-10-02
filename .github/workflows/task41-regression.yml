@@ -28,3 +28,46 @@ jobs:
         run: npm run quality
       - name: Task 41 deployment contracts
         run: npm run verify:deployment
+  tenant_database:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: sentinelx_task41_ci
+          POSTGRES_USER: sentinelx_ci
+          POSTGRES_PASSWORD: disposable-only-ci-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sentinelx_ci -d sentinelx_task41_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    env:
+      SENTINELX_TEST_DATABASE: '1'
+      DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_task41_ci
+      PGPASSWORD: disposable-only-ci-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned dependencies and PostgreSQL client
+        run: |
+          npm ci --ignore-scripts
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+      - name: Isolated PostgreSQL RBAC and last-Administrator invariants
+        run: node --test tests/integration/access.test.js
+      - name: Isolated tenant 2FA invitation activation and disablement
+        run: node --test tests/integration/tenant-authentication.test.js
+      - name: Create independent onboarding test database
+        run: psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_platform_task41_ci'
+      - name: Independent platform registration and credential erasure
+        env:
+          DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_platform_task41_ci
+        run: node --test tests/integration/platform-signup.test.js
