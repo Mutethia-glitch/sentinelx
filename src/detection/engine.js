@@ -84,6 +84,8 @@ function detectionEngine(repository, correlator = null, integration = mlIntegrat
       let mlEvidence = null;
       for (const rule of rules) {
         if (!validDefinition(rule.definition) || !eventMatches(event, rule.definition)) continue;
+        // A multi-event threshold must never correlate unrelated NULL identities.
+        if(rule.definition.threshold>1 && rule.definition.groupBy.some(field=>event[field]===null||event[field]===undefined))continue;
         const group = groupValues(event, rule.definition.groupBy);
         const matches = await repository.matchingEvents(rule.definition, event, group, db);
         if (matches.length < rule.definition.threshold) continue;
