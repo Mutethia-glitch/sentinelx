@@ -1,0 +1,47 @@
+{
+  "name": "IPHYN repeated verified website route probes",
+  "description": "Three authentic production Iphyn website connector unknown-tRPC-procedure verdicts from the same verified source IP in 120 seconds; does not cover static/edge routing.",
+  "enabled": false,
+  "severity": "MEDIUM",
+  "categoryCode": "RECONNAISSANCE",
+  "conditions": [
+    {
+      "field": "source",
+      "operator": "equals",
+      "value": "site.847bd8a1-a123-4395-82e3-51c622cea1bf"
+    },
+    {
+      "field": "host",
+      "operator": "equals",
+      "value": "iphyn.vercel.app"
+    },
+    {
+      "field": "type",
+      "operator": "equals",
+      "value": "reconnaissance"
+    },
+    {
+      "field": "action",
+      "operator": "equals",
+      "value": "probe"
+    },
+    {
+      "field": "status",
+      "operator": "equals",
+      "value": "detected"
+    },
+    {
+      "field": "sourceIp",
+      "operator": "exists",
+      "value": true
+    }
+  ],
+  "threshold": 3,
+  "windowSeconds": 120,
+  "groupBy": [
+    "sourceIp",
+    "host"
+  ],
+  "mitreTechniqueIds": [],
+  "reason": "Disabled acceptance fixture. Site source confirmed by the owner from one real 2026-10-02 event; only operator-approved positive and benign tests may precede activation."
+}

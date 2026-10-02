@@ -49,3 +49,46 @@ Run tenant A and B checks using consenting, disposable, separate email addresses
 Mark Task 41 Complete only after the provider-domain gate, distinct-user activation, three-role API matrix, disablement/last-admin safety, negative cross-tenant tests, full signup-to-first-login, secure deployment smoke and regression tests, and documentation are all recorded with evidence. Task 42 and later remain separately out of scope until Task 41 actually passes.
 
 Related threat register: docs/LIVE_THREAT_COVERAGE.md.
+
+## Subsequent live acceptance update — same date
+
+The earlier table is a point-in-time baseline, not the current rollout state.
+The operator subsequently confirmed these production results (sensitive IP/key omitted):
+
+- Platform 003 and isolated original/Iphyn tenant migrations through 020 were
+  applied before SentinelX PR #1 merged. The four Render services ultimately
+  reached LIVE. The original tenant recovered after the privacy-safe startup
+  diagnostics PR #2; the application logged successful listening.
+- Iphyn PR #29 and the separate server-only website adapter PR #30 were merged;
+  user installed a *rotated* key in Vercel Production. Its website connection
+  transitioned ISSUED → REPORTING after one legitimate application-routed
+  unknown tRPC procedure rejection (HTTP 404, NOT_FOUND).
+- The resulting inspected Iphyn event had source
+  `site.847bd8a1-a123-4395-82e3-51c622cea1bf`, registered host
+  `iphyn.vercel.app`, LOW severity, type reconnaissance, action probe,
+  categoryCode RECONNAISSANCE, issuer application, and correct tenant identity.
+  This is a source-attested signal, not a claim of domain ownership or full
+  coverage. Ordinary homepage navigation produced no additional probe event
+  while the site stayed REPORTING.
+- Original SentinelX was added as a distinct legacy company login route; the
+  user confirmed its sign-in became accessible. From the original company's
+  authenticated workspace, the Iphyn website connection and Iphyn site-source
+  event were absent. This is an observed cross-tenant *read visibility* negative
+  check, not an exhaustive cross-tenant write/key-replay test.
+- PR #3 fixed Events category-only filtering to match native normalized
+  `metadata.categoryCode` as well as linked alert category, without inventing
+  linked rules. Disposable PostgreSQL and cross-tenant CI passed; PR #3 merged,
+  both tenant services reached LIVE, and the user confirmed that filtering
+  RECONNAISSANCE now displays the real Iphyn event.
+- Credential revocation is proved in disposable PostgreSQL integration testing,
+  but production revocation of the currently working Iphyn connection is deferred
+  to avoid unnecessary telemetry interruption. The sender-domain, independent
+  recipient activation, full live RBAC lifecycle, login containment expiry and
+  verified source integrations for other attack categories remain OPEN.
+
+A separate disabled fixture, `fixtures/rules/iphyn-site-scoped-reconnaissance.json`,
+now targets the *observed site.* source instead of the older `iphyn-app` source.
+It is a proposal for source-specific subsequent acceptance, not an enabled
+production rule. Require an operator-approved low-volume positive/below-threshold
+pair and a benign source/IP control before considering its activation. No
+synthetic attack report is to be submitted to the live website connector.
