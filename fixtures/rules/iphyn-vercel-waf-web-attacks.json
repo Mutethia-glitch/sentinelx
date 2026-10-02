@@ -1,0 +1,47 @@
+{
+  "name": "IPHYN verified Vercel WAF web application denial",
+  "description": "One signed, operator-mapped Vercel firewall deny from the configured Iphyn host; without source IP grouping or raw request content.",
+  "enabled": false,
+  "severity": "HIGH",
+  "categoryCode": "WEB_APPLICATION_ATTACK",
+  "conditions": [
+    {
+      "field": "source",
+      "operator": "equals",
+      "value": "vercel-firewall"
+    },
+    {
+      "field": "host",
+      "operator": "equals",
+      "value": "iphyn.vercel.app"
+    },
+    {
+      "field": "type",
+      "operator": "equals",
+      "value": "web_application"
+    },
+    {
+      "field": "action",
+      "operator": "in",
+      "value": [
+        "sql_injection",
+        "xss",
+        "path_traversal",
+        "command_injection"
+      ]
+    },
+    {
+      "field": "status",
+      "operator": "equals",
+      "value": "blocked"
+    }
+  ],
+  "threshold": 1,
+  "windowSeconds": 60,
+  "groupBy": [
+    "host",
+    "action"
+  ],
+  "mitreTechniqueIds": [],
+  "reason": "Create disabled pending verified drain signature, project/host and operator-approved WAF-rule mappings; live negative controls before activation."
+}
