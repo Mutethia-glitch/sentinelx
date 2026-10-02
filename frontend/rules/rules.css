@@ -1,14 +1,1 @@
-/* Task 41: scoped rules workspace, inheriting SentinelX's shared theme. */
-.sx-rule-tools{display:flex;flex-wrap:wrap;align-items:end;gap:1rem;margin-bottom:1rem}
-.sx-rule-tools label{min-width:min(100%,18rem);flex:1 1 18rem}
-.sx-rule-tools button{flex:0 0 auto}
-#rule-fields{display:grid;grid-template-columns:minmax(8rem,12rem) minmax(0,1fr);gap:.65rem 1rem}
-#rule-fields dt{font-weight:600;color:var(--muted-foreground)}
-#rule-fields dd{margin:0;overflow-wrap:anywhere}
-#rule-definition{max-height:24rem;overflow:auto;padding:1rem;background:var(--code);border:1px solid var(--border);border-radius:var(--radius);white-space:pre-wrap;overflow-wrap:anywhere}
-#rule-state-form{max-width:46rem;display:grid;gap:.8rem}
-#rule-state-form textarea{min-height:5.25rem;width:100%}
-.sx-rule-ack{display:flex;align-items:start;gap:.6rem}
-.sx-rule-ack input{flex:none;margin-top:.25rem}
-#rule-rows td{overflow-wrap:anywhere}
-@media(max-width:600px){#rule-fields{grid-template-columns:1fr}#rule-fields dt{margin-top:.5rem}}
+/* Intentionally empty. Task 37 centralizes runtime layout and spacing in /ui/sentinelx-theme.css to prevent cross-file CSS cascade conflicts. */
