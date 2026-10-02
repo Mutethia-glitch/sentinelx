@@ -522,3 +522,97 @@ body[data-page="audit"] #audit-panel .sx-panel-head>div:last-child{display:flex;
 .sx-shield-layer:nth-child(7){transform:translateZ(2px);backface-visibility:hidden}
 @keyframes sx-shield-turn{from{transform:rotateX(3.4deg) rotateY(-24deg)}to{transform:rotateX(3.4deg) rotateY(336deg)}}
 @media(prefers-reduced-motion:reduce){.sx-shield-rotor{animation:none}}
+
+/* Company finder only: no changes to tenant pages, shared navigation or auth UI. */
+body[data-page="company-login"] .sx-company-landing{
+  min-height:100dvh;
+  padding:clamp(1rem,4vw,3rem);
+  background:
+    radial-gradient(circle at 10% 10%,color-mix(in oklab,var(--primary) 13%,transparent),transparent 42%),
+    radial-gradient(circle at 92% 90%,color-mix(in oklab,var(--primary) 7%,transparent),transparent 44%),
+    var(--background);
+}
+body[data-page="company-login"] .sx-company-shell{
+  width:100%;
+  max-width:72rem;
+  display:grid;
+  gap:clamp(1.5rem,3vw,2.5rem);
+  padding:clamp(1.25rem,3.6vw,2.75rem);
+  margin:auto;
+  border:1px solid var(--border);
+  border-radius:calc(var(--radius) * 3);
+  background:var(--card);
+  box-shadow:0 1.5rem 4rem rgba(24,38,56,.09);
+}
+body[data-page="company-login"] .sx-company-brand{display:flex;align-items:center;gap:.875rem;min-width:0}
+body[data-page="company-login"] .sx-company-brand-mark{
+  width:3rem;height:3rem;flex:0 0 3rem;
+  display:grid;place-items:center;
+  border:1px solid color-mix(in oklab,var(--primary) 40%,transparent);
+  border-radius:calc(var(--radius) * 2);
+  background:color-mix(in oklab,var(--primary) 10%,var(--card));
+}
+body[data-page="company-login"] .sx-company-brand-mark svg{display:block;width:1.5rem;height:1.5rem}
+body[data-page="company-login"] .sx-company-brand-copy{display:grid;gap:.2rem;min-width:0}
+body[data-page="company-login"] .sx-company-brand-copy strong{color:var(--foreground);font-size:1.2rem;line-height:1.2}
+body[data-page="company-login"] .sx-company-brand-copy>span{color:var(--muted-foreground);font-size:.625rem;font-weight:700;letter-spacing:.1em}
+body[data-page="company-login"] .sx-company-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(19rem,.92fr);gap:clamp(1.25rem,3vw,3rem);align-items:stretch}
+body[data-page="company-login"] .sx-company-intro{
+  display:flex;flex-direction:column;justify-content:center;
+  min-width:0;text-align:left;
+  padding:clamp(1rem,2.4vw,2rem);
+  border:1px solid color-mix(in oklab,var(--primary) 16%,var(--border));
+  border-radius:calc(var(--radius) * 2);
+  background:linear-gradient(145deg,color-mix(in oklab,var(--primary) 9%,var(--card)),var(--card));
+}
+body[data-page="company-login"] .sx-company-kicker{
+  margin:0 0 .875rem;color:var(--primary)!important;
+  font-size:.6875rem;font-weight:700;letter-spacing:.11em;
+}
+body[data-page="company-login"] .sx-company-intro h1{
+  max-width:25rem;margin:0 0 1rem;
+  font-size:clamp(1.8rem,3.5vw,2.8rem);
+  line-height:1.13;letter-spacing:-.025em;
+}
+body[data-page="company-login"] .sx-company-intro>p:not(.sx-company-kicker){
+  max-width:33rem;margin:0;color:var(--muted-foreground);font-size:.875rem;line-height:1.75;
+}
+body[data-page="company-login"] .sx-company-steps{display:grid;gap:1.125rem;margin-top:2rem}
+body[data-page="company-login"] .sx-company-step{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.75rem;align-items:start}
+body[data-page="company-login"] .sx-company-step-number{
+  display:grid;place-items:center;width:2rem;height:2rem;
+  border:1px solid color-mix(in oklab,var(--primary) 24%,var(--border));
+  border-radius:50%;background:var(--card);color:var(--primary);
+  font:.6875rem var(--font-mono);font-weight:700;
+}
+body[data-page="company-login"] .sx-company-step h2{margin:.05rem 0 .2rem;color:var(--foreground);font-size:.85rem;font-weight:600}
+body[data-page="company-login"] .sx-company-step p{margin:0;color:var(--muted-foreground);font-size:.75rem;line-height:1.5}
+body[data-page="company-login"] .sx-company-find-panel{display:flex;flex-direction:column;justify-content:center;border-radius:calc(var(--radius) * 2)}
+body[data-page="company-login"] .sx-company-find-panel .sx-panel-head{padding:1.5rem 1.5rem 1.125rem}
+body[data-page="company-login"] .sx-company-find-panel .sx-panel-head h2{font-size:1.15rem}
+body[data-page="company-login"] .sx-company-find-panel .sx-panel-head p{margin-top:.45rem;font-size:.8rem}
+body[data-page="company-login"] .sx-company-find-panel .sx-panel-body{padding:1.5rem;gap:1rem}
+body[data-page="company-login"] #company{height:2.875rem;margin-top:.6rem;background:var(--card);font-size:.875rem}
+body[data-page="company-login"] #company-login-form button{width:100%;min-height:2.875rem;white-space:normal;text-align:center}
+body[data-page="company-login"] #message{min-height:1.25rem;margin:0;color:var(--muted-foreground);font-size:.8125rem;line-height:1.4}
+body[data-page="company-login"] #message:not(:empty){padding:.5rem .65rem;border-radius:var(--radius);background:var(--surface-subtle)}
+body[data-page="company-login"] .hint{color:var(--muted-foreground);font-size:.75rem;line-height:1.5}
+body[data-page="company-login"] .sx-company-footnote{
+  margin:0;padding-top:1.25rem;border-top:1px solid var(--border);
+  color:var(--muted-foreground);font-size:.75rem;text-align:center;line-height:1.55;
+}
+@media(max-width:800px){
+  body[data-page="company-login"] .sx-company-layout{grid-template-columns:1fr}
+  body[data-page="company-login"] .sx-company-intro{padding:1.5rem}
+}
+@media(max-width:480px){
+  body[data-page="company-login"] .sx-company-shell{padding:1rem;gap:1.25rem}
+  body[data-page="company-login"] .sx-company-intro{padding:1.125rem}
+  body[data-page="company-login"] .sx-company-find-panel .sx-panel-head{padding:1rem}
+  body[data-page="company-login"] .sx-company-find-panel .sx-panel-body{padding:1rem}
+}
+
+/* Access-page logo frame alignment only; the approved shield geometry and animation are unchanged. */
+body[data-page="access"] .sx-auth-intro-mark.sx-shield-logo .sx-shield-rotor{
+  width:1.35rem;height:1.35rem;flex:none;margin:0;justify-self:center;align-self:center;
+}

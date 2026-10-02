@@ -1,1 +1,57 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Find your company</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><script src="/login/login.js" defer></script></head><body data-page="company-login"><main class="sx-content sx-auth-centered"><section class="sx-auth-card"><div class="sx-auth-intro"><h1>Sign in to SentinelX</h1><p>Find your company first. Your email, password and six-digit verification code are handled only by your company's private SentinelX environment.</p><ul class="sx-auth-points"><li>Each company has its own secure user accounts and roles.</li><li>Company access stays separate from every other organization.</li><li>Use your company's name or its unique sign-in code.</li></ul></div><div class="sx-panel"><div class="sx-panel-head"><div><h2>Find your company</h2><p>Administrators and invited team members use the same entry point.</p></div></div><form id="company-login-form" class="sx-panel-body"><label>Company name or sign-in code<input id="company" name="company" type="text" maxlength="120" autocomplete="organization" placeholder="e.g. Iphyn Network" required></label><button type="submit">Continue to company sign-in</button><p class="hint">New to SentinelX? <a href="/signup">Create your company</a>.</p><p class="hint">Can't find your company? Ask your company Administrator for its sign-in code.</p><p id="message" role="status" aria-live="polite"></p></form></div></section></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SentinelX · Find your company</title>
+  <link rel="stylesheet" href="/ui/sentinelx-theme.css">
+  <script src="/login/login.js" defer></script>
+</head>
+<body data-page="company-login">
+  <main class="sx-content sx-auth-centered sx-company-landing">
+    <section class="sx-auth-card sx-company-shell" aria-labelledby="company-welcome">
+      <div class="sx-company-brand">
+        <span class="sx-company-brand-mark" aria-hidden="true">
+          <svg viewBox="-1.15 -1.5 2.3 3.1" focusable="false">
+            <g transform="scale(1,-1)">
+              <path d="M0 1.25 L.92 .86 L.76 -.34 Q.58 -1.02 0 -1.42 Q-.58 -1.02 -.76 -.34 L-.92 .86 Z" fill="#1a7fae"/>
+              <path d="M0 1.25 L.92 .86 L.76 -.34 Q.58 -1.02 0 -1.42 Q-.58 -1.02 -.76 -.34 L-.92 .86 Z" fill="#42badf" transform="scale(.88)"/>
+            </g>
+          </svg>
+        </span>
+        <span class="sx-company-brand-copy">
+          <strong>SentinelX</strong>
+          <span>SECURE COMPANY ACCESS</span>
+        </span>
+      </div>
+      <div class="sx-company-layout">
+        <div class="sx-auth-intro sx-company-intro">
+          <p class="sx-company-kicker">YOUR WORKSPACE STARTS HERE</p>
+          <h1 id="company-welcome">Welcome to SentinelX.</h1>
+          <p>Find your company to continue to its own protected security workspace. Your password and six-digit email verification stay with your company's SentinelX environment.</p>
+          <div class="sx-company-steps" aria-label="How sign-in works">
+            <div class="sx-company-step"><span class="sx-company-step-number">01</span><div><h2>Find your company</h2><p>Enter its name or unique sign-in code.</p></div></div>
+            <div class="sx-company-step"><span class="sx-company-step-number">02</span><div><h2>Continue securely</h2><p>Go straight to your company's own sign-in page.</p></div></div>
+            <div class="sx-company-step"><span class="sx-company-step-number">03</span><div><h2>Verify your identity</h2><p>Use your assigned account and email verification code.</p></div></div>
+          </div>
+        </div>
+        <section class="sx-panel sx-company-find-panel" aria-labelledby="company-find-title">
+          <div class="sx-panel-head">
+            <div><h2 id="company-find-title">Find your company</h2><p>For company Administrators and invited team members.</p></div>
+          </div>
+          <form id="company-login-form" class="sx-panel-body">
+            <label for="company">Company name or sign-in code
+              <input id="company" name="company" type="text" maxlength="120" autocomplete="organization" placeholder="e.g. Iphyn Network" required>
+            </label>
+            <button type="submit">Continue to company sign-in</button>
+            <p id="message" role="status" aria-live="polite"></p>
+            <p class="hint">New to SentinelX? <a href="/signup">Create your company</a>.</p>
+            <p class="hint">Can't find your company? Ask your company Administrator for its sign-in code.</p>
+          </form>
+        </section>
+      </div>
+      <p class="sx-company-footnote">Each company's accounts, access controls and security information stay in its own environment.</p>
+    </section>
+  </main>
+</body>
+</html>
