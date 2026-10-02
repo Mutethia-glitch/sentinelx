@@ -144,7 +144,7 @@
   }
   function beginTwoFactor(result,pathname=globalThis.location?.pathname||'/dashboard'){
     if(!result?.requiresTwoFactor)return false;
-    const allowed=/^\/(?:access|dashboard|events|alerts|incidents|notifications|audit)(?:\/)?$/.test(pathname)?pathname:'/dashboard';
+    const allowed=/^\/(?:access|dashboard|events|rules|alerts|incidents|notifications|audit)(?:\/)?$/.test(pathname)?pathname:'/dashboard';
     try{globalThis.sessionStorage.setItem('sentinelx-resend-after',String(Date.now()+60000));}catch{}
     globalThis.location?.assign('/verify?continue='+encodeURIComponent(allowed));return true;
   }
