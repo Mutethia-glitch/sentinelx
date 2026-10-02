@@ -616,3 +616,123 @@ body[data-page="company-login"] .sx-company-footnote{
 body[data-page="access"] .sx-auth-intro-mark.sx-shield-logo .sx-shield-rotor{
   width:1.35rem;height:1.35rem;flex:none;margin:0;justify-self:center;align-self:center;
 }
+
+/* Onboarding design only — all existing signup / verify control IDs remain unchanged. */
+body[data-page="signup"] .sx-signup-landing{
+  min-height:100dvh;
+  padding:clamp(1rem,4vw,3rem);
+  background:
+    radial-gradient(circle at 8% 8%,color-mix(in oklab,var(--primary) 13%,transparent),transparent 43%),
+    radial-gradient(circle at 90% 92%,color-mix(in oklab,var(--primary) 8%,transparent),transparent 45%),
+    var(--background);
+}
+body[data-page="signup"] .sx-signup-shell{
+  width:100%;max-width:75rem;display:grid;gap:clamp(1.25rem,3vw,2.5rem);
+  padding:clamp(1.125rem,3.5vw,2.75rem);margin:auto;
+  border:1px solid var(--border);border-radius:calc(var(--radius)*3);
+  background:var(--card);box-shadow:0 1.5rem 4rem rgba(24,38,56,.09);
+}
+body[data-page="signup"] .sx-signup-brand{display:flex;align-items:center;gap:.875rem;min-width:0}
+body[data-page="signup"] .sx-signup-brand-mark{
+  display:grid;place-items:center;width:3rem;height:3rem;flex:0 0 3rem;
+  border:1px solid color-mix(in oklab,var(--primary) 40%,transparent);
+  border-radius:calc(var(--radius)*2);
+  background:color-mix(in oklab,var(--primary) 10%,var(--card));
+}
+body[data-page="signup"] .sx-signup-brand-copy{display:grid;gap:.2rem;min-width:0}
+body[data-page="signup"] .sx-signup-brand-copy strong{color:var(--foreground);font-size:1.2rem;line-height:1.2}
+body[data-page="signup"] .sx-signup-brand-copy>span{color:var(--muted-foreground);font-size:.625rem;font-weight:700;letter-spacing:.1em}
+body[data-page="signup"] .sx-signup-layout{
+  display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);
+  gap:clamp(1.25rem,3vw,3rem);align-items:stretch;
+}
+body[data-page="signup"] .sx-signup-intro{
+  display:flex;flex-direction:column;justify-content:center;min-width:0;
+  text-align:left;padding:clamp(1rem,2.4vw,2rem);
+  border:1px solid color-mix(in oklab,var(--primary) 16%,var(--border));
+  border-radius:calc(var(--radius)*2);
+  background:linear-gradient(145deg,color-mix(in oklab,var(--primary) 9%,var(--card)),var(--card));
+}
+body[data-page="signup"] .sx-signup-kicker{
+  margin:0 0 .875rem!important;color:var(--primary)!important;
+  font-size:.6875rem;font-weight:700;letter-spacing:.11em;
+}
+body[data-page="signup"] .sx-signup-intro h1{
+  max-width:29rem;margin:0 0 1rem;
+  font-size:clamp(1.75rem,3.35vw,2.75rem);
+  line-height:1.13;letter-spacing:-.025em;
+}
+body[data-page="signup"] .sx-signup-intro>p:not(.sx-signup-kicker){
+  max-width:32rem;color:var(--muted-foreground);
+  font-size:.875rem;line-height:1.75;margin:0;
+}
+body[data-page="signup"] .sx-signup-steps{display:grid;gap:1.25rem;margin-top:2rem}
+body[data-page="signup"] .sx-signup-step{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.75rem;align-items:start}
+body[data-page="signup"] .sx-signup-step-number{
+  display:grid;place-items:center;width:2rem;height:2rem;
+  border:1px solid color-mix(in oklab,var(--primary) 24%,var(--border));
+  border-radius:50%;background:var(--card);color:var(--primary);
+  font:.6875rem var(--font-mono);font-weight:700;
+}
+body[data-page="signup"] .sx-signup-step h2{margin:.05rem 0 .2rem;color:var(--foreground);font-size:.85rem;font-weight:600}
+body[data-page="signup"] .sx-signup-step p{margin:0;color:var(--muted-foreground);font-size:.75rem;line-height:1.5}
+body[data-page="signup"] .sx-signup-panel{
+  display:flex;flex-direction:column;justify-content:center;min-width:0;
+  border-radius:calc(var(--radius)*2);
+}
+body[data-page="signup"] .sx-signup-panel .sx-panel-head{padding:1.5rem 1.5rem 1.125rem}
+body[data-page="signup"] .sx-signup-panel .sx-panel-head h2{font-size:1.15rem}
+body[data-page="signup"] .sx-signup-panel .sx-panel-head p{margin-top:.45rem;font-size:.8rem}
+body[data-page="signup"] .sx-signup-panel .sx-panel-body{padding:1.5rem;gap:1rem}
+body[data-page="signup"] .sx-signup-panel label{min-width:0}
+body[data-page="signup"] .sx-signup-panel input:not([type="checkbox"]){
+  height:2.75rem;background:var(--card);font-size:.875rem;
+}
+body[data-page="signup"] .sx-signup-field-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:.875rem;min-width:0;
+}
+body[data-page="signup"] .sx-signup-form-note{
+  margin:0;color:var(--muted-foreground);font-size:.75rem;line-height:1.6;
+}
+body[data-page="signup"] #signup-form button[type="submit"],
+body[data-page="signup"] #verify-form button[type="submit"]{
+  min-height:2.875rem;width:100%;white-space:normal;text-align:center;
+}
+body[data-page="signup"] #verify-form #code{height:3rem;text-align:center;font-size:1.25rem;letter-spacing:.3em}
+body[data-page="signup"] #complete h3{margin:0;color:var(--foreground);font-size:1rem}
+body[data-page="signup"] #complete p{margin:0;color:var(--muted-foreground);line-height:1.6}
+body[data-page="signup"] #tenant-link{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:2.75rem;border-radius:var(--radius);
+  background:var(--primary);color:var(--primary-foreground);font-size:.875rem;font-weight:600;
+}
+body[data-page="signup"] .sx-signup-panel #message{
+  display:block;margin:0;padding:0 1.5rem 1.5rem;
+  color:var(--muted-foreground);font-size:.8rem;line-height:1.5;
+}
+body[data-page="signup"] .sx-signup-panel #message:empty{display:none}
+body[data-page="signup"] .sx-signup-panel #message.error{color:var(--destructive)}
+body[data-page="signup"] .sx-signup-panel .hint{font-size:.75rem;color:var(--muted-foreground)}
+body[data-page="signup"] .sx-signup-footnote{
+  margin:0;padding-top:1.25rem;border-top:1px solid var(--border);
+  color:var(--muted-foreground);font-size:.75rem;text-align:center;line-height:1.55;
+}
+@media(max-width:860px){
+  body[data-page="signup"] .sx-signup-layout{grid-template-columns:1fr}
+  body[data-page="signup"] .sx-signup-intro{padding:1.5rem}
+}
+@media(max-width:480px){
+  body[data-page="signup"] .sx-signup-shell{padding:1rem;gap:1.25rem}
+  body[data-page="signup"] .sx-signup-intro{padding:1.125rem}
+  body[data-page="signup"] .sx-signup-field-grid{grid-template-columns:1fr;gap:0}
+  body[data-page="signup"] .sx-signup-panel .sx-panel-head{padding:1rem}
+  body[data-page="signup"] .sx-signup-panel .sx-panel-body{padding:1rem}
+  body[data-page="signup"] .sx-signup-panel #message{padding:0 1rem 1rem}
+}
+
+/* The shared seven-layer shield renderer is the single logo implementation. */
+body[data-page="signup"] .sx-signup-brand-mark.sx-shield-logo .sx-shield-rotor,
+body[data-page="company-login"] .sx-company-brand-mark.sx-shield-logo .sx-shield-rotor{
+  width:1.65rem;height:1.65rem;flex:none;
+  justify-self:center;align-self:center;
+}

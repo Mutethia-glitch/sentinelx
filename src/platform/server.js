@@ -20,6 +20,7 @@ const FILES=new Map([
   ['/signup/',['signup/index.html','text/html; charset=utf-8']],
   ['/signup/signup.js',['signup/signup.js','text/javascript; charset=utf-8']],
   ['/ui/sentinelx-theme.css',['shared/sentinelx-theme.css','text/css; charset=utf-8']],
+  ['/ui/sentinelx-ui.js',['shared/sentinelx-ui.js','text/javascript; charset=utf-8']],
 ]);
 function createPlatformServer(service,config,{limiter=loginLimiter(),verificationLimiter=loginLimiter({windowMs:60000}),security=null}={}){
   const boundary=security||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});

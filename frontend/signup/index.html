@@ -1,1 +1,75 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Company signup</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><script src="/signup/signup.js" defer></script></head><body data-page="signup"><main class="sx-content sx-auth-centered"><section class="sx-auth-card"><div class="sx-auth-intro"><h1>Set up SentinelX for your company</h1><p>Create the first company Administrator. SentinelX verifies the Administrator email with a six-digit code before an isolated company environment is provisioned.</p><ul class="sx-auth-points"><li>Each company receives its own SentinelX application environment and PostgreSQL database.</li><li>Company Administrators create users and assign approved roles.</li><li>Production logins require password plus a six-digit email code.</li></ul></div><div class="sx-panel"><div class="sx-panel-head"><div><h2>Company registration</h2></div></div><form id="signup-form" class="sx-panel-body"><label>Company name<input id="company-name" maxlength="120" required></label><label>Administrator name<input id="admin-name" maxlength="120" required></label><label>Administrator email<input id="admin-email" type="email" autocomplete="email" maxlength="254" required></label><label>Password<input id="password" type="password" autocomplete="new-password" minlength="15" required></label><button type="submit">Create company</button></form><form id="verify-form" class="sx-panel-body" hidden><label>6-digit email code<input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button type="submit">Verify and create company</button><div class="sx-resend-row"><button id="resend" type="button">Send a new code</button><span id="resend-timer" role="timer" aria-live="off"></span></div></form><section id="complete" class="sx-panel-body" hidden><h3>Company environment ready</h3><p id="company-result"></p><a id="tenant-link">Open company SentinelX</a></section><p id="message" class="sx-panel-body" role="status" aria-live="polite"></p></div></section></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SentinelX · Create your company</title>
+  <link rel="stylesheet" href="/ui/sentinelx-theme.css">
+  <script src="/ui/sentinelx-ui.js" defer></script>
+  <script src="/signup/signup.js" defer></script>
+</head>
+<body data-page="signup">
+  <main class="sx-content sx-auth-centered sx-signup-landing">
+    <section class="sx-auth-card sx-signup-shell" aria-labelledby="signup-heading">
+      <div class="sx-signup-brand">
+  <span class="sx-signup-brand-mark sx-brand-mark" data-icon="shield" aria-hidden="true"></span>
+  <span class="sx-signup-brand-copy"><strong>SentinelX</strong><span>SECURE COMPANY ONBOARDING</span></span>
+</div>
+      <div class="sx-signup-layout">
+        <div class="sx-auth-intro sx-signup-intro">
+          <p class="sx-signup-kicker">A SECURE WORKSPACE FOR YOUR TEAM</p>
+          <h1 id="signup-heading">Create your company's SentinelX workspace.</h1>
+          <p>Register your organization, verify your Administrator email, and open a dedicated security workspace for your company.</p>
+          <div class="sx-signup-steps" aria-label="Company setup stages">
+            <div class="sx-signup-step"><span class="sx-signup-step-number">01</span><div><h2>Company details</h2><p>Name your organization and create its first Administrator.</p></div></div>
+            <div class="sx-signup-step"><span class="sx-signup-step-number">02</span><div><h2>Verify your email</h2><p>Confirm your address using a six-digit, time-limited code.</p></div></div>
+            <div class="sx-signup-step"><span class="sx-signup-step-number">03</span><div><h2>Open your workspace</h2><p>Continue to your company's separate application and database.</p></div></div>
+          </div>
+        </div>
+        <section class="sx-panel sx-signup-panel" aria-labelledby="registration-heading">
+          <div class="sx-panel-head">
+            <div><h2 id="registration-heading">Create your company</h2><p>Start with your organization and Administrator details.</p></div>
+          </div>
+          <form id="signup-form" class="sx-panel-body">
+            <label for="company-name">Company name
+              <input id="company-name" maxlength="120" autocomplete="organization" placeholder="Your organization" required>
+            </label>
+            <div class="sx-signup-field-grid">
+              <label for="admin-name">Administrator name
+                <input id="admin-name" maxlength="120" autocomplete="name" placeholder="Full name" required>
+              </label>
+              <label for="admin-email">Administrator email
+                <input id="admin-email" type="email" autocomplete="email" maxlength="254" placeholder="you@company.com" required>
+              </label>
+            </div>
+            <label for="password">Create a password
+              <input id="password" type="password" autocomplete="new-password" minlength="15" placeholder="At least 15 characters" required>
+            </label>
+            <p class="sx-signup-form-note">You'll verify this email before your private company environment is created.</p>
+            <button type="submit">Create company</button>
+            <p class="hint">Already registered? <a href="/login">Find your company</a>.</p>
+          </form>
+          <form id="verify-form" class="sx-panel-body" hidden>
+            <p class="sx-signup-form-note">Enter the code sent to your Administrator email. Your code expires after 10 minutes.</p>
+            <label for="code">6-digit email code
+              <input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+            </label>
+            <button type="submit">Verify and create company</button>
+            <div class="sx-resend-row">
+              <button id="resend" type="button">Send a new code</button>
+              <span id="resend-timer" role="timer" aria-live="off"></span>
+            </div>
+          </form>
+          <section id="complete" class="sx-panel-body" hidden>
+            <h3>Company environment ready</h3>
+            <p id="company-result"></p>
+            <a id="tenant-link">Open company SentinelX</a>
+          </section>
+          <p id="message" class="sx-panel-body" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      <p class="sx-signup-footnote">Each company receives its own SentinelX environment, with its users and access controls kept separate.</p>
+    </section>
+  </main>
+</body>
+</html>
