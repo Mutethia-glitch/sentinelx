@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - '.github/workflows/task41-public-smoke.yml'
+      - 'src/api/server.js'
+      - 'src/platform/server.js'
+      - 'scripts/smoke-online.js'
   workflow_dispatch:
 
 permissions:
