@@ -61,6 +61,8 @@ jobs:
           sudo apt-get install -y postgresql-client
       - name: Isolated PostgreSQL RBAC and last-Administrator invariants
         run: node --test tests/integration/access.test.js
+      - name: Isolated PostgreSQL rule activation, RBAC, audit, version conflict and rollback
+        run: node --test tests/integration/rules.test.js
       - name: Isolated tenant 2FA invitation activation and disablement
         run: node --test tests/integration/tenant-authentication.test.js
       - name: Isolated website registration, role boundaries, server evidence and revocation
