@@ -11,7 +11,7 @@
 | Common logo release | DEPLOYED | Render four services status LIVE on main 22887ceb at approximately 06:06 UTC. |
 | Iphyn severity normalization | DEPLOYED | Render previously deployed 13fe863 before Iphyn PR #27 merge; present in successor releases. |
 | Iphyn PR #27 (privileged-access denial) | MERGED with Vercel success contexts | Merge 08831105f at 00:27:59 UTC; both Vercel contexts succeeded. Real post-merge privileged denial and resulting event severity not yet recorded here. |
-| Unauthorized access mapping follow-on | DEPLOYED CODE ONLY | SentinelX 64556c3 was LIVE on Iphyn Render tenant at approximately 06:39:54 UTC; no real matching alert claimed. Iphyn PR #28 pending review and merge. |
+| Unauthorized access mapping follow-on | BOTH CODEPATHS DEPLOYED; LIVE DETECTION PENDING | SentinelX 64556c3 is present in LIVE successor 4407432; Iphyn PR #28 merged 2026-10-02 07:18:57 UTC (4b71268), with Vercel production deployment confirmed by the user. Fixed PR branch c990b13 passed Recovery CI (45/45, TypeScript, build). A real attributed denial and threshold alert remain unverified. |
 | Brute-force login rejection | PARTIAL LIVE | User confirmed ingestion, repeated-login HIGH alert and actual temporary rejection with countdown. Full expiry/scope/audit acceptance below. |
 
 ## Mandatory acceptance still to record
