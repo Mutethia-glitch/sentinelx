@@ -62,7 +62,17 @@ function eventRepository(pool) {
       else if(filters.severity)conditions.push("e.normalized_data->>'severity'="+add(filters.severity));
       if(filters.from)conditions.push('e.occurred_at>='+add(filters.from)+'::timestamptz');
       if(filters.to)conditions.push('e.occurred_at<='+add(filters.to)+'::timestamptz');
-      if(filters.categoryCode||filters.ruleId||filters.mitreTechniqueId){
+      if(filters.categoryCode&&!filters.ruleId&&!filters.mitreTechniqueId){
+        // An authenticated application/identity feed can classify an event before
+        // any detection rule produces an alert. Include both that native verdict
+        // and historical alert-derived categories, with no duplicate rows.
+        const category=add(filters.categoryCode);
+        conditions.push("(e.normalized_data->'metadata'->>'categoryCode'="+category+
+          ' OR EXISTS (SELECT 1 FROM alert_events ae JOIN alerts a ON a.id=ae.alert_id '+
+          'WHERE ae.event_id=e.id AND a.category_code='+category+'))');
+      }else if(filters.ruleId||filters.mitreTechniqueId){
+        // With a rule/MITRE constraint, keep category, rule and technique tied
+        // to the same linked alert. Native categories alone do not imply a rule.
         const linked=[];
         if(filters.categoryCode)linked.push('a.category_code='+add(filters.categoryCode));
         if(filters.ruleId)linked.push('a.rule_id='+add(filters.ruleId)+'::uuid');
