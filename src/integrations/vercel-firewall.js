@@ -4,7 +4,7 @@ const {AuthError}=require('../auth/errors');
 const {securityEvent}=require('../events/model');
 
 const SOURCE='vercel-firewall';
-const MAX_BODY_BYTES=262144;
+const MAX_BODY_BYTES=1024*1024;
 const MAX_RECORDS=50;
 const MAX_AGE_MS=15*60*1000;
 const ACTIONS=new Set(['sql_injection','xss','path_traversal','command_injection']);

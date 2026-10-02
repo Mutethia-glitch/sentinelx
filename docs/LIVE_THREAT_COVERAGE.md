@@ -25,11 +25,32 @@
 | 10 | RANSOMWARE | No endpoint/file-behaviour ransomware verdict feed | CRITICAL | SYNTHETIC ONLY | Verified ransomware-specific verdict/activity, benign batch-file change negative; no destructive live tests. |
 | 11 | DENIAL_OF_SERVICE | Iphyn rate_limit_blocked exists but is MEDIUM rejection evidence, not DoS/DDoS proof | CRITICAL | SYNTHETIC ONLY | Add aggregate WAF/proxy request-rate and availability evidence; benign peak-traffic control; never equate one 429 with DoS. |
 | 12 | DATA_EXFILTRATION | No trusted application/storage transfer/egress evidence | CRITICAL | SYNTHETIC ONLY | Approved export/egress policy or vendor verdict with user, target, volume and result; authorized export negative. |
-| 13 | WEB_APPLICATION_ATTACK | No signed WAF/application security verdict for injection, XSS, traversal or command injection | HIGH | SYNTHETIC ONLY; NEXT SOURCE CONTRACT | Add a bounded server-side WAF/block decision, proof of sanitization and false-positive controls; never classify arbitrary request text as an attack. |
+| 13 | WEB_APPLICATION_ATTACK | A dedicated optional signed Vercel JSON Log Drain adapter accepts only verified project/host firewall deny decisions whose exact WAF rule IDs have operator-approved SQLi/XSS/traversal/command-injection mappings. It never copies raw paths, query strings, messages or client IPs. | HIGH | RECEIVER + DISABLED RULE FIXTURE IMPLEMENTED; REAL DRAIN NOT CONFIGURED OR LIVE-ACCEPTED | Confirm Vercel Drains plan; manually configure JSON / production / firewall source, keep the project/host and source secret exact in tenant settings, review genuine WAF rule IDs and enable only after positive plus benign controls. An arbitrary blocked request is not an injection classification. |
 | 14 | INSIDER_THREAT | No evidence-led source verdict or attributable analyst finding | HIGH | SYNTHETIC ONLY | Require correlated approved account/data audit plus explicit analyst/source classification; routine staff work negative. |
 | 15 | SUPPLY_CHAIN_COMPROMISE | No CI/dependency/build provenance or integrity incident feed | CRITICAL | SYNTHETIC ONLY | Integrate verified build/integrity advisory and affected artifact; routine dependency bump negative. |
 
 All fifteen SX-CORE-001 through SX-CORE-015 definitions start disabled. The Iphyn-specific brute-force tenant rule has been enabled and its event/alert/temporary-block behaviour was confirmed by the user. No source automatically gains monitoring when a company supplies only a URL.
+
+## Signed Vercel firewall source — integration prepared, NOT live
+
+The optional endpoint `POST /api/connectors/vercel-firewall` is absent unless all
+four `VERCEL_FIREWALL_*` variables are deliberately configured on the Iphyn
+tenant. The incoming raw JSON-array Log Drain body must have a constant-time
+verified `x-vercel-signature` HMAC-SHA1 (Vercel's official Drain contract).
+Only signed production `firewall` records from the configured project + host
+with `proxy.wafAction=deny` and an explicitly mapped
+`proxy.wafRuleId` are retained as sanitized MEDIUM web-application events.
+No arbitrary URL, query, payload, client IP, or user agent is stored.
+
+The operator-specific rule fixture
+`fixtures/rules/iphyn-vercel-waf-web-attacks.json` is **disabled** and
+cannot auto-create or auto-enable itself merely through deployment. It can
+produce a HIGH `WEB_APPLICATION_ATTACK` alert only after a tenant
+Administrator has reviewed the source and explicitly installed/enabled a
+persisted rule. It groups by verified host + approved attack label, not a
+shared null IP. No runtime traffic, actual WAF verdict or production
+alert acceptance has been observed here. Full instructions and no-secret
+manual Vercel steps: `docs/IPHYN_VERCEL_FIREWALL_INTEGRATION.md`.
 
 ## Required gate for EACH category (not interchangeable)
 
@@ -60,7 +81,7 @@ See `docs/IPHYN_UNAUTHORIZED_ACCESS_ACCEPTANCE.md` for the corrected role-locked
 
 ## Integration priority after that rollout
 
-WEB_APPLICATION_ATTACK requires a trusted Iphyn or Vercel WAF/app-security verdict, not raw pattern matching on a user-supplied string. Define a minimal allowlist, signed source ownership, decision outcome and safe metadata first. Reconnaissance, DoS, network and data-exfiltration require separate telemetry. Malware/ransomware require endpoint findings; phishing requires mail or analyst evidence; privilege/account/insider need trustworthy identity/data audit; supply chain requires CI/integrity evidence. Add each source as a separate reviewed contract and test both false positives and cross-tenant rejection.
+WEB_APPLICATION_ATTACK now has an off-by-default, signed and source-bound Vercel firewall adapter, with CI-only verification. Live activation requires an operator-configured Pro/Enterprise Log Drain, actual WAF rule IDs and benign/positive acceptance; never elevate arbitrary request text or a generic WAF rate-limit rule to SQL injection. Reconnaissance, DoS, network and data-exfiltration require separate telemetry. Malware/ransomware require endpoint findings; phishing requires mail or analyst evidence; privilege/account/insider need trustworthy identity/data audit; supply chain requires CI/integrity evidence. Add each source as a separate reviewed contract and test both false positives and cross-tenant rejection.
 
 ## Live evidence and limitations
 
