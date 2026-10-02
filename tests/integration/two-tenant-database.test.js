@@ -12,6 +12,7 @@ const {hashPassword}=require('../../src/auth/passwords');
 const {configFromEnv}=require('../../src/auth/config');
 const {accessService}=require('../../src/access/service');
 const {createServer}=require('../../src/api/server');
+const {managedEvidenceRepository}=require('../../src/data/managed-evidence-repository');
 const ADDRESS='shared-member@example.invalid';
 const COMPANIES=[
  {id:'11111111-1111-4111-8111-111111111111',name:'Isolated CI Company A',slug:'isolated-ci-a',role:'Administrator',password:'Company A synthetic password only!'},
@@ -93,5 +94,14 @@ test('two separate migrated company databases cannot share identities, password,
  assert.equal(users.some(row=>row.id===b.userId),false);
  assert.equal((await api(b,'/api/access/users',cookieB,{'X-Role':'Administrator'})).status,403);
  assert.equal((await api(b,'/api/access/users',cookieA,{'X-Role':'Administrator'})).status,401);
+ // Tenant A's independently issued provider secret cannot authenticate against B.
+ const evidenceA=managedEvidenceRepository(a.pool,a.details.id);
+ const evidenceB=managedEvidenceRepository(b.pool,b.details.id);
+ const id=randomUUID(),key='b'.repeat(64);
+ await evidenceA.issue(a.userId,id,{name:'ci-isolated-idp',issuer:'identity',host:'idp.example.com'},key);
+ assert.equal((await evidenceA.byToken(key)).registryId,id);
+ assert.equal(await evidenceB.byToken(key),null,'A source key is never visible to B');
+ assert.equal((await evidenceB.list()).length,0);
+ assert.equal((await evidenceA.list())[0].name,'ci-isolated-idp');
  // The control plane has neither tenant connection; no production account is touched.
 });
