@@ -67,6 +67,8 @@ jobs:
         run: node --test tests/integration/website-connectors.test.js
       - name: Isolated search regression for native classified events
         run: node --test tests/integration/search.test.js
+      - name: Isolated managed issuer-feed API, token, receipt and revocation regression
+        run: node --test tests/integration/managed-evidence-feeds.test.js
       - name: Create second isolated tenant test database
         run: psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_other_task41_ci'
       - name: Real cross-company database, role and 2FA isolation
