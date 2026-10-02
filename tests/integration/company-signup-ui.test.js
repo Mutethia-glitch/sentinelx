@@ -24,6 +24,7 @@ test('company signup renders on mobile, displays errors and guards verification/
  });
  const base='http://127.0.0.1:'+server.address().port;
  await page.goto(base+'/signup?continue=example');
+ assert.equal(await page.locator('.sx-signup-brand-mark .sx-shield-layer').count(),7);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  assert.equal(await page.locator('#verify-form').isVisible(),false);
  await page.locator('#company-name').fill('Synthetic Company');await page.locator('#admin-name').fill('Synthetic Admin');

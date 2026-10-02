@@ -45,7 +45,8 @@ test('Lovable-derived dark SOC shell renders safely on desktop and mobile',async
   assert.equal(response.status(),200);
   assert.equal(await page.locator('.sx-app').count(),1);
   assert.equal(await page.locator('.sx-sidebar').count(),1);
-  assert.equal(await page.locator('.sx-brand-mark svg').count(),1);
+  assert.equal(await page.locator('.sx-brand-mark .sx-shield-rotor').count(),1);
+  assert.equal(await page.locator('.sx-brand-mark .sx-shield-layer').count(),7);
   assert.equal(await page.locator('nav a[aria-current="page"]').getAttribute('href'),'/dashboard');
   assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).colorScheme),'dark');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
