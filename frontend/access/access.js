@@ -7,6 +7,23 @@ const message=(text,isError=false)=>{
   notice.textContent=isError?`Error: ${text}`:text;if(isError)notice.scrollIntoView({block:'center'});
 };
 const request=ui.request;
+const siteEndpoint=()=>window.location.origin+'/api/connectors/site-events';
+function showSiteSetup(){
+ const endpoint=siteEndpoint();
+ element('site-setup-endpoint').value=endpoint;
+ element('site-env-template').textContent=`SENTINELX_SITE_CONNECTOR_URL=${endpoint}
+SENTINELX_SITE_CONNECTOR_KEY=<issued-private-key>`;
+}
+element('copy-site-endpoint').addEventListener('click',async()=>{
+ const value=element('site-setup-endpoint').value;
+ try {
+  if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');
+  await navigator.clipboard.writeText(value);
+  message('Company connector URL copied. Configure it on your website backend.');
+ }catch{element('site-setup-endpoint').focus();element('site-setup-endpoint').select();
+  message('Select and copy the connector URL shown above.');}
+});
+showSiteSetup();
 function reset(){generation++;ui.clearAccess();element('login-panel').hidden=false;element('identity-panel').hidden=true;
   element('users-panel').hidden=true;element('access-overview').hidden=true;element('users').replaceChildren();
   element('identity').textContent='';element('assigned-roles').textContent='';element('tenant-name').textContent='';
@@ -83,7 +100,7 @@ element('site-form').addEventListener('submit',async event=>{
   const issued=await request('/api/access/sites',{method:'POST',headers:{'Content-Type':'application/json'},
    body:JSON.stringify({origin:element('site-origin').value})});
   element('site-secret').textContent=issued.token;
-  element('site-endpoint').textContent='Your server-side endpoint: '+window.location.origin+issued.endpoint;
+  element('site-endpoint').textContent='Your server-side endpoint: '+siteEndpoint();
   element('site-secret-panel').hidden=false;
   const current=await request('/api/access/sites');renderSites(current);
   message('One-time website connector key issued. Store it in your site backend only.');
