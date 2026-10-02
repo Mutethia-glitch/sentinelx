@@ -61,10 +61,11 @@ const { authHandler } = require('./auth-handler');
 const { accessRepository } = require('../data/access-repository');
 const { websiteRepository } = require('../data/website-repository');
 const { siteCollectorHandler } = require('../integrations/site-collector');
+const { firstPartyMonitor } = require('../integrations/first-party-monitor');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null, vercelFirewall = null, trustedEvidence = null, siteCollector = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null, vercelFirewall = null, trustedEvidence = null, siteCollector = null, selfMonitor = null) {
   const security=apiSecurity||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
@@ -81,6 +82,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    if(selfMonitor)selfMonitor.observe(req,res);
     // Production APP_ORIGIN is HTTPS; never scope HSTS to unrelated Render subdomains.
     if(config.secureCookie)res.setHeader('Strict-Transport-Security','max-age=31536000');
     if(req.url==='/healthz'){
@@ -168,7 +170,9 @@ async function main() {
       collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)),
       firewall ? vercelFirewallHandler(firewall,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
       feeds ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
-      siteCollectorHandler(websites,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config.tenant?.id||null));
+      siteCollectorHandler(websites,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config.tenant?.id||null),
+      config.selfMonitorEnabled ? firstPartyMonitor(eventRepository(pool),
+        detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config) : null);
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     startupStage = 'HTTP server listen';
     server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
