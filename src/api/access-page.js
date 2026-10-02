@@ -14,6 +14,18 @@ function platformLink(destination){
   return url.origin+destination;
 }
 function accessPage(req, res) {
+  // The shared landing service must not display its own tenant password form.
+  // A bookmarked /access still reaches the company's own authentication via the locator.
+  if(process.env.COMPANY_LOGIN_GATEWAY==='1' && (req.url==='/access'||req.url==='/access/')){
+    const destination=platformLink('/login');
+    if(destination){
+      res.setHeader('Cache-Control','no-store');
+      if(req.method!=='GET'&&req.method!=='HEAD'){
+        res.statusCode=405;res.setHeader('Allow','GET, HEAD');res.end();return true;
+      }
+      res.statusCode=302;res.setHeader('Location',destination);res.end();return true;
+    }
+  }
   if (req.url === '/' || req.url === '/company-login') {
     res.setHeader('Cache-Control', 'no-store');
     if (req.method !== 'GET' && req.method !== 'HEAD') {
