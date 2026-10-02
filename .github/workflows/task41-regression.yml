@@ -65,6 +65,12 @@ jobs:
         run: node --test tests/integration/access.test.js
       - name: Isolated tenant 2FA invitation activation and disablement
         run: node --test tests/integration/tenant-authentication.test.js
+      - name: Create second isolated tenant test database
+        run: psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_other_task41_ci'
+      - name: Real cross-company database, role and 2FA isolation
+        env:
+          SECOND_TENANT_DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_other_task41_ci
+        run: node --test tests/integration/two-tenant-database.test.js
       - name: Create independent onboarding test database
         run: psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_platform_task41_ci'
       - name: Independent platform registration and credential erasure
