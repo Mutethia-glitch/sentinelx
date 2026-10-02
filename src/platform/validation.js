@@ -1,10 +1,11 @@
 const {normalizeEmail,validatePassword}=require('../auth/validation');
 const {AuthError}=require('../auth/errors');
+const {websiteOrigin}=require('./website');
 function signupInput(body){
-  if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).sort().join(',')!=='adminEmail,adminName,companyName,password')throw new AuthError(400,'Invalid company signup.');
+  if(!body||typeof body!=='object'||Array.isArray(body)||!['adminEmail,adminName,companyName,password','adminEmail,adminName,companyName,password,websiteUrl'].includes(Object.keys(body).sort().join(',')))throw new AuthError(400,'Invalid company signup.');
   if(typeof body.companyName!=='string'||body.companyName.trim().length<2||body.companyName.length>120||body.companyName.includes('\0')||
      typeof body.adminName!=='string'||!body.adminName.trim()||body.adminName.length>120||body.adminName.includes('\0'))throw new AuthError(400,'Invalid company signup.');
-  return{companyName:body.companyName.trim(),adminName:body.adminName.trim(),adminEmail:normalizeEmail(body.adminEmail),password:validatePassword(body.password,true)};
+  return{companyName:body.companyName.trim(),adminName:body.adminName.trim(),adminEmail:normalizeEmail(body.adminEmail),password:validatePassword(body.password,true),websiteOrigin:websiteOrigin(body.websiteUrl)};
 }
 function verifyInput(body){
   if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).sort().join(',')!=='code,registrationId'||

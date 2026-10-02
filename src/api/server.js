@@ -59,10 +59,12 @@ const { authRepository } = require('../data/auth-repository');
 const { authService } = require('../auth/service');
 const { authHandler } = require('./auth-handler');
 const { accessRepository } = require('../data/access-repository');
+const { websiteRepository } = require('../data/website-repository');
+const { siteCollectorHandler } = require('../integrations/site-collector');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null, vercelFirewall = null, trustedEvidence = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null, vercelFirewall = null, trustedEvidence = null, siteCollector = null) {
   const security=apiSecurity||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
@@ -87,6 +89,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
       res.statusCode=200;return res.end(JSON.stringify({status:'ok',...(config.tenant?.id?{tenantId:config.tenant.id,origin:config.origin}:{})}));
     }
     if (security(req, res)) return;
+    if (siteCollector && req.url==='/api/connectors/site-events') return siteCollector(req,res);
     if (trustedEvidence && req.url==='/api/connectors/evidence') return trustedEvidence(req,res);
     if (vercelFirewall && req.url==='/api/connectors/vercel-firewall') return vercelFirewall(req,res);
     if (collector && req.url.startsWith('/api/connectors/')) return collector(req,res);
@@ -132,7 +135,8 @@ async function main() {
     }
     const mailer=emailDelivery(emailConfig());
     const service = authService(authRepository(pool), config,mailer);
-    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds});
+    const websites=websiteRepository(pool);
+    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites});
     const integration = externalWebhook();
     const connector = collectorConfig(process.env, config.tenant);
     const firewall = vercelFirewallConfig(process.env, config.tenant);
@@ -154,7 +158,8 @@ async function main() {
       auditService(auditRepository(pool), access), null,
       collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)),
       firewall ? vercelFirewallHandler(firewall,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
-      feeds ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null);
+      feeds ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
+      siteCollectorHandler(websites,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config.tenant?.id||null));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {

@@ -1,6 +1,7 @@
 const {createPool}=require('../src/data/pool');
 const {transaction}=require('../src/data/auth-repository');
 const {normalizeEmail}=require('../src/auth/validation');
+const {websiteOrigin}=require('../src/platform/website');
 
 function required(name,value,max=null){
   if(typeof value!=='string'||!value.trim()||(max&&value.length>max))throw new Error('Set '+name+'.');
@@ -15,19 +16,20 @@ async function main(){
     const adminEmail=normalizeEmail(process.env.TENANT_ADMIN_EMAIL);
     const adminName=required('TENANT_ADMIN_NAME',process.env.TENANT_ADMIN_NAME,120);
     const passwordHash=required('TENANT_ADMIN_PASSWORD_HASH',process.env.TENANT_ADMIN_PASSWORD_HASH);
+    const requestedWebsite=websiteOrigin(process.env.TENANT_WEBSITE_ORIGIN);
     if(!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(tenantId)||
        !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(slug)||
        !/^scrypt\$131072\$8\$1\$[0-9a-f]{32}\$[0-9a-f]{128}$/.test(passwordHash))throw new Error('Invalid tenant bootstrap input.');
     pool=createPool();
     await transaction(pool,async client=>{
       await client.query('SELECT pg_advisory_xact_lock($1)',[73482142]);
-      const profiles=(await client.query('SELECT tenant_id,company_name,slug FROM tenant_profile FOR UPDATE')).rows;
+      const profiles=(await client.query('SELECT tenant_id,company_name,slug,requested_website_origin FROM tenant_profile FOR UPDATE')).rows;
       if(profiles.length>1)throw new Error('Invalid tenant profile state.');
       if(profiles.length===1){
         const p=profiles[0];
-        if(p.tenant_id!==tenantId||p.company_name!==companyName||p.slug!==slug)throw new Error('Tenant profile mismatch.');
+        if(p.tenant_id!==tenantId||p.company_name!==companyName||p.slug!==slug||p.requested_website_origin!==requestedWebsite)throw new Error('Tenant profile mismatch.');
       }else{
-        await client.query('INSERT INTO tenant_profile(singleton,tenant_id,company_name,slug) VALUES(true,$1,$2,$3)',[tenantId,companyName,slug]);
+        await client.query('INSERT INTO tenant_profile(singleton,tenant_id,company_name,slug,requested_website_origin) VALUES(true,$1,$2,$3,$4)',[tenantId,companyName,slug,requestedWebsite]);
       }
       let user=(await client.query('SELECT id,active,password_hash FROM users WHERE lower(email)=$1 FOR UPDATE',[adminEmail])).rows[0];
       if(!user){

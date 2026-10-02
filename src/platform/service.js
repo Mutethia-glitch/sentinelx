@@ -30,13 +30,15 @@ function platformService(repository,config,mailer,provisioner){
     const expectedOrigin=config.originMode==='render'?null:'https://'+verified.slug+'.'+config.baseDomain;
     let result;
     try{result=await provisioner.provision({tenantId:verified.tenant_id,companyName:verified.company_name,slug:verified.slug,
-      origin:expectedOrigin,admin:{email:verified.admin_email,name:verified.admin_name,passwordHash:verified.admin_password_hash}});}
+      origin:expectedOrigin,admin:{email:verified.admin_email,name:verified.admin_name,passwordHash:verified.admin_password_hash},
+      ...(verified.requested_website_origin?{websiteOrigin:verified.requested_website_origin}:{})});}
     catch(error){throw error;}
     if(result.status==='PROVISIONING')return{status:'PROVISIONING',stage:result.stage||'PREPARING',retryAfterSeconds:10};
     if(config.originMode==='render'?!/^https:\/\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.onrender\.com$/.test(result.origin):result.origin!==expectedOrigin)throw new AuthError(503,'Company provisioning returned an invalid tenant origin.');
     const activated=await repository.activate(row.id,result.origin);
     if(!activated)throw new AuthError(503,'Company provisioning could not be finalized.');
-    return{tenant:{id:verified.tenant_id,name:verified.company_name,slug:verified.slug,origin:result.origin,status:'ACTIVE'}};
+    return{tenant:{id:verified.tenant_id,name:verified.company_name,slug:verified.slug,origin:result.origin,status:'ACTIVE',
+      requestedWebsite:verified.requested_website_origin||null,websiteConnection:'PENDING_ADMIN_SETUP'}};
   },
   async resend(body){
     const input=resendInput(body),row=await repository.registration(input.registrationId);

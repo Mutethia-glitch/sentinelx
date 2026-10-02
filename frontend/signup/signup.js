@@ -26,7 +26,7 @@ by('signup-form').addEventListener('submit',async event=>{
   event.preventDefault();if(busy)return;
   const button=event.currentTarget.querySelector('button');busy=true;button.disabled=true;msg('Creating registration…');
   try{
-    const result=await request('/api/company-signup',{companyName:by('company-name').value,adminName:by('admin-name').value,adminEmail:by('admin-email').value,password:by('password').value});
+    const result=await request('/api/company-signup',{companyName:by('company-name').value,adminName:by('admin-name').value,adminEmail:by('admin-email').value,password:by('password').value,websiteUrl:by('website-url').value});
     registrationId=result.registrationId;try{sessionStorage.setItem('sentinelx-signup-registration',registrationId);}catch{}by('signup-form').hidden=true;by('verify-form').hidden=false;
     cooldown();by('code').focus();msg('A six-digit verification code was sent to the Administrator email.');
   }catch(error){msg(error.message,true);}
@@ -37,7 +37,7 @@ async function verifyCompany(){if(!registrationId||busy)return;busy=true;control
     const result=await request('/api/company-signup/verify',{registrationId,code:by('code').value});
     if(result.status==='PROVISIONING'){pending=true;msg((stages[result.stage]||'Your company environment is being prepared')+'. We will open your company account when it is ready.');setTimeout(()=>{pending=false;verifyCompany();},10000);return;}
     pending=false;by('code').value='';by('verify-form').hidden=true;by('complete').hidden=false;
-    by('company-result').textContent=result.tenant.name+' is ready.';by('tenant-link').href=result.tenant.origin;
+    by('company-result').textContent=result.tenant.name+' is ready.'+(result.tenant.requestedWebsite?' Website '+result.tenant.requestedWebsite+' is pending Administrator connector setup.':'');by('tenant-link').href=result.tenant.origin;
     registrationId=null;try{sessionStorage.removeItem('sentinelx-signup-registration');}catch{}msg('Your company environment is ready. Opening sign-in…');
     const destination=new URL(result.tenant.origin);
     if(destination.protocol!=='https:'||destination.origin!==result.tenant.origin)throw new Error('Company address could not be verified.');

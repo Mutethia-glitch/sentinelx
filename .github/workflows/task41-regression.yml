@@ -63,6 +63,8 @@ jobs:
         run: node --test tests/integration/access.test.js
       - name: Isolated tenant 2FA invitation activation and disablement
         run: node --test tests/integration/tenant-authentication.test.js
+      - name: Isolated website registration, role boundaries, server evidence and revocation
+        run: node --test tests/integration/website-connectors.test.js
       - name: Create second isolated tenant test database
         run: psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_other_task41_ci'
       - name: Real cross-company database, role and 2FA isolation
@@ -75,3 +77,12 @@ jobs:
         env:
           DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_platform_task41_ci
         run: node --test tests/integration/platform-signup.test.js
+      - name: Create isolated migration compatibility databases
+        run: |
+          psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_migration_compat_tenant_ci'
+          psql -h 127.0.0.1 -U sentinelx_ci -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE sentinelx_migration_compat_platform_ci'
+      - name: Verify LF and CRLF historical migration ledgers against PostgreSQL
+        env:
+          MIGRATION_COMPAT_TENANT_DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_migration_compat_tenant_ci
+          MIGRATION_COMPAT_PLATFORM_DATABASE_URL: postgresql://sentinelx_ci:disposable-only-ci-password@127.0.0.1:5432/sentinelx_migration_compat_platform_ci
+        run: node --test tests/integration/migration-line-endings.test.js

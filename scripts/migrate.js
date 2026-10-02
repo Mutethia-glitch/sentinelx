@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { createHash } = require('node:crypto');
+const { migrationChecksums } = require('./migration-checksums');
 const { executeSql } = require('../src/data/postgres');
 
 function migrationSql() {
@@ -9,15 +9,16 @@ function migrationSql() {
   if (!files.length) throw new Error('No migrations found.');
   const blocks = files.map(name => {
     const sql = fs.readFileSync(path.join(directory, name), 'utf8');
-    const checksum = createHash('sha256').update(sql).digest('hex');
+    const { canonical, accepted } = migrationChecksums(sql);
+    const allowed = accepted.map(value => `'${value}'`).join(', ');
     return `DO $migration$
 BEGIN
-  IF EXISTS (SELECT 1 FROM schema_migrations WHERE name = '${name}' AND checksum <> '${checksum}') THEN
+  IF EXISTS (SELECT 1 FROM schema_migrations WHERE name = '${name}' AND checksum NOT IN (${allowed})) THEN
     RAISE EXCEPTION 'Applied migration checksum mismatch';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM schema_migrations WHERE name = '${name}') THEN
     ${sql}
-    INSERT INTO schema_migrations(name, checksum) VALUES ('${name}', '${checksum}');
+    INSERT INTO schema_migrations(name, checksum) VALUES ('${name}', '${canonical}');
   END IF;
 END;
 $migration$;`;

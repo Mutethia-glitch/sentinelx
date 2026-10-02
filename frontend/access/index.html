@@ -61,4 +61,23 @@
     <div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Administrator-only role assignment. Every change requires a reason, and at least one active Administrator must remain.</p></div></div>
     <div class="sx-panel-body"><form id="invite-form"><h3>Invite company user</h3><label>Name<input id="invite-name" maxlength="120" required></label><label>Email<input id="invite-email" type="email" maxlength="254" required></label><label>Initial role<select id="invite-role"><option>Security Analyst</option><option>Viewer/Management</option><option>Administrator</option></select></label><label>Reason<input id="invite-reason" maxlength="500" required></label><button type="submit" data-icon="send">Send 6-digit activation code</button></form><div id="users"></div></div>
   </section>
+  <section id="sites-panel" class="sx-panel" hidden aria-labelledby="sites-heading">
+    <div class="sx-panel-head"><div><h2 id="sites-heading">Company website connections</h2>
+      <p>Administrator-only, server-to-server links. Registering a URL alone never enables monitoring.</p></div></div>
+    <div class="sx-panel-body">
+      <p id="requested-site" class="hint"></p>
+      <form id="site-form">
+        <label>Company website HTTPS origin<input id="site-origin" type="url" maxlength="300" autocomplete="url" placeholder="https://your-company.com" required></label>
+        <button type="submit" data-icon="link">Issue private website connector key</button>
+      </form>
+      <section id="site-secret-panel" hidden aria-labelledby="site-secret-heading">
+        <h3 id="site-secret-heading">One-time private key</h3>
+        <p class="hint">Copy this key into your website's server-only environment. It will not be displayed again. Never put it in HTML, client JavaScript, analytics or a public repository.</p>
+        <pre id="site-secret" class="sx-site-secret"></pre>
+        <p id="site-endpoint" class="hint"></p>
+        <p class="hint">The status REPORTING confirms that a registered key sent an authenticated event; it does not independently prove domain ownership or protection of all traffic.</p>
+      </section>
+      <div id="sites-list"></div>
+    </div>
+  </section>
 </main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>
