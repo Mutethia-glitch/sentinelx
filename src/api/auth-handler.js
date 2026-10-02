@@ -1,6 +1,7 @@
 const { AuthError } = require('../auth/errors');
 const { loginInput,activationInput } = require('../auth/validation');
 const { loginLimiter } = require('../auth/rate-limit');
+const {pseudonymousLoginSubject}=require('../auth/subject');
 
 function cookieToken(header, name) {
   if (!header) return null;
