@@ -552,7 +552,7 @@ body[data-page="company-login"] .sx-company-brand-mark{
   border-radius:calc(var(--radius) * 2);
   background:color-mix(in oklab,var(--primary) 10%,var(--card));
 }
-body[data-page="company-login"] .sx-company-brand-mark svg{display:block;width:1.5rem;height:1.5rem}
+body[data-page="company-login"] .sx-company-brand-mark > svg{display:block;width:1.5rem;height:1.5rem}
 body[data-page="company-login"] .sx-company-brand-copy{display:grid;gap:.2rem;min-width:0}
 body[data-page="company-login"] .sx-company-brand-copy strong{color:var(--foreground);font-size:1.2rem;line-height:1.2}
 body[data-page="company-login"] .sx-company-brand-copy>span{color:var(--muted-foreground);font-size:.625rem;font-weight:700;letter-spacing:.1em}
