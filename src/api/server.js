@@ -125,15 +125,22 @@ function createServer(service, config, access = null, ingestion = null, views = 
 }
 async function main() {
   let pool;
+  // Report only a fixed startup stage: never surface errors, SQL, URLs or credentials.
+  let startupStage = 'configuration';
   try {
     const config = configFromEnv();
+    startupStage = 'database connection';
     pool = createPool();
+    startupStage = 'authentication schema';
     await pool.query('SELECT token_hash FROM auth_sessions LIMIT 0');
+    startupStage = 'tenant identity';
     if(config.tenant){
       const profiles=await pool.query('SELECT tenant_id,company_name,slug FROM tenant_profile');
       if(profiles.rows.length!==1||profiles.rows[0].tenant_id!==config.tenant.id||profiles.rows[0].company_name!==config.tenant.name||profiles.rows[0].slug!==config.tenant.slug)throw new Error('Tenant identity mismatch.');
     }
+    startupStage = 'email delivery configuration';
     const mailer=emailDelivery(emailConfig());
+    startupStage = 'service initialization';
     const service = authService(authRepository(pool), config,mailer);
     const websites=websiteRepository(pool);
     const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites});
@@ -141,8 +148,10 @@ async function main() {
     const connector = collectorConfig(process.env, config.tenant);
     const firewall = vercelFirewallConfig(process.env, config.tenant);
     const feeds = evidenceFeedsConfig(process.env, config.tenant);
+    startupStage = 'connector schema';
     if (connector||firewall||feeds) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
     if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
+    startupStage = 'HTTP server assembly';
     const server = createServer(service, config, access,
       ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))), integration),
       eventViewService(eventRepository(pool), access),
@@ -161,12 +170,13 @@ async function main() {
       feeds ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
       siteCollectorHandler(websites,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config.tenant?.id||null));
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
+    startupStage = 'HTTP server listen';
     server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
       server.close(() => pool.end());
     });
   } catch {
-    console.error('Authentication server could not start. Check configuration, database access and migrations locally.');
+    console.error(`Authentication server could not start at ${startupStage}. Check configuration, database access and migrations locally.`);
     if (pool) await pool.end();
     process.exitCode = 1;
   }
