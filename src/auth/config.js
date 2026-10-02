@@ -20,6 +20,8 @@ function configFromEnv(env=process.env){
   if(env.AUTH_EMAIL_2FA!==undefined&&!['0','1'].includes(env.AUTH_EMAIL_2FA))throw new Error('AUTH_EMAIL_2FA must be 0 or 1.');
   if(env.SENTINELX_SELF_MONITOR!==undefined&&!['0','1'].includes(env.SENTINELX_SELF_MONITOR))throw new Error('SENTINELX_SELF_MONITOR must be 0 or 1.');
   const selfMonitorEnabled=env.SENTINELX_SELF_MONITOR==='1';
+  if(env.MANAGED_EVIDENCE_FEEDS!==undefined&&!['0','1'].includes(env.MANAGED_EVIDENCE_FEEDS))throw new Error('MANAGED_EVIDENCE_FEEDS must be 0 or 1.');
+  const managedEvidenceEnabled=env.MANAGED_EVIDENCE_FEEDS==='1';
   const requireEmail2fa=production||env.AUTH_EMAIL_2FA==='1';
   const secret=requireEmail2fa?otpSecret(env.AUTH_OTP_SECRET):null;
   const tenantFields=[env.TENANT_ID,env.TENANT_NAME,env.TENANT_SLUG];
@@ -40,7 +42,7 @@ function configFromEnv(env=process.env){
     cookieName:url.protocol==='https:'?'__Host-sentinelx_session':'sentinelx_session',
     challengeCookieName:url.protocol==='https:'?'__Host-sentinelx_2fa':'sentinelx_2fa',
     sessionSeconds:8*60*60,idleSeconds:30*60,
-    requireEmail2fa,selfMonitorEnabled,otpSecret:secret,otpSeconds:10*60,otpMaxAttempts:5,otpResendSeconds:60,
+    requireEmail2fa,selfMonitorEnabled,managedEvidenceEnabled,otpSecret:secret,otpSeconds:10*60,otpMaxAttempts:5,otpResendSeconds:60,
     trustedProxyIps:Object.freeze([...trustedProxyIps]),tenant,
   };
 }
