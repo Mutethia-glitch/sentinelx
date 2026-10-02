@@ -40,7 +40,7 @@ function showDetail(item){
   field('Target',item.target.type+' / '+(item.target.id||'none'));
   field('Occurred',item.occurredAt);
   el('audit-context').textContent=JSON.stringify(item.context,null,2);
-  el('audit-detail-panel').hidden=false;
+  el('audit-detail-panel').hidden=false;ui.revealDetails(el('audit-detail-panel'));
 }
 function row(item){
   const tr=document.createElement('tr');

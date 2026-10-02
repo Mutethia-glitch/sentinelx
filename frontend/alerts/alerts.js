@@ -18,7 +18,7 @@ async function inspectEvent(id,background=false){background=background===true;if
     currentEventId=id;el('event-identity').textContent=`${event.id} · ${event.timestamp} · ${event.source} / ${event.type}`;
     el('normalized-event').textContent=event.event?JSON.stringify(Object.fromEntries(Object.entries(event.event).filter(([key])=>key!=='rawData')),null,2):'Not yet normalized.';
     el('raw-event').textContent=JSON.stringify(event.rawData,null,2);
-    el('event-detail').hidden=false;if(!background){el('event-detail').focus();message('Source event loaded.');}return true;
+    el('event-detail').hidden=false;if(!background){ui.revealDetails(el('event-detail'));message('Source event loaded.');}return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
 async function inspect(id,background=false){background=background===true;if(!background)ui.clearDrafts();
@@ -39,7 +39,7 @@ async function inspect(id,background=false){background=background===true;if(!bac
       el('event-rows').append(row);
     }
     el('create-incident-from-alert').hidden=!canCreateIncident;el('create-incident-from-alert').href='/incidents#fromAlert='+encodeURIComponent(alert.id);el('alert-status').value=alert.status;el('status-form').hidden=!canManage;
-    el('detail-panel').hidden=false;if(!background)el('detail-panel').focus();if(!background)message('Alert loaded.');return true;
+    el('detail-panel').hidden=false;if(!background)ui.revealDetails(el('detail-panel'));if(!background)message('Alert loaded.');return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
 async function load(background=false){background=background===true;if(!background)ui.clearDrafts();

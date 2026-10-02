@@ -39,7 +39,7 @@ async function inspect(id,background=false) {background=background===true;if(!ba
     }
     el('normalized-data').textContent = event.event ? JSON.stringify(Object.fromEntries(Object.entries(event.event).filter(([key]) => key !== 'rawData')), null, 2) : 'Not yet normalized.';
     el('raw-data').textContent = JSON.stringify(event.rawData, null, 2);
-    el('detail-panel').hidden = false; if(!background)el('detail-panel').focus(); if(!background)message('Event loaded.');return true;
+    el('detail-panel').hidden = false; if(!background)ui.revealDetails(el('detail-panel')); if(!background)message('Event loaded.');return true;
   } catch (error) { if (current === generation&&(!background||error.status===401||error.status===403)) handleError(error);if(background)throw error; }
 }
 async function load(background=false) {background=background===true;if(!background)ui.clearDrafts();

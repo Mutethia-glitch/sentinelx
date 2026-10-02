@@ -311,8 +311,18 @@
     });
     observer.observe(doc.body,{childList:true,subtree:true});return observer;
   }
+  function revealDetails(panel){
+    if(!panel)return;
+    const doc=panel.ownerDocument,view=doc.defaultView;
+    panel.setAttribute('tabindex','-1');
+    panel.focus({preventScroll:true});
+    const header=doc.querySelector('.sx-topbar');
+    const offset=(header?header.getBoundingClientRect().height:0)+16;
+    const top=Math.max(0,view.scrollY+panel.getBoundingClientRect().top-offset);
+    view.scrollTo({top,behavior:view.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  }
   function init(doc=globalThis.document,pathname=''){
     markCurrentPage(doc,pathname);setupChrome(doc);observePresentation(doc);
   }
-  return {request,startLiveUpdates,liveCanApply,clearDrafts,clearAccess,applyAccess,loading,safeError,beginTwoFactor,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
+  return {revealDetails,request,startLiveUpdates,liveCanApply,clearDrafts,clearAccess,applyAccess,loading,safeError,beginTwoFactor,markCurrentPage,createIcon,decorateIcons,decorateMetricCards,decorateSemanticValues,selectIncidentTab,init};
 });
