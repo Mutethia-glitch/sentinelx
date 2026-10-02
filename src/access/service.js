@@ -28,6 +28,11 @@ function accessService(repository, authentication, options={}) {
       if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
       return options.websites.list();
     },
+    async integrationReadiness(token){
+      await authorize(token,'users.manage');
+      if(!options.integrationCoverage)throw new AuthError(503,'Integration readiness unavailable.');
+      return options.integrationCoverage.list();
+    },
     async addSite(token,body){
       const actor=await authorize(token,'users.manage');
       if(!options.websites)throw new AuthError(503,'Website connection management unavailable.');
