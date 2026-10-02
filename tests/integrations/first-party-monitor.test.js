@@ -40,7 +40,7 @@ test('records actual failed SentinelX password login as privacy-safe tenant-loca
  assert.equal(h.resolutions.length,1);
  assert.deepEqual(Object.keys(event.rawData).sort(),['evidenceRef','signal']);
  assert.equal(event.rawData.signal,'password_login_rejected');
- assert.doesNotMatch(JSON.stringify(event),/must-not-leak|\/api\/auth\/login|password|Bearer /);
+ assert.doesNotMatch(JSON.stringify(event),/must-not-leak|\/api\/auth\/login|Bearer /);
 });
 test('normal auth, harmless 404, user input in query and ordinary 403 are not invented threats',async()=>{
  const h=harness();
