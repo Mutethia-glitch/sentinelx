@@ -4,6 +4,13 @@ const { AuthError } = require('../auth/errors');
 const { readJson } = require('../api/auth-handler');
 const { timestamp } = require('../events/model');
 const { canonicalIp } = require('./login-containment');
+const CONNECTOR_SEVERITY = Object.freeze({
+  login_failed: {severity:'LOW',reason:'An individual password sign-in failed; repetition is evaluated by detection rules.'},
+  access_denied: {severity:'MEDIUM',reason:'The application rejected access to a protected operation.'},
+  rate_limit_blocked: {severity:'MEDIUM',reason:'The application rejected a request after its rate limit was exceeded; this alone does not establish DoS.'},
+  login_containment_blocked: {severity:'HIGH',reason:'A sign-in was blocked under a verified repeated-login containment decision.'},
+  privileged_access_denied: {severity:'HIGH',reason:'A signed-in non-administrator was denied an administrator-only operation; no privilege gain is established.'}
+});
 function collectorConfig(env, tenant) {
   if (env.CONNECTOR_LOGIN_CONTAINMENT !== undefined && !['0','1'].includes(env.CONNECTOR_LOGIN_CONTAINMENT)) throw new Error('Invalid login containment policy.');
   if (!env.CONNECTOR_TOKEN && !env.CONNECTOR_SOURCE && !env.CONNECTOR_HOST) return null;
@@ -18,19 +25,20 @@ function connectorEvent(body, config, now = Date.now()) {
   if (!body || typeof body !== 'object' || Array.isArray(body) ||
       Object.keys(body).some(k => !['eventId','timestamp','kind','sourceIp','subject','containmentId'].includes(k)) ||
       !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(body.eventId || '') ||
-      !['login_failed','access_denied','rate_limit_blocked','login_containment_blocked'].includes(body.kind) ||
+      (typeof body.kind!=='string'||!Object.hasOwn(CONNECTOR_SEVERITY,body.kind)) ||
       (body.sourceIp !== null && (typeof body.sourceIp !== 'string' || !isIP(body.sourceIp) || body.sourceIp.includes('%'))) ||
       (body.subject !== undefined && (typeof body.subject !== 'string' || !/^[0-9a-f]{64}$/.test(body.subject)))) fail();
   let occurred; try { occurred = timestamp(body.timestamp); } catch { fail(); }
   if (Math.abs(now - Date.parse(occurred)) > 10 * 60 * 1000) fail();
   const contained=body.kind==='login_containment_blocked';
   if (contained ? (!body.sourceIp || !body.subject || typeof body.containmentId!=='string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(body.containmentId)) : body.containmentId!==undefined) fail();
-  const login = body.kind === 'login_failed';
+  const login = body.kind === 'login_failed', privileged=body.kind==='privileged_access_denied';
+  const classification=CONNECTOR_SEVERITY[body.kind];
   return { timestamp: occurred, source: config.source, host: config.host,
-    type: login || contained ? 'authentication' : 'application', action: login ? 'login' : contained ? 'login_throttled' : body.kind,
-    status: login ? 'failed' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
-    user: body.subject || null, severity: 'LOW', rawData: { kind: body.kind },
-    metadata: { connector: config.source, tenantId: config.tenantId, externalId: body.eventId,...(contained?{containmentId:body.containmentId}:{}) } };
+    type: login || contained ? 'authentication' : privileged ? 'authorization' : 'application', action: login ? 'login' : contained ? 'login_throttled' : body.kind,
+    status: login ? 'failed' : privileged ? 'denied' : 'blocked', sourceIp: body.sourceIp===null?null:canonicalIp(body.sourceIp),
+    user: body.subject || null, severity: classification.severity, rawData: { kind: body.kind },
+    metadata: { severityPolicy:'connector-v1',severityReason:classification.reason,connector: config.source, tenantId: config.tenantId, externalId: body.eventId,...(contained?{containmentId:body.containmentId}:{}) } };
 }
 function collectorHandler(config, repository, detector, containment = null) {
   return async (req, res) => {

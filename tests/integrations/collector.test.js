@@ -60,3 +60,14 @@ test('repository retries reuse the event and detector failures roll back receipt
   const second=await repo.create(event,null,after,receipt);
   assert.equal(first.id,second.id);assert.equal(detected,1);assert.equal(committed.audits,1);
 });
+
+test('connector severity is evidence-based and cannot be supplied by callers',()=>{
+  for(const [kind,severity] of Object.entries({login_failed:'LOW',access_denied:'MEDIUM',rate_limit_blocked:'MEDIUM',login_containment_blocked:'HIGH',privileged_access_denied:'HIGH'})){
+    const body={...input(),kind,...(kind==='login_containment_blocked'?{sourceIp:'192.0.2.1',subject:'b'.repeat(64),containmentId:input().eventId}:{})};
+    const event=connectorEvent(body,config);
+    assert.equal(event.severity,severity);assert.equal(event.metadata.severityPolicy,'connector-v1');
+    assert.ok(event.metadata.severityReason.length>20);
+    assert.throws(()=>connectorEvent({...body,severity:'CRITICAL'},config));
+  }
+  assert.throws(()=>connectorEvent({...input(),kind:'ransomware'},config));
+});
