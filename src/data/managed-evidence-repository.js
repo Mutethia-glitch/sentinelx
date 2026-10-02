@@ -1,5 +1,6 @@
 'use strict';
 const {createHash}=require('node:crypto');
+const {isIP}=require('node:net');
 const {transaction}=require('./auth-repository');
 const {requirePermission}=require('../access/policy');
 const {AuthError}=require('../auth/errors');
@@ -28,6 +29,7 @@ function managedEvidenceRepository(pool,tenantId){
       Object.keys(body).sort().join(',')!=='host,issuer,name'||
       !NAME.test(body.name)||!ISSUERS.includes(body.issuer)||
       typeof body.host!=='string'||body.host.length>253||!HOST.test(body.host)||
+      isIP(body.host)||body.host==='localhost'||/\\.(?:local|localhost|internal|invalid|test)$/.test(body.host)||
       !/^[0-9a-f]{64}$/.test(key))throw new AuthError(400,'Invalid provider feed details.');
    return transaction(pool,async db=>{
     await db.query('SELECT pg_advisory_xact_lock($1)',[73482176]);
