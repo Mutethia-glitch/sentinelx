@@ -1,6 +1,7 @@
 'use strict';
 const ui=window.SentinelXUi;
 const el=id=>document.getElementById(id);
+const entriesPerPage=10;
 let page=1,filters=new URLSearchParams(),generation=0;
 
 function message(value,error=false){
@@ -61,13 +62,13 @@ async function load(background=false){background=background===true;if(!backgroun
     el('login-panel').hidden=true;el('identity-panel').hidden=false;
     el('identity').textContent=access.user.displayName+' · '+(access.roles.join(', ')||'No role assigned');
     if(!access.permissions.includes('audit.read')){el('audit-panel').hidden=true;message('Your account does not have permission to view the audit trail.',true);return;}
-    const query=new URLSearchParams(filters);query.set('page',String(page));
+    const query=new URLSearchParams(filters);query.set('page',String(Math.ceil(page/5)));
     const data=await request('/api/audit?'+query);if(current!==generation||(background&&!ui.liveCanApply()))return false;
     el('rows').replaceChildren();if(!background)clearDetail();
-    for(const item of data.entries)el('rows').append(row(item));
-    if(!background&&data.entries.length)showDetail(data.entries[0]);
-    el('page').textContent='Page '+data.page;el('previous').disabled=data.page<=1;el('next').disabled=!data.hasMore;
-    el('audit-panel').hidden=false;if(!background)message(data.entries.length?'Audit trail loaded.':'No audit entries match these filters.');return true;
+    const start=((page-1)%5)*entriesPerPage,visibleEntries=data.entries.slice(start,start+entriesPerPage);
+    for(const item of visibleEntries)el('rows').append(row(item));
+    el('page').textContent='Page '+page+' · 10 entries per page';el('previous').disabled=page<=1;el('next').disabled=!(start+entriesPerPage<data.entries.length||data.hasMore);
+    el('audit-panel').hidden=false;if(!background)message(visibleEntries.length?'Audit trail loaded.':'No audit entries match these filters.');return true;
   }catch(error){if(current===generation&&(!background||error.status===401||error.status===403))handleError(error);if(background)throw error;}
 }
 el('filters').addEventListener('submit',event=>{
@@ -80,7 +81,7 @@ el('filters').addEventListener('submit',event=>{
 });
 el('clear').addEventListener('click',()=>{el('filters').reset();filters=new URLSearchParams();page=1;load();});
 el('previous').addEventListener('click',()=>{if(page>1){page--;load();}});
-el('next').addEventListener('click',()=>{if(page<2000){page++;load();}});
+el('next').addEventListener('click',()=>{if(!el('next').disabled&&page<10000){page++;load();}});
 el('login-form').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;ui.loading('Signing in…');
   try{const login=await request('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:el('email').value,password:el('password').value})});if(ui.beginTwoFactor(login))return;await load();}
