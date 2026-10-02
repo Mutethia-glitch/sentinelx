@@ -170,8 +170,32 @@
     }
     return svg;
   }
+  let shieldLogoId=0;
+  function createShieldLogo(doc){
+    const rotor=doc.createElement('span');rotor.className='sx-shield-rotor';rotor.setAttribute('aria-hidden','true');
+    const outline='M0 1.25 L.92 .86 L.76 -.34 Q.58 -1.02 0 -1.42 Q-.58 -1.02 -.76 -.34 L-.92 .86 Z';
+    const node=(tag,attrs)=>{const item=doc.createElementNS(SVG,tag);for(const [key,value]of Object.entries(attrs))item.setAttribute(key,value);return item;};
+    for(let layer=0;layer<7;layer++){
+      const svg=node('svg',{viewBox:'-1.15 -1.5 2.3 3.1',class:'sx-shield-layer','aria-hidden':'true',focusable:'false'});
+      const face=node('g',{transform:'scale(1,-1)'});
+      face.append(node('path',{d:outline,fill:'#1a7fae'}));
+      if(layer===6){
+        const id='sx-shield-face-'+(++shieldLogoId),defs=node('defs',{}),gradient=node('linearGradient',{id,x1:'0',y1:'0',x2:'1',y2:'1'});
+        for(const [offset,color]of [['0%','#8ceaff'],['45%','#2fb3e6'],['100%','#1a7fae']])gradient.append(node('stop',{offset,'stop-color':color}));
+        defs.append(gradient);svg.append(defs);
+        face.append(node('path',{d:outline,fill:'url(#'+id+')',stroke:'#8ceaff','stroke-width':'.045',transform:'scale(.94)'}));
+        face.append(node('path',{d:'M0 .16 L.2 -.08 L0 -.32 L-.2 -.08 Z',fill:'#8ceaff'}));
+        face.append(node('path',{d:'M0 .16 L.2 -.08 L0 -.32 Z',fill:'#42badf'}));
+      }
+      svg.append(face);rotor.append(svg);
+    }
+    return rotor;
+  }
   function applyIcon(element,name){
     if(!element||element.dataset.sxIconApplied==='1')return;
+    if(element.matches?.('.sx-brand-mark,.sx-auth-intro-mark[data-icon="shield"]')){
+      element.classList.add('sx-shield-logo');element.append(createShieldLogo(element.ownerDocument||globalThis.document));element.dataset.sxIconApplied='1';return;
+    }
     const svg=createIcon(name,element.ownerDocument||globalThis.document);if(!svg)return;
     element.prepend(svg);element.dataset.sxIconApplied='1';
   }

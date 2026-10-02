@@ -507,3 +507,18 @@ body[data-page="audit"] .sx-audit-layout>.sx-panel{min-width:0}
 body[data-page="audit"] #rows td:first-child{white-space:nowrap}
 body[data-page="audit"] #rows td:nth-child(4),body[data-page="audit"] #rows td:nth-child(5){overflow-wrap:anywhere}
 body[data-page="audit"] #audit-panel .sx-panel-head>div:last-child{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+
+/* Shield geometry and palette adapted from SentinelX Clarity's ShieldLogo3D.
+   Layered SVG/CSS retains the existing static frontend and logo dimensions. */
+.sx-shield-logo{perspective:140px}
+.sx-shield-rotor{display:block;position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(3.4deg) rotateY(-24deg);animation:sx-shield-turn 8.73s linear infinite}
+.sx-shield-logo .sx-shield-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sx-shield-layer:nth-child(1){transform:translateZ(-2px)}
+.sx-shield-layer:nth-child(2){transform:translateZ(-1.33px)}
+.sx-shield-layer:nth-child(3){transform:translateZ(-.67px)}
+.sx-shield-layer:nth-child(4){transform:translateZ(0)}
+.sx-shield-layer:nth-child(5){transform:translateZ(.67px)}
+.sx-shield-layer:nth-child(6){transform:translateZ(1.33px)}
+.sx-shield-layer:nth-child(7){transform:translateZ(2px);backface-visibility:hidden}
+@keyframes sx-shield-turn{from{transform:rotateX(3.4deg) rotateY(-24deg)}to{transform:rotateX(3.4deg) rotateY(336deg)}}
+@media(prefers-reduced-motion:reduce){.sx-shield-rotor{animation:none}}
