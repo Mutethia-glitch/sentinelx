@@ -44,9 +44,11 @@ test('isolated tenant ledger accepts existing LF and CRLF hashes but rejects tam
     // All four CRLF-style production checksums are now in the ledger.
     executeMigration(migrationSql(), url);
     const rows = (await client.query(
-      "SELECT name, checksum FROM schema_migrations WHERE name >= '017' ORDER BY name"
+      "SELECT name, checksum FROM schema_migrations WHERE name IN ('017_connector_receipts.sql','018_connector_login_containment.sql','019_pending_website_origin.sql','020_website_connectors.sql') ORDER BY name"
     )).rows;
     assert.equal(rows.length, 4);
+    const added=await client.query("SELECT checksum FROM schema_migrations WHERE name='021_managed_evidence_feeds.sql'");
+    assert.equal(added.rows.length,1,'New additive migration must exist independently of the four historical checksums');
     for (const row of rows) {
       assert.equal(row.checksum, fileHashes('db/migrations/' + row.name).accepted[1],
         'historical ledger checksum is preserved');
