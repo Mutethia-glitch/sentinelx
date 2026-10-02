@@ -741,3 +741,11 @@ body[data-page="company-login"] .sx-company-brand-mark.sx-shield-logo .sx-shield
 .sx-auth-centered .sx-auth-intro-mark.sx-shield-logo .sx-shield-rotor{
   width:1.4rem;height:1.4rem;flex:none;justify-self:center;align-self:center;
 }
+
+/* Administrator-only website connection card, using existing Access panel styling. */
+body[data-page="access"] .sx-site-secret{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ border:1px solid var(--border);background:var(--surface-subtle);
+ border-radius:var(--radius);padding:1rem;font-family:var(--font-mono);
+ font-size:.8rem;
+}
