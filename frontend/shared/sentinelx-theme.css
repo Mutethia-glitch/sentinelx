@@ -736,3 +736,8 @@ body[data-page="company-login"] .sx-company-brand-mark.sx-shield-logo .sx-shield
   width:1.65rem;height:1.65rem;flex:none;
   justify-self:center;align-self:center;
 }
+
+/* Keep the 3D shield visually centered in all standalone verification/activation frames. */
+.sx-auth-centered .sx-auth-intro-mark.sx-shield-logo .sx-shield-rotor{
+  width:1.4rem;height:1.4rem;flex:none;justify-self:center;align-self:center;
+}
