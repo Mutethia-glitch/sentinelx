@@ -100,7 +100,7 @@ el('filters').addEventListener('submit',event=>{
   event.preventDefault();
   try{
     filters=new URLSearchParams();
-    for(const [key,value] of new FormData(event.currentTarget)){if(!value)continue;filters.set(key,(key==='from'||key==='to')?iso(value):value);}
+    for(const [key,value] of new FormData(event.currentTarget)){if(!value.trim())continue;filters.set(key,(key==='from'||key==='to')?iso(value):value.trim());}
     page=1;load();
   }catch{message('Enter valid audit filter dates.',true);}
 });

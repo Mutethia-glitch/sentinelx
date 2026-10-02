@@ -3,7 +3,7 @@ const {timestamp}=require('../events/model');
 const UUID=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 function auditQuery(params){
  if(!(params instanceof URLSearchParams)||params.toString().length>4096)throw new AuthError(400,'Invalid audit filters.');
- const allowed=new Set(['actorId','action','targetType','targetId','from','to','page']);
+ const allowed=new Set(['q','actorId','action','targetType','targetId','from','to','page']);
  const out={page:1};
  for(const [key,raw] of params){
   if(!allowed.has(key)||params.getAll(key).length!==1||!raw||!raw.trim()||raw.includes('\0'))throw new AuthError(400,'Invalid audit filters.');

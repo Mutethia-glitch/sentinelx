@@ -3,8 +3,16 @@ function view(row){return{id:row.id,actor:row.actor_id?{id:row.actor_id,displayN
 function auditRepository(pool){return{async list(filters){try{
  const values=[],where=[],add=v=>{values.push(v);return '$'+values.length;};
  if(filters.actorId)where.push('a.actor_id='+add(filters.actorId)+'::uuid');
- if(filters.action)where.push('a.action='+add(filters.action));
- if(filters.targetType)where.push('a.target_type='+add(filters.targetType));
+ // Literal case-insensitive substring matching: user input cannot act as LIKE
+ // wildcards, and filtering happens in PostgreSQL BEFORE pagination and CSV export.
+ if(filters.q){
+   const p=add(filters.q);
+   where.push(`(POSITION(LOWER(${p}) IN LOWER(a.action))>0
+     OR POSITION(LOWER(${p}) IN LOWER(a.target_type))>0
+     OR POSITION(LOWER(${p}) IN LOWER(COALESCE(u.display_name,a.actor_context,'')))>0)`);
+ }
+ if(filters.action)where.push('POSITION(LOWER('+add(filters.action)+') IN LOWER(a.action))>0');
+ if(filters.targetType)where.push('POSITION(LOWER('+add(filters.targetType)+') IN LOWER(a.target_type))>0');
  if(filters.targetId)where.push('a.target_id='+add(filters.targetId)+'::uuid');
  if(filters.from)where.push('a.occurred_at>='+add(filters.from)+'::timestamptz');
  if(filters.to)where.push('a.occurred_at<='+add(filters.to)+'::timestamptz');
