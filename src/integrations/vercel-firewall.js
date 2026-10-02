@@ -57,7 +57,8 @@ function selectFirewallEvent(log,config,now=Date.now()){
  // Only an explicitly attributed and denied firewall rule can become web attack evidence.
  // No client request text (message, path, query, URL, user-agent, referer) is retained.
  if(!log||typeof log!=='object'||Array.isArray(log))throw new AuthError(400,'Invalid firewall batch.');
- if(log.projectId!==config.projectId||log.host!==config.host||
+ if(log.projectId!==config.projectId||typeof log.host!=='string'||
+    !HOST.test(log.host)||log.host.length>253||
     (log.environment!==undefined&&log.environment!=='production'))return null;
  const proxy=log.proxy;
  if(log.source!=='firewall'||!proxy||typeof proxy!=='object'||Array.isArray(proxy)||

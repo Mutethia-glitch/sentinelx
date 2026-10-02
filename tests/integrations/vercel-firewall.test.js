@@ -80,6 +80,8 @@ test('only mapped signed provider firewall denials normalize without raw request
  for(const forbidden of ['private-user-agent','should-never-persist','192.0.2.33','Do not copy'])
   assert.equal(text.includes(forbidden),false,'Untrusted request fields must not be saved.');
  assert.equal(selectFirewallEvent(input({proxy:{...input().proxy,wafRuleId:RULE_XSS}}),config).event.action,'xss');
+ // Vercel top-level host can be a deployment domain; proxy.host is the actual visited hostname.
+ assert.equal(selectFirewallEvent(input({host:'iphyn-deployment-abc.vercel.app'}),config).event.host,HOST);
  assert.equal(preset.enabled,false);
  assert.equal(ruleInput(preset).categoryCode,'WEB_APPLICATION_ATTACK');
 });
@@ -87,7 +89,7 @@ test('unmapped actions and unrelated/benign logs are not promoted to web attacks
  const base=input(),proxy=base.proxy;
  const benign=[
  {source:'lambda'},{source:'build'},{source:'firewall',projectId:'prj_other'},
- {host:'other.vercel.app'},{environment:'preview'},
+ {host:'invalid/hostname'},{environment:'preview'},
  {proxy:{...proxy,host:'other.vercel.app'}},
  {proxy:{...proxy,wafRuleId:'rule_generic_limit'}},
  {proxy:{...proxy,wafAction:'log'}},

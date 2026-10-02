@@ -33,9 +33,11 @@ batch before writing. Retry delivery is idempotent via existing
 the existing event transaction.
 
 An accepted record must meet **every** criterion:
-1. Its Drain signature is correct; `log.projectId` and `log.host` exactly
-   match the configured immutable Iphyn project ID and expected production
-   host, and `proxy.host` matches too.
+1. Its Drain signature is correct; `log.projectId` matches the configured
+   immutable Iphyn project ID and `proxy.host` exactly matches the expected
+   visitor-facing production host (`iphyn.vercel.app`). The top-level `log.host`
+   is validated as a hostname, but may be the distinct Vercel deployment
+   hostname rather than the public production hostname.
 2. `log.source=firewall`, `proxy.wafAction=deny`, and any present status code
    is `403`. A present environment must be `production`.
 3. `proxy.wafRuleId` is an exact rule ID approved by the operator in the

@@ -37,7 +37,7 @@ The optional endpoint `POST /api/connectors/vercel-firewall` is absent unless al
 four `VERCEL_FIREWALL_*` variables are deliberately configured on the Iphyn
 tenant. The incoming raw JSON-array Log Drain body must have a constant-time
 verified `x-vercel-signature` HMAC-SHA1 (Vercel's official Drain contract).
-Only signed production `firewall` records from the configured project + host
+Only signed production `firewall` records from the configured project and verified visitor-facing `proxy.host`
 with `proxy.wafAction=deny` and an explicitly mapped
 `proxy.wafRuleId` are retained as sanitized MEDIUM web-application events.
 No arbitrary URL, query, payload, client IP, or user agent is stored.
