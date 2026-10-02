@@ -425,7 +425,11 @@ background-processing change.
 ## Central company sign-in and tenant routing
 
 The root URL of a tenant with `COMPANY_SIGNUP_URL` configured redirects to the separate
-onboarding control plane's `/login` company locator. A direct company URL's
+onboarding control plane's `/login` company locator. For a dedicated shared
+entry service (currently the original `sentinelx-nl6f` deployment), also set
+`COMPANY_LOGIN_GATEWAY=1` so old `/access` bookmarks redirect to the locator
+rather than showing the entry service's tenant-only login. Never set this
+flag on actual company tenants, including Iphyn. A direct company URL's
 `/access` remains its normal tenant-specific login. The locator asks **only**
 for company name or immutable sign-in code; do not enter a password on the
 shared control plane. It checks ACTIVE registry entries and responds with the
@@ -453,6 +457,6 @@ existing-company mapping conflicts with an ACTIVE registry entry, resolution
 must fail closed rather than direct someone to the wrong organization.
 
 For the original SentinelX entry URL set `COMPANY_SIGNUP_URL` to the HTTPS
-onboarding origin or its `/signup` page. This setting changes only its root
+onboarding origin or its `/signup` page. Without the optional gateway flag, this setting changes only its root
 entry routing; direct `/access` remains functional for its own tenant. Do not
 configure any Vercel variables for this SentinelX control-plane change.
