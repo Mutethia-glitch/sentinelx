@@ -47,9 +47,17 @@ All user-provided values are PostgreSQL bound parameters, never SQL fragments.
 ## Evidence-chain semantics
 
 Event-local fields (including IP/user/host/status) read normalized event data.
-Event category/rule/MITRE constraints use an `EXISTS` join through
+An **event-only category filter** matches either the event's explicitly recorded
+`normalized_data.metadata.categoryCode` (such as authenticated application
+`RECONNAISSANCE` evidence) or its linked alert's category. This includes a
+classified event before a detection rule generates an alert; legacy alert-derived
+categories still match without duplicate results. A native evidence category is
+source-attested and is not proof that any detection rule fired.
+
+When event category is combined with `ruleId` and/or `mitreTechniqueId`, all
+three contextual constraints continue to use an `EXISTS` join through
 `alert_events` to a **single associated alert and its rule**. An event with
-no qualifying linked alert will not appear for a rule/category/MITRE filter.
+no qualifying linked alert will not appear in that combined rule/MITRE search.
 
 Alert category, severity, source, rule and status use persisted alert snapshots.
 Alert IP/user/host constraints match a **single linked security event** through
