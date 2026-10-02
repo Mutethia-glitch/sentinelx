@@ -33,21 +33,25 @@ function selectFeed(header,feeds){
  for(const feed of feeds||[])if(timingSafeEqual(digest,feed.digest))found=feed;
  return valid?found:null;
 }
-function evidenceHandler(feeds,repository,detector){
+function evidenceHandler(feeds,repository,detector,managed=null){
  return async(req,res)=>{
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Content-Type','application/json; charset=utf-8');
   const send=(status,payload)=>{res.statusCode=status;res.end(JSON.stringify(payload));};
   try{
-   if(!feeds||req.url!=='/api/connectors/evidence'){req.resume();return send(404,{error:'Not found.'});}
+   if((!feeds&&!managed)||req.url!=='/api/connectors/evidence'){req.resume();return send(404,{error:'Not found.'});}
    if(req.method!=='POST'){req.resume();res.setHeader('Allow','POST');return send(405,{error:'Method not allowed.'});}
    if(req.headers.origin){req.resume();return send(401,{error:'Trusted source authentication required.'});}
-   const feed=selectFeed(req.headers.authorization,feeds);
+   const feed=selectFeed(req.headers.authorization,feeds)||
+     (managed?await managed.byToken(typeof req.headers.authorization==='string'&&req.headers.authorization.startsWith('Bearer ')?req.headers.authorization.slice(7):''):null);
    if(!feed){req.resume();return send(401,{error:'Trusted source authentication required.'});}
    const input=await readJson(req);
    const event=normalizeEvidence(input,feed);
-   const saved=await repository.create(event,null,async(persisted,db)=>detector.evaluate(persisted,db),
+   const saved=await repository.create(event,null,async(persisted,db)=>{
+     if(feed.registryId)await managed.markReporting(db,feed.registryId);
+     await detector.evaluate(persisted,db);
+   },
      {source:feed.source,externalId:input.eventId});
    return send(200,{eventId:saved.id,accepted:true});
   }catch(error){
