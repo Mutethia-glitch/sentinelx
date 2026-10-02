@@ -77,11 +77,16 @@ taxonomy.
 
 See `docs/DEPLOYMENT.md` and `docs/MULTI_COMPANY_TENANCY.md`.
 
-The implementation is not yet a live internet deployment. Task 41 must remain
-open until repository/local gates pass **and** a real HTTPS domain, email relay,
-platform PostgreSQL database, isolated tenant PostgreSQL/database runtime and
-infrastructure provisioner have been configured and the live signup/2FA/user-
-isolation acceptance flow has passed. Task 42 must not start before that.
+Real isolated Render tenant, onboarding and provisioner deployments now exist, and
+live read-only HTTPS, HSTS, health and public-page smoke checks passed on
+2 October 2026. GitHub CI also passed 253 core tests and four disposable,
+PostgreSQL-backed integration gates, including two independent tenant databases.
+Task 41 must still remain OPEN: sending to independently owned external employee
+addresses is waiting for a user-purchased and verified sender domain; genuine
+other-address invitation/activation, complete live two-company user isolation,
+user/session revocation and the signup-to-first-login acceptance flow remain
+unverified. Do not mistake disposable CI or healthy URLs for those live gates.
+Task 42 must not start before Task 41 is accepted.
 
 ## AI Guardrail
 **Implement this task only. Do not proceed into later tasks. Do not redesign SentinelX. Do not substitute a different architecture because another product uses it. Do not add speculative features.**

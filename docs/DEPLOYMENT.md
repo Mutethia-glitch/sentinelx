@@ -2,8 +2,11 @@
 
 ## Status
 
-Task 41 application/deployment support is implemented, but a live internet deployment
-must pass the production smoke and onboarding checks before Task 41 can be marked Complete.
+Live Render tenant/onboarding services passed read-only HTTPS/HSTS/health/page smoke
+on 2 October 2026 (CI 36983940455). The 253-test core suite, deployment verifier,
+and isolated PostgreSQL Task 41 CI gates passed (CI 36984086762). Task 41 remains
+OPEN until independently owned email delivery, genuine invited-user activation,
+real tenant authorization/isolation and signup-to-first-login acceptance are observed.
 
 ## Production architecture
 
