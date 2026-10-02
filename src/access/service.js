@@ -41,6 +41,8 @@ function accessService(repository, authentication, options={}) {
     async issueManagedFeed(token,body){
       const actor=await authorize(token,'users.manage');
       if(!options.managedEvidence)throw new AuthError(503,'Managed evidence feeds are not enabled.');
+      if(Array.isArray(options.configuredFeeds)&&options.configuredFeeds.some(feed=>feed.source==='evidence.'+body?.name))
+       throw new AuthError(409,'Provider feed name is reserved by an existing tenant integration.');
       const id=randomUUID(),key=randomBytes(32).toString('hex');
       const feed=await options.managedEvidence.issue(actor.id,id,body,key);
       return{...feed,endpoint:'/api/connectors/evidence',token:key,shownOnce:true,
