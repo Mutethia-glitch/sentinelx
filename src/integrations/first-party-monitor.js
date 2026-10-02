@@ -1,6 +1,7 @@
 'use strict';
 const {randomUUID}=require('node:crypto');
 const {isIP}=require('node:net');
+const {normalizedAddress}=require('../api/security');
 
 // First-party observations are derived from completed SentinelX responses, not
 // from attacker-supplied descriptions of an attack. No request body, full URL,
@@ -42,13 +43,30 @@ function firstPartyMonitor(repository,detector,config,{now=Date.now,limit=10,win
      type:'reconnaissance',action:'probe',status:'rejected',severity:'LOW'};
   return null;
  }
+ function reliableIp(req){
+  // Behind a reverse proxy, never attribute its private socket address to
+  // unrelated visitors. Only use a derived client IP when that proxy is
+  // explicitly trusted by the normal API security boundary.
+  const remote=normalizedAddress(req.socket?.remoteAddress);
+  if(!remote)return null;
+  const trusted=(config.trustedProxyIps||[]).includes(remote);
+  const candidate=normalizedAddress(req.sentinelxClientAddress)||remote;
+  if(candidate!==remote&&!trusted)return null;
+  if(!isIP(candidate))return null;
+  if(isIP(candidate)===4){
+   const [a,b]=candidate.split('.').map(Number);
+   if(a===0||a===10||a===127||a===169&&b===254||
+      a===172&&b>=16&&b<=31||a===192&&b===168||
+      a===100&&b>=64&&b<=127)return null;
+  }else if(candidate==='::1'||/^(?:fc|fd|fe[89ab])/i.test(candidate))return null;
+  return candidate;
+ }
  function observe(req,res){
   if(typeof req.url!=='string'||!req.url.startsWith('/api/'))return;
   res.once('finish',()=>{
    const verdict=classify(req,res);
    if(!verdict)return;
-   const address=req.sentinelxClientAddress||req.socket?.remoteAddress||null;
-   const sourceIp=typeof address==='string'&&isIP(address)?address:null;
+   const sourceIp=reliableIp(req);
    if(!sample((sourceIp||'unknown')+':'+verdict.signal))return;
    const evidenceRef='sentinelx.response:'+randomUUID();
    const event={
