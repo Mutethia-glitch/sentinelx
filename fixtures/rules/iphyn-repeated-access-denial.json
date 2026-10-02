@@ -1,0 +1,52 @@
+{
+  "name": "IPHYN repeated authenticated access denials",
+  "description": "Three denied Iphyn protected operations from the same verified source IP and pseudonymous signed-in user in five minutes. No anonymous/null-IP grouping.",
+  "enabled": false,
+  "severity": "HIGH",
+  "categoryCode": "UNAUTHORIZED_ACCESS",
+  "conditions": [
+    {
+      "field": "source",
+      "operator": "equals",
+      "value": "iphyn-app"
+    },
+    {
+      "field": "host",
+      "operator": "equals",
+      "value": "iphyn.vercel.app"
+    },
+    {
+      "field": "type",
+      "operator": "equals",
+      "value": "access"
+    },
+    {
+      "field": "action",
+      "operator": "equals",
+      "value": "access_denied"
+    },
+    {
+      "field": "status",
+      "operator": "equals",
+      "value": "denied"
+    },
+    {
+      "field": "sourceIp",
+      "operator": "exists",
+      "value": true
+    },
+    {
+      "field": "user",
+      "operator": "exists",
+      "value": true
+    }
+  ],
+  "threshold": 3,
+  "windowSeconds": 300,
+  "groupBy": [
+    "sourceIp",
+    "user"
+  ],
+  "mitreTechniqueIds": [],
+  "reason": "Create disabled Iphyn-scoped rule for authorized positive and benign checks before enabling."
+}
