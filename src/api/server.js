@@ -4,6 +4,7 @@ const {emailConfig,emailDelivery}=require('../email/delivery');
 const { frontendShared } = require('./frontend-shared');
 const { externalWebhook } = require('../integrations/webhook');
 const { collectorConfig, collectorHandler } = require('../integrations/collector');
+const { vercelFirewallConfig, vercelFirewallHandler } = require('../integrations/vercel-firewall');
 const { loginContainmentRepository } = require('../integrations/login-containment');
 const { auditRepository }=require('../data/audit-repository');
 const { auditService }=require('../audit/service');
@@ -60,7 +61,7 @@ const { accessRepository } = require('../data/access-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
-function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null) {
+function createServer(service, config, access = null, ingestion = null, views = null, categories = null, rules = null, alerts = null, incidents = null, investigations = null, responses = null, notifications = null, dashboard = null, reports = null, audit = null, apiSecurity = null, collector = null, vercelFirewall = null) {
   const security=apiSecurity||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   const auditing = audit ? auditHandler(audit, config) : null;
   const reporting = reports ? reportHandler(reports, config) : null;
@@ -85,6 +86,7 @@ function createServer(service, config, access = null, ingestion = null, views = 
       res.statusCode=200;return res.end(JSON.stringify({status:'ok',...(config.tenant?.id?{tenantId:config.tenant.id,origin:config.origin}:{})}));
     }
     if (security(req, res)) return;
+    if (vercelFirewall && req.url==='/api/connectors/vercel-firewall') return vercelFirewall(req,res);
     if (collector && req.url.startsWith('/api/connectors/')) return collector(req,res);
     if (auditing && req.url.startsWith('/api/audit')) return auditing(req, res);
     if (reporting && req.url.startsWith('/api/reports')) return reporting(req, res);
@@ -131,7 +133,8 @@ async function main() {
     const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds});
     const integration = externalWebhook();
     const connector = collectorConfig(process.env, config.tenant);
-    if (connector) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
+    const firewall = vercelFirewallConfig(process.env, config.tenant);
+    if (connector||firewall) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
     if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
     const server = createServer(service, config, access,
       ingestionService(eventRepository(pool), access, approvedSources(), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))), integration),
@@ -146,7 +149,8 @@ async function main() {
       dashboardService(dashboardRepository(pool), access),
       reportService(reportRepository(pool), access),
       auditService(auditRepository(pool), access), null,
-      collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)));
+      collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)),
+      firewall ? vercelFirewallHandler(firewall,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null);
     server.on('error', () => { console.error('Authentication server could not start.'); process.exitCode = 1; pool.end(); });
     server.listen(config.port, config.bindHost, () => console.log(`SentinelX server listening on configured port ${config.port}.`));
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
