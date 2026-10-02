@@ -5,7 +5,7 @@ const {ruleInput}=require('../../src/rules/model');
 const {eventMatches,validDefinition,detectionEngine}=require('../../src/detection/engine');
 const {connectorConfig,connectorEvent}=require('../../src/integrations/collector');
 
-const config=collectorConfig({CONNECTOR_TOKEN:'a'.repeat(64),CONNECTOR_SOURCE:'iphyn-app',
+const config=connectorConfig({CONNECTOR_TOKEN:'a'.repeat(64),CONNECTOR_SOURCE:'iphyn-app',
   CONNECTOR_HOST:'iphyn.vercel.app'}, {id:'disposable-tenant'});
 const input=(patch={})=>({eventId:'12345678-1234-1234-1234-123456789abc',
   timestamp:new Date().toISOString(),kind:'access_denied',sourceIp:'192.0.2.22',subject:'b'.repeat(64),...patch});
