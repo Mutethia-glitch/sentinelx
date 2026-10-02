@@ -18,7 +18,7 @@ function harness({now=()=>Date.now(),limit=10}={}){
   const req={url:path,method,sentinelxClientAddress:address,headers:{
    authorization:'Bearer must-not-leak',cookie:'secret=must-not-leak',
    'user-agent':'must-not-leak'},
-   socket:{remoteAddress:'10.0.0.7'}};
+   socket:{remoteAddress:address==='unknown'?'10.0.0.7':address}};
   monitor.observe(req,res);res.emit('finish');
   await new Promise(resolve=>setImmediate(resolve));
  }
