@@ -74,7 +74,9 @@ test('only mapped signed provider firewall denials normalize without raw request
  assert.equal(selected.event.status,'blocked');
  assert.equal(selected.event.severity,'MEDIUM');
  assert.equal(selected.event.sourceIp,null);
- assert.equal(selected.externalId,PROJECT+':'+input().id);
+ assert.match(selected.externalId,/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/);
+ assert.equal(selectFirewallEvent(input(),config).externalId,selected.externalId);
+ assert.notEqual(selectFirewallEvent(input({id:'1573817187330377061717300001'}),config).externalId,selected.externalId);
  assert.equal(eventMatches(selected.event,ruleInput(preset).definition),true);
  const text=JSON.stringify(selected.event);
  for(const forbidden of ['private-user-agent','should-never-persist','192.0.2.33','Do not copy'])
