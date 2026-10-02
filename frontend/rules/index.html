@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SentinelX · Detection rules</title><link rel="stylesheet" href="/ui/sentinelx-theme.css"><link rel="stylesheet" href="/rules/rules.css"><script src="/ui/sentinelx-ui.js" defer></script><script src="/rules/rules.js" defer></script></head><body data-page="rules"><div class="sx-app"><aside class="sx-sidebar" aria-label="SentinelX navigation">
+  <div class="sx-brand">
+    <span class="sx-brand-mark" data-icon="shield"></span>
+    <div class="sx-brand-copy"><p class="sx-brand-name">SentinelX</p><p class="sx-brand-subtitle">IPHYN Security Operations</p></div>
+  </div>
+  <nav class="sx-nav" aria-label="SentinelX sections">
+    <a href="/dashboard" data-permission="dashboard.read" hidden data-icon="layout-dashboard"><span class="sx-nav-label">Dashboard</span></a>
+    <a href="/events" data-permission="events.read" hidden data-icon="activity"><span class="sx-nav-label">Events</span></a>
+    <a href="/rules" data-permission="rules.read" hidden data-icon="list-filter"><span class="sx-nav-label">Rules</span></a>
+    <a href="/alerts" data-permission="alerts.read" hidden data-icon="shield-alert"><span class="sx-nav-label">Alerts</span></a>
+    <a href="/incidents" data-permission="incidents.read" hidden data-icon="siren"><span class="sx-nav-label">Incidents</span></a>
+    <a href="/notifications" data-permission="notifications.read" hidden data-icon="bell"><span class="sx-nav-label">Notifications</span></a>
+    <a href="/audit" data-permission="audit.read" hidden data-icon="file-clock"><span class="sx-nav-label">Audit</span></a>
+    <a href="/access" data-icon="user-cog"><span class="sx-nav-label">Access</span></a>
+  </nav>
+  <div class="sx-sidebar-footer"><button class="sx-collapse" type="button" data-sx-sidebar-toggle data-icon="panel-left-close" aria-label="Collapse sidebar"><span class="sx-collapse-label">Collapse</span></button></div>
+</aside><div class="sx-main"><header class="sx-topbar">
+  <button class="sx-icon-button sx-mobile-menu" type="button" data-sx-nav-toggle data-icon="menu" aria-label="Open navigation"></button>
+  <div class="sx-title"><h1>Detection rules</h1><p>Audited, tenant-local controls for the 15 threat categories.</p></div>
+  <div class="sx-topbar-actions"><section id="identity-panel" class="sx-topbar-identity" hidden>
+   <div class="sx-user-copy"><p id="identity"></p><p class="sx-user-role">Authenticated session</p></div>
+   <button class="sx-icon-button" type="button" data-sx-refresh data-icon="refresh-cw" aria-label="Refresh rules" title="Refresh"></button>
+   <button id="logout" class="sx-button-ghost" type="button" data-icon="log-out"><span class="sx-action-label">Sign out</span></button>
+ </section></div>
+</header><main class="sx-content">
+<div class="sx-operational"><span class="ok">Operational</span><span>•</span><span>SentinelX</span><span>•</span><time data-sx-clock></time></div>
+<p id="message" role="status" aria-live="polite"></p>
+<section id="login-panel" hidden class="sx-panel sx-auth-panel" aria-labelledby="login-heading">
+ <div class="sx-panel-head"><div><h2 id="login-heading">Sign in</h2><p>Use your company-provisioned account.</p></div></div>
+ <form id="login-form" class="sx-panel-body">
+  <label>Email<input id="email" type="email" autocomplete="username" maxlength="254" required></label>
+  <label>Application passphrase<input id="password" type="password" autocomplete="current-password" required></label>
+  <button type="submit" data-icon="key-round">Sign in</button>
+ </form>
+</section>
+<section id="rules-panel" hidden class="sx-panel" aria-labelledby="rules-heading">
+ <div class="sx-panel-head"><div><h2 id="rules-heading">Core detection rules</h2><p id="rule-summary">Rule availability and activation are tenant-specific. Issuing a provider key never automatically enables alerting.</p></div></div>
+ <div class="sx-panel-body">
+  <div class="sx-rule-tools"><label for="rule-search">Find a rule<input id="rule-search" type="search" maxlength="100" placeholder="Category or rule name"></label><button id="refresh-rules" type="button" data-icon="refresh-cw">Refresh rules</button></div>
+  <p class="hint">LOW evidence events can create HIGH or CRITICAL alerts when an enabled rule's defined conditions and threshold match. Activate only a rule with an approved, attributable source.</p>
+  <div class="table-scroll"><table><caption>Read-only list for permitted viewers. Rule activation requires rules.manage and a recorded reason.</caption>
+  <thead><tr><th>Rule</th><th>Category</th><th>Alert severity</th><th>Required events</th><th>Window</th><th>Status</th><th>Action</th></tr></thead><tbody id="rule-rows"></tbody></table></div>
+  <div class="pagination"><button id="previous" type="button" disabled data-icon="chevron-left">Previous</button><span id="page"></span><button id="next" type="button" disabled data-icon="chevron-right">Next</button></div>
+ </div>
+</section>
+<section id="rule-detail" hidden class="sx-panel" tabindex="-1" aria-labelledby="rule-detail-heading">
+ <div class="sx-panel-head"><div><h2 id="rule-detail-heading">Rule inspection</h2><p>Review the exact persisted rule before changing its state.</p></div></div>
+ <div class="sx-panel-body"><dl id="rule-fields"></dl><h3>Conditions and correlation</h3><pre id="rule-definition"></pre>
+ <section id="rule-manage" hidden><h3>Audited activation</h3>
+  <p class="hint" id="rule-action-warning">Only the Enabled state may change from this page. Existing severity, definition, category and MITRE mappings are preserved.</p>
+  <form id="rule-state-form">
+   <label>Reason for this change<textarea id="rule-reason" maxlength="500" required placeholder="State the approved reason (1–500 characters)"></textarea></label>
+   <label class="sx-rule-ack"><input id="rule-confirm" type="checkbox" required> I reviewed the exact rule, its source attribution, and the impact of this change.</label>
+   <button id="rule-action" type="submit"></button>
+  </form></section>
+ </div>
+</section></main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

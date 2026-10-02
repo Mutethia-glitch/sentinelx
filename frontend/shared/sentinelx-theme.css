@@ -749,3 +749,36 @@ body[data-page="access"] .sx-site-secret{
  border-radius:var(--radius);padding:1rem;font-family:var(--font-mono);
  font-size:.8rem;
 }
+
+/* Task 41 administrative workspaces: all runtime styling remains centralized. */
+/* Task 41: compact administrative overview with individually expandable tools. */
+.sx-access-shortcuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.65rem;margin:.4rem 0 1.25rem}
+.sx-access-shortcuts a{display:flex;align-items:center;min-height:3rem;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-raised);color:var(--primary);font-size:.875rem;font-weight:600;text-decoration:none;overflow-wrap:anywhere}
+.sx-access-shortcuts a:hover,.sx-access-shortcuts a:focus-visible{background:var(--accent);text-decoration:underline}
+.sx-access-workspaces{display:grid;gap:.85rem;padding-top:.9rem;padding-bottom:1.2rem}
+.sx-access-fold{min-width:0;scroll-margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-raised);overflow:visible}
+.sx-access-fold>summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.45rem;cursor:pointer;padding:1rem 1.15rem;font-size:.95rem;font-weight:650;color:var(--foreground)}
+.sx-access-fold>summary:hover{background:var(--accent)}
+.sx-access-fold[open]>summary{border-bottom:1px solid var(--border)}
+.sx-access-summary{font-weight:400;font-size:.79rem;color:var(--muted-foreground)}
+.sx-access-fold-body{display:grid;gap:.9rem;padding:1rem 1.15rem;min-width:0}
+#users-panel>.sx-panel-body{padding:1rem 1.15rem}
+.sx-access-fold .sx-panel-body{min-width:0}
+.sx-access-fold pre,.sx-access-fold code{max-width:100%;overflow-wrap:anywhere;white-space:pre-wrap}
+.sx-access-fold .user-card{margin-top:.55rem}
+@media(max-width:680px){.sx-access-shortcuts{grid-template-columns:1fr}.sx-access-fold>summary{display:block}.sx-access-summary{display:block;margin-top:.3rem}.sx-access-fold-body{padding:.75rem}}
+
+/* Task 41: scoped rules workspace, inheriting SentinelX's shared theme. */
+.sx-rule-tools{display:flex;flex-wrap:wrap;align-items:end;gap:1rem;margin-bottom:1rem}
+.sx-rule-tools label{min-width:min(100%,18rem);flex:1 1 18rem}
+.sx-rule-tools button{flex:0 0 auto}
+#rule-fields{display:grid;grid-template-columns:minmax(8rem,12rem) minmax(0,1fr);gap:.65rem 1rem}
+#rule-fields dt{font-weight:600;color:var(--muted-foreground)}
+#rule-fields dd{margin:0;overflow-wrap:anywhere}
+#rule-definition{max-height:24rem;overflow:auto;padding:1rem;background:var(--code);border:1px solid var(--border);border-radius:var(--radius);white-space:pre-wrap;overflow-wrap:anywhere}
+#rule-state-form{max-width:46rem;display:grid;gap:.8rem}
+#rule-state-form textarea{min-height:5.25rem;width:100%}
+.sx-rule-ack{display:flex;align-items:start;gap:.6rem}
+.sx-rule-ack input{flex:none;margin-top:.25rem}
+#rule-rows td{overflow-wrap:anywhere}
+@media(max-width:600px){#rule-fields{grid-template-columns:1fr}#rule-fields dt{margin-top:.5rem}}

@@ -26,7 +26,7 @@ element('copy-site-endpoint').addEventListener('click',async()=>{
 showSiteSetup();
 element('managed-feed-endpoint').textContent=window.location.origin+'/api/connectors/evidence';
 function reset(){generation++;ui.clearAccess();element('login-panel').hidden=false;element('identity-panel').hidden=true;
-  element('users-panel').hidden=true;element('access-overview').hidden=true;element('users').replaceChildren();
+  element('users-panel').hidden=true;element('access-shortcuts').hidden=true;element('access-overview').hidden=true;element('users').replaceChildren();
   element('identity').textContent='';element('assigned-roles').textContent='';element('tenant-name').textContent='';
   element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('site-secret-panel').hidden=true;element('site-secret').textContent='';
   element('integration-rows').replaceChildren();element('integration-status').textContent='';
@@ -62,12 +62,32 @@ async function refresh(background=false){background=background===true;if(!backgr
   element('identity').textContent=`${access.user.displayName} · ${access.user.email}`;
   element('tenant-name').textContent=access.tenant?`Company: ${access.tenant.name}`:'Local development tenant';
   element('assigned-roles').textContent=access.roles.length?`Roles: ${access.roles.join(', ')}`:'No role assigned. Ask an Administrator to configure your access.';
+  element('access-shortcuts').hidden=!(access.permissions.includes('users.read')&&access.permissions.includes('users.roles.manage'));
   if(access.permissions.includes('users.read')&&access.permissions.includes('users.roles.manage')){
     const [users,roles,sites,integration,managedFeeds]=await Promise.all([request('/api/access/users'),request('/api/access/roles'),request('/api/access/sites'),request('/api/access/integrations').catch(()=>null),request('/api/access/evidence-feeds').catch(()=>null)]);
     if(current!==generation||(background&&!ui.liveCanApply()))return false;element('users').replaceChildren(...users.users.map(user=>userCard(user,roles.roles)));element('users-panel').hidden=false;renderSites(sites);renderIntegration(integration);renderManagedFeeds(managedFeeds);element('sites-panel').hidden=false;
   }else{element('users-panel').hidden=true;element('users').replaceChildren();element('sites-panel').hidden=true;element('sites-list').replaceChildren();element('integration-rows').replaceChildren();element('managed-feed-panel').hidden=true;element('managed-feed-list').replaceChildren();}
   return true;
 }
+// Expand only the chosen workspace and reveal its content without touching forms.
+function openWorkspace(id){
+ const target=element(id);
+ if(!target||target.hidden||target.tagName!=='DETAILS')return;
+ if(id!=='users-panel'){
+  element('users-panel').open=false;
+  for(const other of ['site-workspace','managed-feed-panel','integration-details']){
+   if(other!==id)element(other).open=false;
+  }
+ }else{
+  for(const other of ['site-workspace','managed-feed-panel','integration-details'])element(other).open=false;
+ }
+ target.open=true;target.scrollIntoView({block:'start'});
+}
+element('access-shortcuts').addEventListener('click',event=>{
+ const link=event.target.closest('[data-open-workspace]');
+ if(!link)return;
+ event.preventDefault();openWorkspace(link.dataset.openWorkspace);
+});
 function renderManagedFeeds(data){
  const panel=element('managed-feed-panel'),list=element('managed-feed-list');list.replaceChildren();
  panel.hidden=!data||!Array.isArray(data.feeds);

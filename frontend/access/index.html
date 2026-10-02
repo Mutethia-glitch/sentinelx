@@ -6,6 +6,7 @@
   <nav class="sx-nav" aria-label="SentinelX sections">
     <a href="/dashboard" data-permission="dashboard.read" hidden data-icon="layout-dashboard"><span class="sx-nav-label">Dashboard</span></a>
     <a href="/events" data-permission="events.read" hidden data-icon="activity"><span class="sx-nav-label">Events</span></a>
+    <a href="/rules" data-permission="rules.read" hidden data-icon="list-filter"><span class="sx-nav-label">Rules</span></a>
     <a href="/alerts" data-permission="alerts.read" hidden data-icon="shield-alert"><span class="sx-nav-label">Alerts</span></a>
     <a href="/incidents" data-permission="incidents.read" hidden data-icon="siren"><span class="sx-nav-label">Incidents</span></a>
     <a href="/notifications" data-permission="notifications.read" hidden data-icon="bell"><span class="sx-nav-label">Notifications</span></a>
@@ -57,15 +58,24 @@
     </div>
   </section>
 
-  <section id="users-panel" hidden class="sx-panel" aria-labelledby="users-heading">
-    <div class="sx-panel-head"><div><h2 id="users-heading">User role management</h2><p>Administrator-only role assignment. Every change requires a reason, and at least one active Administrator must remain.</p></div></div>
-    <div class="sx-panel-body"><form id="invite-form"><h3>Invite company user</h3><label>Name<input id="invite-name" maxlength="120" required></label><label>Email<input id="invite-email" type="email" maxlength="254" required></label><label>Initial role<select id="invite-role"><option>Security Analyst</option><option>Viewer/Management</option><option>Administrator</option></select></label><label>Reason<input id="invite-reason" maxlength="500" required></label><button type="submit" data-icon="send">Send 6-digit activation code</button></form><div id="users"></div></div>
-  </section>
+  <nav id="access-shortcuts" class="sx-access-shortcuts" aria-label="Access workspaces" hidden>
+    <a href="#users-panel" data-open-workspace="users-panel">Manage company users</a>
+    <a href="#site-workspace" data-open-workspace="site-workspace">Website connectors</a>
+    <a href="#managed-feed-panel" data-open-workspace="managed-feed-panel">Provider evidence feeds</a>
+    <a href="#integration-details" data-open-workspace="integration-details">15-category readiness</a>
+    <a href="/rules" data-permission="rules.read" hidden>Manage detection rules →</a>
+  </nav>
+  <details id="users-panel" hidden class="sx-panel sx-access-fold" aria-labelledby="users-heading">
+    <summary id="users-heading">Company user management <span class="sx-access-summary">Invite members and assign roles</span></summary>
+    <div class="sx-panel-body"><p class="hint">Administrator-only role assignment. Every change requires a reason, and at least one active Administrator must remain.</p><form id="invite-form"><h3>Invite company user</h3><label>Name<input id="invite-name" maxlength="120" required></label><label>Email<input id="invite-email" type="email" maxlength="254" required></label><label>Initial role<select id="invite-role"><option>Security Analyst</option><option>Viewer/Management</option><option>Administrator</option></select></label><label>Reason<input id="invite-reason" maxlength="500" required></label><button type="submit" data-icon="send">Send 6-digit activation code</button></form><div id="users"></div></div>
+  </details>
   <section id="sites-panel" class="sx-panel" hidden aria-labelledby="sites-heading">
-    <div class="sx-panel-head"><div><h2 id="sites-heading">Company website connections</h2>
-      <p>Administrator-only, server-to-server links. Registering a URL alone never enables monitoring.</p></div></div>
-    <div class="sx-panel-body">
-      <p id="requested-site" class="hint"></p>
+    <div class="sx-panel-head"><div><h2 id="sites-heading">Company integrations</h2>
+      <p>Expand only the connection or evidence section you need. Each provider remains company-specific.</p></div></div>
+    <div class="sx-panel-body sx-access-workspaces">
+      <details id="site-workspace" class="sx-access-fold">
+      <summary>Company website connectors <span class="sx-access-summary">Register and manage backend reporting keys</span></summary>
+      <div class="sx-access-fold-body"><p id="requested-site" class="hint"></p>
       <section aria-labelledby="site-setup-heading" class="sx-panel-body">
         <h3 id="site-setup-heading">Website backend setup</h3>
         <p class="hint">Every company has its own receiver. Copy the full URL below into your WEBSITE SERVER'S environment; it is not the public onboarding URL. The private connector key is issued separately, shown once, and must never enter browser code or public environment variables.</p>
@@ -89,9 +99,11 @@
         <p class="hint">Copy the key securely now. Refreshing or closing this page will not reveal it again; if lost, revoke and reissue the connection.</p>
         <p class="hint">The status REPORTING confirms that a registered key sent an authenticated event; it does not independently prove domain ownership or protection of all traffic.</p>
       </section>
-      <div id="sites-list"></div>
-      <section id="managed-feed-panel" hidden aria-labelledby="managed-feed-heading">
-        <h3 id="managed-feed-heading">Additional provider evidence feeds</h3>
+      <div id="sites-list"></div></div>
+      </details>
+      <details id="managed-feed-panel" class="sx-access-fold" hidden aria-labelledby="managed-feed-heading">
+        <summary id="managed-feed-heading">Additional provider evidence feeds <span class="sx-access-summary">Application, identity, endpoint, mail and other issuers</span></summary>
+        <div class="sx-access-fold-body">
         <p class="hint">Optional company-owned server-to-server evidence feeds for the 15-category integrations. Only register a genuine provider that can substantiate its selected issuer's verdicts. A key authorizes source-attested submissions; it does not verify the external vendor or enable an alert rule.</p>
         <p class="hint">Provider receiver (your company only): <code id="managed-feed-endpoint"></code></p>
         <form id="managed-feed-form">
@@ -116,18 +128,19 @@
           <pre id="managed-feed-secret" class="sx-site-secret"></pre>
           <p class="hint">Send a valid issuer-specific security verdict to the provider receiver using this key as a Bearer token. Key is shown once, never stored in browser storage, and must not be exposed publicly. Losing it requires revocation and issuing a new source name.</p>
         </section>
-        <div id="managed-feed-list"></div>
-      </section>
-      <section aria-labelledby="integration-heading">
-        <h3 id="integration-heading">15-category integration readiness</h3>
+        <div id="managed-feed-list"></div></div>
+      </details>
+      <details id="integration-details" class="sx-access-fold" aria-labelledby="integration-heading">
+        <summary id="integration-heading">15-category integration readiness <span class="sx-access-summary">Evidence availability, not protection certification</span></summary>
+        <div class="sx-access-fold-body">
         <p class="hint">A category's evidence contract being available does not mean an external provider is installed or that a real attack has been detected. Observed counts are source-attested tenant records, not live coverage certification. Additional identity, network, mail, endpoint, storage, analyst and CI feeds require separately approved server-side credentials.</p>
         <p id="integration-status" class="hint" role="status"></p>
         <div class="table-scroll"><table>
           <caption>Tenant-local evidence contract and source status, not a threat protection score.</caption>
           <thead><tr><th>Threat category</th><th>Required evidence provider</th><th>Eligible configured feeds</th><th>Recorded contract events</th><th>Current evidence state</th></tr></thead>
           <tbody id="integration-rows"></tbody>
-        </table></div>
-      </section>
+        </table></div></div>
+      </details>
     </div>
   </section>
 </main></div></div><div class="sx-overlay" data-sx-nav-overlay></div></body></html>

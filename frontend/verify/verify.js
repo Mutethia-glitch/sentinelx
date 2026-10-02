@@ -1,6 +1,6 @@
 'use strict';
 const code=document.getElementById('code'),message=document.getElementById('message'),form=document.getElementById('verify-form'),resend=document.getElementById('resend');
-function destination(){const value=new URL(location.href).searchParams.get('continue')||'/dashboard';return /^\/(?:access|dashboard|events|alerts|incidents|notifications|audit)(?:\/)?$/.test(value)?value:'/dashboard';}
+function destination(){const value=new URL(location.href).searchParams.get('continue')||'/dashboard';return /^\/(?:access|dashboard|events|rules|alerts|incidents|notifications|audit)(?:\/)?$/.test(value)?value:'/dashboard';}
 async function request(path,body){const response=await fetch(path,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const result=await response.json();if(!response.ok){const e=new Error(result?.error||'Request failed.');e.status=response.status;throw e;}return result;}
 form.addEventListener('submit',async event=>{event.preventDefault();const button=form.querySelector('button[type="submit"]');button.disabled=true;message.textContent='Verifying…';try{await request('/api/auth/verify-2fa',{code:code.value});location.replace(destination());}catch(error){message.textContent='Error: '+error.message;code.value='';code.focus();}finally{button.disabled=false;}});
 const timer=document.getElementById('resend-timer');
