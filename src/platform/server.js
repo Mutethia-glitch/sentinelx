@@ -25,6 +25,8 @@ const FILES=new Map([
 function createPlatformServer(service,config,{limiter=loginLimiter(),verificationLimiter=loginLimiter({windowMs:60000}),security=null}={}){
   const boundary=security||apiSecurityBoundary({address:req=>clientAddress(req,config.trustedProxyIps||[])});
   return http.createServer({maxHeaderSize:16384},async(req,res)=>{
+    // The managed TLS edge forwards this response; HSTS is scoped to the exact HTTPS host.
+    if(config.production&&config.origin?.startsWith('https://'))res.setHeader('Strict-Transport-Security','max-age=31536000');
     if(req.url==='/healthz'){
       res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');
       if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');return res.end(JSON.stringify({error:'Method not allowed.'}));}

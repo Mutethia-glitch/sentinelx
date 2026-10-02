@@ -77,6 +77,8 @@ function createServer(service, config, access = null, ingestion = null, views = 
   const authentication = authHandler(service, config);
   const authorization = access ? accessHandler(access, config) : null;
   const server = http.createServer({ maxHeaderSize: 16384 }, (req, res) => {
+    // Production APP_ORIGIN is HTTPS; never scope HSTS to unrelated Render subdomains.
+    if(config.secureCookie)res.setHeader('Strict-Transport-Security','max-age=31536000');
     if(req.url==='/healthz'){
       res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');
       if(req.method!=='GET'){res.statusCode=405;res.setHeader('Allow','GET');return res.end(JSON.stringify({error:'Method not allowed.'}));}
