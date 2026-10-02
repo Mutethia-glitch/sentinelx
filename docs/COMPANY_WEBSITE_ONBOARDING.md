@@ -83,3 +83,41 @@ core detection rule is enabled simply because a site submits data.
   migrations on platform/tenant databases in the right order, executes
   disposable CI and reviews Vercel Iphyn PR #29 independently. No production
   access roles, detection rules or secrets should be auto-changed.
+
+## Migration and release ordering (required before merging this draft PR)
+
+Because main is automatically deployed to all four SentinelX Render services,
+do **not** merge a branch that references new tables/columns before those
+columns exist in the corresponding live databases. The optional website field
+was staged as a PR precisely to avoid that deployment race.
+
+1. Review the SQL and verify migrations against isolated CI first:
+   `platform/db/migrations/003_requested_website_origin.sql`,
+   `db/migrations/019_pending_website_origin.sql`, and
+   `db/migrations/020_website_connectors.sql`. Neither migration contains
+   credentials or changes the existing user authorization model.
+2. The authorized database operator applies `npm run db:migrate:platform`
+   **only to the onboarding platform database** using its private
+   `PLATFORM_DATABASE_URL`. Confirm the migration ledger lists 003 and
+   `tenants.requested_website_origin` exists.
+3. The operator applies `npm run db:migrate` to **each existing company's own
+   database**, including Iphyn, with its own tenant-local connection string.
+   Confirm tenant migration ledger entries 019/020, tenant profile column,
+   and the empty `website_connectors` table. Never point this script to
+   another company's or the onboarding database. Migration 020 does not
+   issue any secrets or activate a website.
+4. Only after all affected production databases have passed the schema
+   checks should the user approve merging this PR. The existing provisioner
+   will migrate newly provisioned databases before bootstrapping them.
+   Verify login, signup without a website, signup with a site marked pending,
+   Administrator-only site key issue/one-time display, trusted app evidence,
+   source revocation and Viewer/Analyst denial.
+5. Keep Iphyn draft PR #29 independently reviewed and manually deployed by
+   the user. Its narrow reconnaissance signal and the disabled tenant rule
+   are separate from a customer's signup metadata. Do not turn on all
+   fifteen generic category rules during website enrollment.
+
+The user has deferred purchasing a sender domain, so distinct external
+recipient invitation/activation acceptance is still pending and Task 41
+remains OPEN. Do not share database URLs, server connector tokens or email
+verification codes in GitHub, screenshots or chat.
