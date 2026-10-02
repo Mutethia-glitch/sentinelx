@@ -57,3 +57,23 @@ test('incident linked rule, source and entities match one evidence chain; unclas
   assert.ok(sql.includes("e.normalized_data->>'sourceIp'"));
   assert.ok(!sql.includes('T1110.001'));
 });
+
+test('standalone event category matches native normalized verdict without requiring an alert',async()=>{
+  const f=capture();
+  await eventRepository(f.pool).list({page:1,categoryCode:'RECONNAISSANCE'});
+  const {sql,values}=f.queries[0];
+  assert.ok(sql.includes("e.normalized_data->'metadata'->>'categoryCode'="));
+  assert.ok(sql.includes('OR EXISTS (SELECT 1 FROM alert_events ae JOIN alerts a ON a.id=ae.alert_id'));
+  assert.ok(sql.includes('a.category_code='));
+  assert.equal(values.filter(v=>v==='RECONNAISSANCE').length,1);
+  assert.ok(!sql.includes('JOIN alert_events ae ON'), 'no mandatory alert join');
+});
+test('linked rule and MITRE constraints retain a single alert evidence chain',async()=>{
+  const f=capture();
+  await eventRepository(f.pool).list({page:1,categoryCode:'RECONNAISSANCE',ruleId:ID,mitreTechniqueId:'T1110.001'});
+  const sql=f.queries[0].sql;
+  assert.ok(sql.includes('WHERE ae.event_id=e.id AND a.category_code='));
+  assert.ok(sql.includes('a.rule_id='));
+  assert.ok(sql.includes('rmm.rule_id=a.rule_id'));
+  assert.ok(!sql.includes("e.normalized_data->'metadata'->>'categoryCode'="));
+});
