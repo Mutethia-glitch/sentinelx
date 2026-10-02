@@ -63,6 +63,7 @@ const { websiteRepository } = require('../data/website-repository');
 const { siteCollectorHandler } = require('../integrations/site-collector');
 const { firstPartyMonitor } = require('../integrations/first-party-monitor');
 const { integrationCoverage }=require('../integrations/coverage');
+const { managedEvidenceRepository }=require('../data/managed-evidence-repository');
 const { accessService } = require('../access/service');
 const { accessHandler } = require('./access-handler');
 const { accessPage } = require('./access-page');
@@ -150,8 +151,11 @@ async function main() {
     const connector = collectorConfig(process.env, config.tenant);
     const firewall = vercelFirewallConfig(process.env, config.tenant);
     const feeds = evidenceFeedsConfig(process.env, config.tenant);
-    const coverage=config.tenant?integrationCoverage(pool,websites,feeds,config):null;
-    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage});
+    const managed=config.managedEvidenceEnabled?managedEvidenceRepository(pool,config.tenant?.id):null;
+    startupStage = 'managed evidence schema';
+    if(managed)await pool.query('SELECT id FROM managed_evidence_feeds LIMIT 0');
+    const coverage=config.tenant?integrationCoverage(pool,websites,feeds,config,managed):null;
+    const access = accessService(accessRepository(pool), service,{tenant:config.tenant,mailer,otpSecret:config.otpSecret,otpSeconds:config.otpSeconds,websites,integrationCoverage:coverage,managedEvidence:managed});
     startupStage = 'connector schema';
     if (connector||firewall||feeds) await pool.query('SELECT event_id FROM connector_receipts LIMIT 0');
     if (connector?.containLogin) await pool.query('SELECT trigger_event_id FROM connector_login_blocks LIMIT 0');
@@ -171,7 +175,7 @@ async function main() {
       auditService(auditRepository(pool), access), null,
       collectorHandler(connector, eventRepository(pool), detectionEngine(detectionRepository(pool), correlationEngine(correlationRepository(pool))),loginContainmentRepository(pool)),
       firewall ? vercelFirewallHandler(firewall,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
-      feeds ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool)))) : null,
+      (feeds||managed) ? evidenceHandler(feeds,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),managed) : null,
       siteCollectorHandler(websites,eventRepository(pool),detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config.tenant?.id||null),
       config.selfMonitorEnabled ? firstPartyMonitor(eventRepository(pool),
         detectionEngine(detectionRepository(pool),correlationEngine(correlationRepository(pool))),config) : null);
