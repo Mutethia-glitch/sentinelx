@@ -3,6 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {EventEmitter}=require('node:events');
 const {firstPartyMonitor}=require('../../src/integrations/first-party-monitor');
+const {pseudonymousLoginSubject}=require('../../src/auth/subject');
 const cfg={origin:'https://sentinelx-iphyn-network.onrender.com',
  tenant:{id:'89238480-9405-49b1-abeb-34bb851612ab'}};
 function harness({now=()=>Date.now(),limit=10}={}){
@@ -98,7 +99,7 @@ test('actual tenant HTTP routing feeds self observations without changing respon
  }};
  const config={...cfg,origin:'http://127.0.0.1:45678',
   cookieName:'sentinelx_session',challengeCookieName:'sentinelx_2fa',
-  trustedProxyIps:[],sessionSeconds:3600,secureCookie:false};
+  trustedProxyIps:[],sessionSeconds:3600,secureCookie:false,otpSecret:'q'.repeat(64)};
  const monitor=firstPartyMonitor(repo,null,config);
  const args=Array(21).fill(null);
  args[0]={async login(){throw new AuthError(401,'Invalid email or password.');}};
@@ -118,4 +119,8 @@ test('actual tenant HTTP routing feeds self observations without changing respon
   ['known_probe_route_rejected','password_login_rejected']);
  assert.ok(received.every(e=>!JSON.stringify(e).includes('must-not-leak')));
  assert.ok(received.every(e=>!JSON.stringify(e).includes('private@example.test')));
+ assert.equal(received[1].user,pseudonymousLoginSubject(config.otpSecret,'private@example.test'));
+ assert.equal(received[1].sourceIp,null,'untrusted local proxy must never be claimed as client');
+ assert.match(received[1].user,/^[0-9a-f]{64}$/);
+
 });
