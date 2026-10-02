@@ -1,0 +1,25 @@
+name: SentinelX read-only public smoke
+
+on:
+  push:
+    paths:
+      - '.github/workflows/task41-public-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  https_health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      DEPLOYMENT_PLATFORM_ORIGIN: https://sentinelx-onboarding.onrender.com
+      DEPLOYMENT_TENANT_ORIGIN: https://sentinelx-iphyn-network.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read-only HTTPS, HSTS and protected-page smoke
+        run: node scripts/smoke-online.js
