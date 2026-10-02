@@ -1,0 +1,33 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'../..');
+const html=readFileSync(path.join(root,'frontend/access/index.html'),'utf8');
+const js=readFileSync(path.join(root,'frontend/access/access.js'),'utf8');
+const guide=readFileSync(path.join(root,'docs/COMPANY_INTEGRATION_GUIDE.md'),'utf8');
+const {CATEGORY_CODES}=require('../../src/threats/taxonomy');
+test('Administrator setup UI retains per-company receiver independently of one-time token',()=>{
+ assert.match(html,/id="site-setup-endpoint"/);
+ assert.match(html,/id="copy-site-endpoint"/);
+ assert.match(html,/id="site-env-template"/);
+ assert.match(js,/window\.location\.origin\+'\/api\/connectors\/site-events'/);
+ assert.match(js,/site-setup-endpoint'\)\.value=endpoint/);
+ assert.match(js,/SENTINELX_SITE_CONNECTOR_URL=/);
+ assert.match(js,/SENTINELX_SITE_CONNECTOR_KEY=<issued-private-key>/);
+ assert.match(html,/Installing only the key and URL does not install a security reporter/);
+ assert.match(html,/REPORTING = authenticated event received/);
+ assert.match(html,/id="site-secret-panel" hidden/);
+ assert.doesNotMatch(js,/localStorage|sessionStorage/);
+});
+test('customer setup guide clearly separates site credentials and independently trusted provider feeds',()=>{
+ for(const code of CATEGORY_CODES)assert.match(guide,new RegExp('\\b'+code+'\\b'));
+ assert.match(guide,/\/api\/connectors\/site-events/);
+ assert.match(guide,/\/api\/connectors\/evidence/);
+ assert.match(guide,/SECURITY_EVIDENCE_FEEDS_JSON/);
+ assert.match(guide,/key \*\*alone does not deploy code/);
+ assert.match(guide,/server-side/);
+ assert.match(guide,/ISSUED/);
+ assert.match(guide,/REVOKED/);
+});
